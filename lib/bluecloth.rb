@@ -175,7 +175,8 @@ class BlueCloth < String
 
 		# Filter HTML if we're asked to do so
 		if self.filter_html
-			text.gsub!( "<", "&lt;" ).gsub!( ">", "&gt;" )
+			text.gsub!( "<", "&lt;" )
+			text.gsub!( ">", "&gt;" )
 			@log.debug "Filtered HTML: %p" % text
 		end
 
