@@ -76,11 +76,15 @@ class BlueCloth < String
 	end
 
 
-	# CVS version tag
-	Version = /([\d\.]+)/.match( %q{$Revision: 1.1 $} )[1]
+	# SVN Revision
+	SvnRev = %q$Rev$
 
-	# CVS id tag
-	Rcsid = %q$Id$
+	# SVN Id tag
+	SvnId = %q$Id$
+
+	# SVN URL
+	SvnUrl = %q$URL$
+
 
 	# Rendering state struct. Keeps track of URLs, titles, and HTML blocks
 	# midway through a render. I prefer this to the globals of the Perl version
