@@ -2,7 +2,7 @@
 BlueCloth
 =========
 
-Version 0.0.2b - 2004/04/11
+Version 0.0.3b - 2004/04/22
 
 Original version by John Gruber <http://daringfireball.net/>.  
 Ruby port by Michael Granger <http://www.deveiate.org/>.
@@ -55,6 +55,18 @@ functionality to its author, John Gruber. The bugs in this code are most
 certainly an artifact of my porting it and not an artifact of the excellent code
 from which it is derived.
 
+It also, as mentioned before, borrows its API liberally from RedCloth, both for
+compatibility's sake, and because I think Why's code is beautiful. His excellent
+code and peerless prose have been an inspiration to me, and this module is
+intended as the sincerest flattery.
+
+Also contributing to any success this module may enjoy are those among my peers
+who have taken the time to help out, either by submitting patches, testing, or
+offering suggestions and review:
+
+* Martin Chase <stillflame@FaerieMUD.org>
+* Florian Gross <flgr@ccan.de>
+
 
 Author/Legal
 ------------
@@ -75,7 +87,6 @@ version.
 BlueCloth is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
 
 
   [1]: http://daringfireball.net/projects/markdown/
