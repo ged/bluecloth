@@ -3,18 +3,16 @@
 # This is an abstract test case class for building Test::Unit unit tests for the
 # BlueCloth module. It consolidates most of the maintenance work that must be
 # done to build a test file by adjusting the $LOAD_PATH appropriately, as well
-# as adding some other useful methods that make building and maintaining the
-# tests much easier (IMHO). See the docs for Test::Unit for more info on the
-# particulars of unit testing.
+# as adding some other useful methods that make building, maintaining, and using
+# the tests for programming much easier (IMHO). See the docs for Test::Unit for
+# more info on the particulars of unit testing.
 # 
 # == Synopsis
 # 
-#	# Allow the unit test to be run from the base dir, or from tests/ or
-#	# similar:
-#	begin
-#		require 'tests/lingtestcase'
-#	rescue
-#		require '../lingtestcase'
+#	# Allow the test to be run from anywhere:
+#	if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
+#		basedir = File::dirname( __FILE__ )
+#		require File::join( basedir, 'bctestcase' )
 #	end
 #
 #	class MySomethingTest < BlueCloth::TestCase
@@ -29,6 +27,7 @@
 #			assert_instance_of MySomething, obj
 #			assert_respond_to :myMethod, obj
 #		end
+#
 #	end
 # 
 # == Rcsid
@@ -46,6 +45,8 @@
 # Please see the file COPYRIGHT in the 'docs' directory for licensing details.
 #
 
+$DebugPattern ||= nil
+
 begin
 	basedir = File::dirname( File::dirname(__FILE__) )
 	unless $LOAD_PATH.include?( "#{basedir}/lib" )
@@ -54,7 +55,6 @@ begin
 end
 
 require "test/unit"
-
 require "bluecloth"
 
 
