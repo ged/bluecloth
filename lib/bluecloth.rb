@@ -811,8 +811,8 @@ class BlueCloth < String
 					else
 						@log.debug "  Linkid %p not found in link table" % linkid
 						@log.debug "  Appending original string instead: %p" %
-							@scanner.string[ startpos-1 .. @scanner.pos ]
-						text += @scanner.string[ startpos-1 .. @scanner.pos ]
+							@scanner.string[ startpos-1 .. @scanner.pos-1 ]
+						text += @scanner.string[ startpos-1 .. @scanner.pos-1 ]
 					end
 
 				# ...or for an inline style second part
