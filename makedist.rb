@@ -3,7 +3,7 @@
 #	Distribution Maker Script
 #	$Id: makedist.rb,v 1.2 2003/07/09 16:15:20 deveiant Exp $
 #
-#	Copyright (c) 2001, 2002, The FaerieMUD Consortium.
+#	Copyright (c) 2001-2004, The FaerieMUD Consortium.
 #
 #	This is free software. You may use, modify, and/or redistribute this
 #	software under the terms of the Perl Artistic License. (See
@@ -106,8 +106,8 @@ def main
 			
 	end
 
-	project = File::read( "CVS/Repository" ).chomp.sub( %r{.*/}, '' )
-	header "%s Distribution Maker" % project
+	header "Distribution Maker"
+	project = File::basename( File::dirname(File::expand_path( __FILE__ )) )
 
 	message "Finding necessary programs...\n\n"
 	for prog in $Programs.keys

@@ -11,6 +11,8 @@
 
 
 BEGIN {
+	require 'find'
+
 	begin
 		require 'readline'
 		include Readline
@@ -21,15 +23,34 @@ BEGIN {
 			return $stdin.gets.chomp
 		end
 	end
-
-	begin
-		require 'yaml'
-		$yaml = true
-	rescue LoadError => e
-		$stderr.puts "No YAML; try() will use .inspect instead."
-		$yaml = false
-	end
 }
+
+class File
+    Win32Exts = %w{.exe .com .bat}
+
+    def self::which( prog, path=ENV['PATH'] )
+        path.split(File::PATH_SEPARATOR).each {|dir|
+            # If running under Windows, look for prog + extensions
+            if File::ALT_SEPARATOR
+                ext = Win32Exts.find_all {|ext|
+                    f = File::join(dir, prog+ext)
+                    File::executable?(f) && !File::directory?(f)
+                }
+                ext.each {|f|
+                    f = File::join( dir, prog + f ).gsub(%r:/:,'\\')
+                    if block_given? then yield( f ) else return f end
+                }
+            else
+                f = File::join( dir, prog )
+                if File::executable?( f ) && ! File::directory?( f )
+                    if block_given? then yield(f) else return f end
+                end
+            end
+        }
+    end
+
+end
+
 
 module UtilityFunctions
 
@@ -45,6 +66,7 @@ module UtilityFunctions
 		/\.cvsignore/,
 		/\.s?o$/,
 	]
+	AMRegexp = Regexp::union( *ANTIMANIFEST )
 
 	# Set some ANSI escape code constants (Shamelessly stolen from Perl's
 	# Term::ANSIColor by Russ Allbery <rra@stanford.edu> and Zenin <zenin@best.com>
@@ -87,20 +109,27 @@ module UtilityFunctions
 		end
 	end
 
+
 	# Test for the presence of the specified <tt>library</tt>, and output a
 	# message describing the test using <tt>nicename</tt>. If <tt>nicename</tt>
 	# is <tt>nil</tt>, the value in <tt>library</tt> is used to build a default.
 	def testForLibrary( library, nicename=nil )
 		nicename ||= library
 		message( "Testing for the #{nicename} library..." )
-		if $:.detect {|dir| File.exists?(File.join(dir,"#{library}.rb")) || File.exists?(File.join(dir,"#{library}.so"))}
-			message( "found.\n" )
-			return true
+		found = false
+
+		begin
+			require library
+		rescue LoadError => err
+			message "no found (%s)\n" % err.message
 		else
-			message( "not found.\n" )
-			return false
+			message "found\n"
+			found = true
 		end
+
+		return found
 	end
+
 
 	# Test for the presence of the specified <tt>library</tt>, and output a
 	# message describing the problem using <tt>nicename</tt>. If
@@ -231,17 +260,36 @@ module UtilityFunctions
 		return "%d.%02d" % release
 	end
 
-	### Extract the project name (CVS Repository name) for the given directory.
-	def extractProjectName
-		File.open( "CVS/Repository", "r").readline.chomp
+
+	### Write a new manifest file with the given +named+, moving any current one
+	### aside with an ".old" suffix if +backup+ is true.
+	def makeManifest( name="MANIFEST", backup=true )
+		message "Making manifest file '#{name}'"
+
+		# Move an old one aside if a backup is desired
+		if backup and File::exists?( name )
+			File::rename( name, name + ".old" )
+		end
+
+		File::open( name, File::WRONLY|File::TRUNC|File::CREAT ) {|ofh|
+			Find::find( "." ) do |file|
+				Find.prune if AMRegexp =~ file
+				Find.prune if %r{/\.} =~ file
+				Find.prune if /TEMPLATE/ =~ file
+				next if File::directory?( file )
+
+				ofh.puts file
+			end
+		}
 	end
+
 
 	### Read the specified <tt>manifestFile</tt>, which is a text file
 	### describing which files to package up for a distribution. The manifest
 	### should consist of one or more lines, each containing one filename or
 	### shell glob pattern.
 	def readManifest( manifestFile="MANIFEST" )
-		message "Building manifest..."
+		message "Reading manifest..."
 		raise "Missing #{manifestFile}, please remake it" unless File.exists? manifestFile
 
 		manifest = IO::readlines( manifestFile ).collect {|line|
@@ -259,6 +307,7 @@ module UtilityFunctions
 		message "found #{filelist.length} files.\n"
 		return filelist
 	end
+
 
 	### Given a <tt>filelist</tt> like that returned by #readManifest, remove
 	### the entries therein which match the Regexp objects in the given

@@ -1,11 +1,11 @@
 #!/usr/bin/ruby
 #
-#	Linguistics Module Install Script
+#	BlueCloth Module Install Script
 #	$Id: install.rb,v 1.3 2003/10/09 13:23:09 deveiant Exp $
 #
 #	Thanks to Masatoshi SEKI for ideas found in his install.rb.
 #
-#	Copyright (c) 2001-2003 The FaerieMUD Consortium.
+#	Copyright (c) 2001-2004 The FaerieMUD Consortium.
 #
 #	This is free software. You may use, modify, and/or redistribute this
 #	software under the terms of the Perl Artistic License. (See
@@ -28,9 +28,9 @@ $rcsId		= %q$Id: install.rb,v 1.3 2003/10/09 13:23:09 deveiant Exp $
 # Define required libraries
 RequiredLibraries = [
 	# libraryname, nice name, RAA URL, Download URL
-# 	[ 'hashslice', "Ruby-Hashslice", 
-# 		'http://www.ruby-lang.org/en/raa-list.rhtml?name=Ruby-HashSlice',
-# 		'http://www.devEiate.org/code/Ruby-HashSlice-1.03.tar.gz' ],
+	[ 'strscan', "StrScan", 
+		'http://raa.ruby-lang.org/list.rhtml?name=strscan',
+		'http://i.loveruby.net/archive/strscan/strscan-0.6.7.tar.gz' ],
 ]
 
 class Installer
@@ -123,7 +123,7 @@ class Installer
 end
 
 if $0 == __FILE__
-	header "Linguistics Installer #$version"
+	header "BlueCloth Installer #$version"
 
 	for lib in RequiredLibraries
 		testForRequiredLibrary( *lib )
@@ -139,7 +139,6 @@ if $0 == __FILE__
 
 	message "Installing\n"
 	i = Installer.new( viewOnly )
-	i.installFiles( "redist", sitelibdir, 0444, verbose )
 	i.installFiles( "lib", sitelibdir, 0444, verbose )
 end
 	
