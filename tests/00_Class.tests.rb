@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/ruby
 #
 # Unit test for the BlueCloth class object 
 # $Id: TEMPLATE.rb.tpl,v 1.2 2003/09/11 04:59:51 deveiant Exp $
@@ -6,10 +6,9 @@
 # Copyright (c) 2004 The FaerieMUD Consortium.
 # 
 
-if File::exists?( "lib/bluecloth.rb" )
-	require 'tests/bctestcase'
-else
-	require 'bctestcase'
+if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
+	basedir = File::dirname( __FILE__ )
+	require File::join( basedir, 'bctestcase' )
 end
 
 

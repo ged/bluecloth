@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/ruby
 #
 # Unit test for bugs found in BlueCloth
 # $Id$
@@ -6,11 +6,11 @@
 # Copyright (c) 2004 The FaerieMUD Consortium.
 # 
 
-if File::exists?( "lib/bluecloth.rb" )
-	require 'tests/bctestcase'
-else
-	require 'bctestcase'
+if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
+	basedir = File::dirname( __FILE__ )
+	require File::join( basedir, 'bctestcase' )
 end
+
 
 require 'timeout'
 
