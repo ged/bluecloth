@@ -2,7 +2,7 @@
 #
 # Tester to find a minimal case for the regexp engine overflow bug
 # 
-# Time-stamp: <01-Jun-2004 21:01:55 ged>
+# Time-stamp: <22-Aug-2004 12:22:15 ged>
 #
 
 BEGIN {
@@ -13,15 +13,18 @@ BEGIN {
 	include UtilityFunctions
 }
 
-BlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script ]
+BlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script math ins del]
 BlockTagPattern = BlockTags.join('|')
+
 re = %r{
-		^						# Start of line
-		<(#{BlockTagPattern})	# Start tag: \2
-		\b						# word break
-		(.*\n)*?				# Any number of lines, minimal match
-		</\1>					# Matching end tag
-	  }ix
+	^						# Start of line
+	<(#{BlockTagPattern})	# Start tag: \2
+	\b						# word break
+	(.*\n)*?				# Any number of lines, minimal match
+	</\1>					# Matching end tag
+	[ ]*					# trailing spaces
+	(?=\n+|\Z)				# End of line or document
+  }ix
 
 source = "<ul>\n<li><p>xx xxxxxxx xx xxxxxx.</p></li>\n<li><p>xxx xxxxxxx xxxx x" \
 "x xxxxxxxxxxx xx:</p>\n\n<ul>\n<li><p>xxxxxxx xxxxxxx: xxxxx xxxx xxxx xxxxxxx " \
