@@ -1,0 +1,145 @@
+/*
+
+   BlueCloth.RubyForge.org
+   Base Stylesheet
+   $Id$
+
+ */
+
+body {
+    background-color: #353457;
+    color: #efefef;
+    font: 14px "Lucida Grande", Skia, Tahoma, sans-serif;
+    margin: 1em 3em 2em;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    text-align: left;
+    background: transparent;
+    font-family:  "Lucida Grande", Tahoma, sans-serif;
+    margin-bottom: 0;
+    padding-bottom: 0;
+	border-right-width: 3px;
+}
+
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p { margin-top: 0.2em; }
+
+h1 { font: bold 170% white; text-shadow: black 3px 3px 4px; }
+h2 { font: bold 130% white; text-shadow: black 2px 2px 3px; }
+h3 { text-shadow: black 2px 2px 3px;
+	font-size: 115%;
+}
+h4 {
+	font-style: italic;
+	text-decoration: none;
+}
+h5 { font: bold small-caps; }
+h6 { font-weight: bold; font-style: italic; }
+
+p,td,th {
+	font-family:	"Lucida Grande", Verdana, sans-serif;
+	font-weight:	normal;
+	font-style:		normal;
+	line-height:	145%;
+}
+
+a {
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	border-bottom: 1px dotted white;
+}
+
+a:hover {
+	background: #49487A;
+}
+a[id] {
+	background: inherit;
+	color: inherit;
+	text-decoration: inherit;
+	border: none;
+}
+
+pre {
+    margin: 5px;
+    background: #ccc;
+    color: #353457;
+    border: 1px solid black;
+    padding: 10px;
+    overflow: hidden;
+	font-size: 12px;
+}
+
+ul > li,
+ol > li {
+    margin-bottom: 5px;
+}
+
+fieldset { border: 0; padding: 0; margin: 5px 0; }
+
+button {
+    background: #efefef;
+    color: #333;
+    border: 1px solid #efefef;
+    display: inline;
+}
+
+kbd {
+    font-family: "Andale Mono", "Monotype.com", "Vera Sans Mono", fixed;
+    font-weight: bold;
+    color: #efefef;
+    background: #49487a;
+    border: 1px dotted #efefef;
+}
+
+.blue-title {
+	 color:  #BBF;
+}
+
+#logo {
+	position: fixed;
+	left:  25px;
+	top:   25px;
+	min-height: 60px;
+}
+
+#content {
+	align: absolute;
+	margin-left: 100px;
+}
+
+#footer {
+	font-size: 9px;
+	color:  #999;
+	text-align: center;
+}
+
+.example-output {
+    margin: 5px;
+    background: #ccc;
+    color: #353457;
+    border: 1px solid black;
+    padding: 10px;
+    overflow: auto;
+	font-size: 12px;
+}
+
+.example-output p,
+.example-output h1,
+.example-output ul,
+.example-output h2 {
+	color:  black;
+	text-shadow: none;
+	line-height: 100%;
+	font-family: Verdana, Helvetica, sans-serif;
+}
+.example-output a {
+	color: red;
+	text-decoration: underline;
+}
+
