@@ -268,7 +268,7 @@ The left shift operator, which is written as &#x3c;&#x3c;, is often used &#x26; 
 <p>The left shift operator, which is written as &#x3c;&#x3c;, is often used &#x26; greatly admired.</p>
 >>>
 
-# Inline HTML
+# Inline HTML - table tags
 <<<
 This is a regular paragraph.
 
@@ -290,6 +290,85 @@ This is another regular paragraph.
 
 <p>This is another regular paragraph.</p>
 >>>
+
+# Inline HTML - div tags
+<<<
+This is a regular paragraph.
+
+<div>
+   Something
+</div>
+Something else.
+--- Should become:
+<p>This is a regular paragraph.</p>
+
+<div>
+   Something
+</div>
+
+<p>Something else.</p>
+>>>
+
+
+# Inline HTML - mathml
+<<<
+Examples
+--------
+
+Now that we have met some of the key players, it is time to see what we can
+do. Here are some examples and comments which illustrate the use of the basic
+layout and token elements. Consider the expression x2 + 4x + 4 = 0. A basic
+MathML presentation encoding for this would be:
+
+<math>
+  <mrow>
+	<msup>
+	  <mi>x</mi>
+	  <mn>2</mn>
+	</msup>
+	<mo>+</mo>
+	<mn>4</mn>
+	<mi>x</mi>
+	<mo>+</mo>
+	<mn>4</mn>
+	<mo>=</mo>
+	<mn>0</mn>
+  </mrow>
+</math>
+
+This encoding will display as you would expect. However, if we were interested
+in reusing this expression in unknown situations, we would likely want to spend
+a little more effort analyzing and encoding the logical expression structure.
+
+--- Should become:
+<h2>Examples</h2>
+
+<p>Now that we have met some of the key players, it is time to see what we can
+do. Here are some examples and comments which illustrate the use of the basic
+layout and token elements. Consider the expression x2 + 4x + 4 = 0. A basic
+MathML presentation encoding for this would be:</p>
+
+<math>
+  <mrow>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mn>4</mn>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>4</mn>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>
+
+<p>This encoding will display as you would expect. However, if we were interested
+in reusing this expression in unknown situations, we would likely want to spend
+a little more effort analyzing and encoding the logical expression structure.</p>
+>>>
+
 
 # Span-level HTML
 <<<

@@ -296,7 +296,7 @@ class BlueCloth < String
 		(.*\n)*?				# Any number of lines, minimal match
 		</\1>					# Matching end tag
 		[ ]*					# trailing spaces
-		(?=\n+|\Z)				# End of line or document
+		$						# End of line or document
 	  }ix
 
 	# More-liberal block-matching
