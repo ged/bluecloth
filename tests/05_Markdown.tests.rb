@@ -24,6 +24,16 @@ class SubfunctionsTestCase < BlueCloth::TestCase
 		baz@ruby-lang.org
 		foo-tim-bazzle@bar-hop.co.uk
 		littlestar@twinkle.twinkle.band.CO.ZA
+		ll@lll.lllll.ll
+		Ull@Ulll.Ulllll.ll
+		UUUU1@UU1.UU1UUU.UU
+		l@ll.ll
+		Ull.Ullll@llll.ll
+		Ulll-Ull.Ulllll@ll.ll
+		1@111.ll
+		info@öko.de
+		jemand@büro.de
+		irgendwo-interreßant@dÅgta.se
 	]
 	def test_10_email_address
 		printTestHeader "BlueCloth: Inline email address"
@@ -906,12 +916,13 @@ __Something__ like this should be bold.
 <p><strong>Something</strong> like this should be bold.</p>
 >>>
 
-# Partial-word emphasis
+# Partial-word emphasis (Bug #568)
 <<<
 **E**xtended **TURN**
 --- Should become:
 <p><strong>E</strong>xtended <strong>TURN</strong></p>
 >>>
+
 
 
 ### [Links]
@@ -1033,6 +1044,13 @@ than from <a href="http://search.yahoo.com/" title="Yahoo Search">Yahoo</a> or
 This is just a [bracket opener; it should fail gracefully.
 --- Should become:
 <p>This is just a [bracket opener; it should fail gracefully.</p>
+>>>
+
+# Unresolved reference-style links (Bug #620)
+<<<
+This is an unresolved [url][1].
+--- Should become:
+<p>This is an unresolved [url][1].</p>
 >>>
 
 
