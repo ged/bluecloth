@@ -1,6 +1,7 @@
 ./utils.rb
 ./tests/bctestcase.rb
 ./tests/*.tests.rb
+./tests/data/*.txt
 ./test.rb
 ./README
 ./CHANGES
