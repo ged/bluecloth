@@ -546,7 +546,7 @@ class BlueCloth < String
 			.*\n+
 		  )+
 		)
-		((?=^[ ]{0,#{TabWidth}}\S)|\Z)		# Lookahead for non-space at
+		(^[ ]{0,#{TabWidth - 1}}\S|\Z)		# Lookahead for non-space at
 											# line-start, or end of doc
 	  }x
 

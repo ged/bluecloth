@@ -41,6 +41,15 @@ class BugsTestCase < BlueCloth::TestCase
 		}
 	end
 	
+	def test_15_regexp_engine_overflow_bug2
+		contents = File::read( File::join(BaseDir,"tests/data/re-overflow2.txt") )
+		bcobj = BlueCloth::new( contents )
+
+		assert_nothing_raised {
+			bcobj.to_html
+		}
+	end
+	
 end
 
 
