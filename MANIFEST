@@ -1,10 +1,9 @@
 ./utils.rb
 ./tests/bctestcase.rb
-./tests/05_Markdown.tests.rb
-./tests/00_Class.tests.rb
+./tests/*.tests.rb
 ./test.rb
 ./README
-./MANIFEST
+./CHANGES
 ./LICENSE
 ./lib/bluecloth.rb
 ./install.rb
