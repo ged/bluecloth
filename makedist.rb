@@ -128,13 +128,13 @@ def main
 		version = promptWithDefault( "Distribution version", releaseVersion )
 		distName = "%s-%s" % [ project, version ]
 
-		tag = "RELEASE_%s" % sprintf('%0.2f', version).gsub(/\./, '_') 
-		tagFlag = promptWithDefault( "Tag '%s' with %s" % [ project, tag ], 'y' )
+		tag = "RELEASE_%s" % version.gsub(/\./, '_') 
+		#tagFlag = promptWithDefault( "Tag '%s' with %s" % [ project, tag ], 'y' )
 
-		if tagFlag =~ /^y/i
-			$stderr.puts "Running #{$Programs['cvs']} -q tag #{tag}"
-			system $Programs['cvs'], '-q', 'tag', tag
-		end
+		#if tagFlag =~ /^y/i
+		#	$stderr.puts "Running #{$Programs['cvs']} -q tag #{tag}"
+		#	system $Programs['cvs'], '-q', 'tag', tag
+		#end
 	end
 
 	message "Making distribution directory #{distName}..."
