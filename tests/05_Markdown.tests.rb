@@ -310,6 +310,54 @@ Something else.
 >>>
 
 
+# Inline HTML - Plain HR
+<<<
+This is a regular paragraph.
+
+<hr />
+
+Something else.
+--- Should become:
+<p>This is a regular paragraph.</p>
+
+<hr />
+
+<p>Something else.</p>
+>>>
+
+
+# Inline HTML - Fancy HR
+<<<
+This is a regular paragraph.
+
+<hr class="publishers-mark" id="first-hrule" />
+
+Something else.
+--- Should become:
+<p>This is a regular paragraph.</p>
+
+<hr class="publishers-mark" id="first-hrule" />
+
+<p>Something else.</p>
+>>>
+
+
+# Inline HTML - Iframe
+<<<
+This is a regular paragraph.
+
+<iframe src="foo.html" id="foo-frame"></iframe>
+
+Something else.
+--- Should become:
+<p>This is a regular paragraph.</p>
+
+<iframe src="foo.html" id="foo-frame"></iframe>
+
+<p>Something else.</p>
+>>>
+
+
 # Inline HTML - mathml
 <<<
 Examples
@@ -891,11 +939,33 @@ id sem consectetuer libero luctus adipiscing.
     </ol>
     
     <p>Here's some example code:</p>
-    
-    <pre><code>return shell_exec("echo $input | $markdown_script");
-    </code></pre>
+
+<pre><code>return shell_exec("echo $input | $markdown_script");
+</code></pre>
 </blockquote>
 >>>
+
+# Blockquotes with a <pre> section
+<<<
+> The best approximation of the problem is the following code:
+>
+> <pre>
+> foo + bar; foo.factorize; foo.display
+> </pre>
+> 
+> This should result in an error on any little-endian platform.
+--- Should become:
+<blockquote>
+    <p>The best approximation of the problem is the following code:</p>
+
+<pre>
+foo + bar; foo.factorize; foo.display
+</pre>
+    
+    <p>This should result in an error on any little-endian platform.</p>
+</blockquote>
+>>>
+
 
 
 ### [Images]

@@ -277,7 +277,8 @@ class BlueCloth < String
 
 	# The list of tags which are considered block-level constructs and an
 	# alternation pattern suitable for use in regexps made from the list
-	StrictBlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script math ins del]
+	StrictBlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script noscript
+		form fieldset iframe math ins del ]
 	StrictTagPattern = StrictBlockTags.join('|')
 
 	LooseBlockTags = StrictBlockTags - %w[ins del]
@@ -307,7 +308,7 @@ class BlueCloth < String
 		(.*\n)*?				# Any number of lines, minimal match
 		.*</\1>					# Anything + Matching end tag
 		[ ]*					# trailing spaces
-		(?=\n+|\Z)				# End of line or document
+		$						# End of line or document
 	  }ix
 
 	# Special case for <hr />.
@@ -323,7 +324,7 @@ class BlueCloth < String
 			\b					# Word break
 			([^<>])*?			# Attributes
 			/?>					# Tag close
-			(?=\n\n|\Z)			# followed by a blank line or end of document
+			$					# followed by a blank line or end of document
 		)
 	  }ix
 
@@ -457,11 +458,15 @@ class BlueCloth < String
 
 
 
-	# Pattern to transform lists
+	# Patterns to match and transform lists
+	ListMarkerOl = %r{\d+\.}
+	ListMarkerUl = %r{[*+-]}
+	ListMarkerAny = Regexp::union( ListMarkerOl, ListMarkerUl )
+
 	ListRegexp = %r{
 		  (?:
 			^[ ]{0,#{TabWidth - 1}}		# Indent < tab width
-			([*+-]|\d+\.)				# unordered or ordered ($1)
+			(#{ListMarkerAny})			# unordered or ordered ($1)
 			[ ]+						# At least one space
 		  )
 		  (?m:.+?)						# item content (include newlines)
@@ -470,7 +475,9 @@ class BlueCloth < String
 			|							#  or
 			  \n{2,}					# Blank line...
 			  (?=\S)					# ...followed by non-space
-			  (?![ ]* (\*|\d+\.) [ ]+)	# ...but not another item
+			  (?![ ]*					# ...but not another item
+				(#{ListMarkerAny})
+			   [ ]+)
 		  )
 	  }x
 
@@ -482,7 +489,7 @@ class BlueCloth < String
 		str.gsub( ListRegexp ) {|list|
 			@log.debug "  Found list %p" % list
 			bullet = $1
-			list_type = (/[*+-]/.match(bullet) ? "ul" : "ol")
+			list_type = (ListMarkerUl.match(bullet) ? "ul" : "ol")
 			list.gsub!( /\n{2,}/, "\n\n\n" )
 
 			%{<%s>\n%s</%s>\n} % [
@@ -498,10 +505,10 @@ class BlueCloth < String
 	ListItemRegexp = %r{
 		(\n)?							# leading line = $1
 		(^[ ]*)							# leading whitespace = $2
-		([*+-]|\d+\.) [ ]+					# list marker = $3
+		(#{ListMarkerAny}) [ ]+			# list marker = $3
 		((?m:.+?)						# list item text   = $4
 		(\n{1,2}))
-		(?= \n* (\z | \2 ([*+-]|\d+\.) [ ]+))
+		(?= \n* (\z | \2 (#{ListMarkerAny}) [ ]+))
 	  }x
 
 	### Transform list items in a copy of the given +str+ and return it.
@@ -567,6 +574,7 @@ class BlueCloth < String
 			\n*				# blanks
 		  )+
 	  }x
+	PreChunk = %r{ ( ^ \s* <pre> .+? </pre> ) }xm
 
 	### Transform Markdown-style blockquotes in a copy of the specified +str+
 	### and return it.
@@ -579,9 +587,13 @@ class BlueCloth < String
 			quote.gsub!( /^ *> ?/, '' ) # Trim one level of quoting 
 			quote.gsub!( /^ +$/, '' )	# Trim whitespace-only lines
 
-			%{<blockquote>\n%s\n</blockquote>\n\n} %
+			indent = " " * TabWidth
+			quoted = %{<blockquote>\n%s\n</blockquote>\n\n} %
 				apply_block_transforms( quote, rs ).
-				gsub( /^/, " " * TabWidth )
+				gsub( /^/, indent ).
+				gsub( PreChunk ) {|m| m.gsub(/^#{indent}/o, '') }
+			@log.debug "Blockquoted chunk is: %p" % quoted
+			quoted
 		}
 	end
 
