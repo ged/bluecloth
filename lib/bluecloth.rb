@@ -589,7 +589,7 @@ class BlueCloth < String
 			[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+
 		)
 		>
-	  }
+	  }x
 
 	### Transform URLs in a copy of the specified +str+ into links and return
 	### it.
@@ -597,7 +597,7 @@ class BlueCloth < String
 		@log.debug " Transforming auto-links"
 		str.gsub( AutoAnchorURLRegexp, %{<a href="\\1">\\1</a>}).
 			gsub( AutoAnchorEmailRegexp ) {|addr|
-			encode_email_address( unescape_special_char($1) )
+			encode_email_address( unescape_special_chars($1) )
 		}
 	end
 
