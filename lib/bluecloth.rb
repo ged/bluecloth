@@ -277,7 +277,7 @@ class BlueCloth < String
 
 	# The list of tags which are considered block-level constructs and an
 	# alternation pattern suitable for use in regexps made from the list
-	StrictBlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script ins del]
+	StrictBlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script math ins del]
 	StrictTagPattern = StrictBlockTags.join('|')
 
 	LooseBlockTags = StrictBlockTags - %w[ins del]
@@ -336,8 +336,7 @@ class BlueCloth < String
 		tokenize = lambda {|match|
 			key = Digest::MD5::hexdigest( match )
 			rs.html_blocks[ key ] = match
-			@log.debug "Replacing %p with %p" %
-				[ match, key ]
+			@log.debug "Replacing %p with %p" % [ match, key ]
 			"\n\n#{key}\n\n"
 		}
 
@@ -426,8 +425,7 @@ class BlueCloth < String
 	### it.
 	def unescape_special_chars( str )
 		EscapeTable.each {|char, hash|
-			@log.debug "Unescaping escaped %p with %p" %
-				[ char, hash[:md5re] ]
+			@log.debug "Unescaping escaped %p with %p" % [ char, hash[:md5re] ]
 			str.gsub!( hash[:md5re], char )
 		}
 
@@ -462,17 +460,17 @@ class BlueCloth < String
 	# Pattern to transform lists
 	ListRegexp = %r{
 		  (?:
-			^[ ]{0,#{TabWidth - 1}}	# Indent < tab width
-			(\*|\d+\.)						# unordered or ordered ($1)
-			[ ]+							# At least one space
+			^[ ]{0,#{TabWidth - 1}}		# Indent < tab width
+			([*+-]|\d+\.)				# unordered or ordered ($1)
+			[ ]+						# At least one space
 		  )
-		  (?m:.+?)							# item content (include newlines)
+		  (?m:.+?)						# item content (include newlines)
 		  (?:
-			  \z							# Either EOF
-			|								#  or
-			  \n{2,}						# Blank line...
-			  (?=\S)						# ...followed by non-space
-			  (?![ ]* (\*|\d+\.) [ ]+)		# ...but not another item
+			  \z						# Either EOF
+			|							#  or
+			  \n{2,}					# Blank line...
+			  (?=\S)					# ...followed by non-space
+			  (?![ ]* (\*|\d+\.) [ ]+)	# ...but not another item
 		  )
 	  }x
 
@@ -483,7 +481,8 @@ class BlueCloth < String
 
 		str.gsub( ListRegexp ) {|list|
 			@log.debug "  Found list %p" % list
-			list_type = ($1 == '*' ? "ul" : "ol")
+			bullet = $1
+			list_type = (/[*+-]/.match(bullet) ? "ul" : "ol")
 			list.gsub!( /\n{2,}/, "\n\n\n" )
 
 			%{<%s>\n%s</%s>\n} % [
@@ -499,10 +498,10 @@ class BlueCloth < String
 	ListItemRegexp = %r{
 		(\n)?							# leading line = $1
 		(^[ ]*)							# leading whitespace = $2
-		(\*|\d+\.) [ ]+					# list marker = $3
+		([*+-]|\d+\.) [ ]+					# list marker = $3
 		((?m:.+?)						# list item text   = $4
 		(\n{1,2}))
-		(?= \n* (\z | \2 (\*|\d+\.) [ ]+))
+		(?= \n* (\z | \2 ([*+-]|\d+\.) [ ]+))
 	  }x
 
 	### Transform list items in a copy of the given +str+ and return it.
@@ -533,9 +532,8 @@ class BlueCloth < String
 
 	# Pattern for matching codeblocks
 	CodeBlockRegexp = %r{
-		(.?)								# $1 = preceding character
-		:\n+								# colon + NL delimiter
-		(									# $2 = the code block
+		(?:\n\n|\A)
+		(									# $1 = the code block
 		  (?:
 			(?:[ ]{#{TabWidth}} | \t)		# a tab or tab-width of spaces
 			.*\n+
@@ -551,15 +549,11 @@ class BlueCloth < String
 		@log.debug " Transforming code blocks"
 
 		str.gsub( CodeBlockRegexp ) {|block|
-			prevchar, codeblock = $1, $2
+			codeblock = $1
 
-			@log.debug "  prevchar = %p" % prevchar
-
-			# Generated the codeblock
-			%{%s\n\n<pre><code>%s\n</code></pre>\n\n} % [
-				(prevchar.empty? || /\s/ =~ prevchar) ? "" : "#{prevchar}:",
-				encode_code( outdent(codeblock), rs ).rstrip,
-			]
+			# Generate the codeblock
+			%{\n\n<pre><code>%s\n</code></pre>\n\n} %
+				[ encode_code( outdent(codeblock), rs ).rstrip ]
 		}
 	end
 
@@ -777,8 +771,7 @@ class BlueCloth < String
 					linktext = @scanner.scan_until( /\]|\[/ )
 
 					if linktext
-						@log.debug "  Found a bracket at depth %d: %p" %
-							[ depth, linktext ]
+						@log.debug "  Found a bracket at depth %d: %p" % [ depth, linktext ]
 						link += linktext
 
 						# Decrement depth for each closing bracket
@@ -807,8 +800,7 @@ class BlueCloth < String
 					# If there's a matching link in the link table, build an
 					# anchor tag for it.
 					if rs.urls.key?( linkid )
-						@log.debug "   Found link key in the link table: %p" %
-							rs.urls[linkid]
+						@log.debug "   Found link key in the link table: %p" % rs.urls[linkid]
 						url = escape_md( rs.urls[linkid] )
 
 						text += %{<a href="#{url}"}
@@ -821,8 +813,8 @@ class BlueCloth < String
 					# source to the result
 					else
 						@log.debug "  Linkid %p not found in link table" % linkid
-						@log.debug "  Appending original string instead: %p" %
-							@scanner.string[ startpos-1 .. @scanner.pos-1 ]
+						@log.debug "  Appending original string instead: "
+						@log.debug "%p" % @scanner.string[ startpos-1 .. @scanner.pos-1 ]
 						text += @scanner.string[ startpos-1 .. @scanner.pos-1 ]
 					end
 
@@ -834,6 +826,7 @@ class BlueCloth < String
 
 					text += %{<a href="%s"} % escape_md( url )
 					if title
+						title.gsub!( /"/, "&quot;" )
 						text += %{ title="%s"} % escape_md( title )
 					end
 					text += %{>#{link}</a>}
@@ -897,8 +890,7 @@ class BlueCloth < String
 			# Scan up to an opening backtick
 			if pre = @scanner.scan_until( /.?(?=`)/m )
 				text += pre
-				@log.debug "Found backtick at %d after '...%s'" %
-					[ @scanner.pos, text[-10, 10] ]
+				@log.debug "Found backtick at %d after '...%s'" % [ @scanner.pos, text[-10, 10] ]
 
 				# Make a pattern to find the end of the span
 				opener = @scanner.scan( /`+/ )
@@ -913,8 +905,7 @@ class BlueCloth < String
 					raise FormatError::new( @scanner.rest[0,20],
 						"No %p found before end" % opener )
 
-				@log.debug "Found close of code span at %d: %p" %
-					[ @scanner.pos - len, codespan ]
+				@log.debug "Found close of code span at %d: %p" % [ @scanner.pos - len, codespan ]
 				codespan.slice!( -len, len )
 				text += "<code>%s</code>" %
 					encode_code( codespan.strip, rs )
@@ -939,10 +930,10 @@ class BlueCloth < String
 		  \([ ]*
 			<?(\S+?)>?		# source url = $3
 		    [ ]*
-			(				# title = $4
-			  (["'])		# quote char = $5
-			  .*?
-			  \5			# matching quote
+			(?:				# 
+			  (["'])		# quote char = $4
+			  (.*?)			# title = $5
+			  \4			# matching quote
 			  [ ]*
 			)?				# title is optional
 		  \)
@@ -970,14 +961,14 @@ class BlueCloth < String
 				whole, alt, linkid = $1, $2, $3.downcase
 				@log.debug "Matched %p" % match
 				res = nil
+				alt.gsub!( /"/, '&quot;' )
 
 				# for shortcut links like ![this][].
 				linkid = alt.downcase if linkid.empty?
 
 				if rs.urls.key?( linkid )
 					url = escape_md( rs.urls[linkid] )
-					@log.debug "Found url '%s' for linkid '%s' " %
-						[ url, linkid ]
+					@log.debug "Found url '%s' for linkid '%s' " % [ url, linkid ]
 
 					# Build the tag
 					result = %{<img src="%s" alt="%s"} % [ url, alt ]
@@ -990,33 +981,33 @@ class BlueCloth < String
 					result = whole
 				end
 
-				@log.debug "Replacing %p with %p" %
-					[ match, result ]
+				@log.debug "Replacing %p with %p" % [ match, result ]
 				result
 			}.
 
 			# Inline image style
 			gsub( InlineImageRegexp ) {|match|
 				@log.debug "Found inline image %p" % match
-				whole, alt, title = $1, $2, $4
+				whole, alt, title = $1, $2, $5
 				url = escape_md( $3 )
+				alt.gsub!( /"/, '&quot;' )
 
 				# Build the tag
 				result = %{<img src="%s" alt="%s"} % [ url, alt ]
 				unless title.nil?
-					result += %{ title="%s"} % escape_md( title.gsub(/^"|"$/, '') )
+					title.gsub!( /"/, '&quot;' )
+					result += %{ title="%s"} % escape_md( title )
 				end
 				result += EmptyElementSuffix
 
-				@log.debug "Replacing %p with %p" %
-					[ match, result ]
+				@log.debug "Replacing %p with %p" % [ match, result ]
 				result
 			}
 	end
 
 
 	# Regexp to match special characters in a code block
-	CodeEscapeRegexp = %r{( \* | _ | \{ | \} | \[ | \] )}x
+	CodeEscapeRegexp = %r{( \* | _ | \{ | \} | \[ | \] | \\ )}x
 
 	### Escape any characters special to HTML and encode any characters special
 	### to Markdown in a copy of the given +str+ and return it.
@@ -1088,8 +1079,7 @@ class BlueCloth < String
 						raise "Malformed tag at character %d: %p" % 
 							[ tagstart, token + @scanner.rest ]
 						
-					@log.debug "  Found another part of the tag at depth %d: %p" %
-						[ depth, chunk ]
+					@log.debug "  Found another part of the tag at depth %d: %p" % [ depth, chunk ]
 
 					token += chunk
 

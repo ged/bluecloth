@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/ruby
 #
 # Test case for BlueCloth Markdown transforms.
 # $Id: TEMPLATE.rb.tpl,v 1.2 2003/09/11 04:59:51 deveiant Exp $
@@ -6,10 +6,9 @@
 # Copyright (c) 2004 The FaerieMUD Consortium.
 # 
 
-if File::exists?( "lib/bluecloth.rb" )
-	require 'tests/bctestcase'
-else
-	require 'bctestcase'
+if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
+	basedir = File::dirname( __FILE__ )
+	require File::join( basedir, 'bctestcase' )
 end
 
 
@@ -412,6 +411,19 @@ This is a chunk of code:
 </code></pre>
 >>>
 
+# Para plus code block (literal tab, no colon)
+<<<
+This is a chunk of code
+
+	some.code > some.other_code
+
+--- Should become:
+<p>This is a chunk of code</p>
+
+<pre><code>some.code &gt; some.other_code
+</code></pre>
+>>>
+
 # Para plus code block (tab-width spaces)
 <<<
 This is a chunk of code:
@@ -425,13 +437,26 @@ This is a chunk of code:
 </code></pre>
 >>>
 
+# Para plus code block (tab-width spaces, no colon)
+<<<
+This is a chunk of code
+
+    some.code > some.other_code
+
+--- Should become:
+<p>This is a chunk of code</p>
+
+<pre><code>some.code &gt; some.other_code
+</code></pre>
+>>>
+
 # Colon with preceeding space
 <<<
 A regular paragraph, without a colon. :
 
     This is a code block.
 --- Should become:
-<p>A regular paragraph, without a colon.</p>
+<p>A regular paragraph, without a colon. :</p>
 
 <pre><code>This is a code block.
 </code></pre>
@@ -444,6 +469,8 @@ A regular paragraph, without a colon. :
 	some.code > some.other_code
 
 --- Should become:
+<p>:</p>
+
 <pre><code>some.code &gt; some.other_code
 </code></pre>
 >>>
@@ -451,6 +478,7 @@ A regular paragraph, without a colon. :
 # Preserve leading whitespace (Bug #541)
 <<<
 Examples:
+
           # (Waste character because first line is flush left !!!)
           # Example script1
           x = 1
@@ -800,6 +828,35 @@ id sem consectetuer libero luctus adipiscing.
 <p><img src="/path/img.jpg" alt="alt text" title="Title"/></p>
 >>>
 
+# Inline image with title (single-quotes)
+<<<
+![alt text](/path/img.jpg 'Title')
+--- Should become:
+<p><img src="/path/img.jpg" alt="alt text" title="Title"/></p>
+>>>
+
+# Inline image with title (with embedded quotes)
+<<<
+![alt text](/path/img.jpg 'The "Title" Image')
+--- Should become:
+<p><img src="/path/img.jpg" alt="alt text" title="The &quot;Title&quot; Image"/></p>
+>>>
+
+# Inline image without title
+<<<
+![alt text](/path/img.jpg)
+--- Should become:
+<p><img src="/path/img.jpg" alt="alt text"/></p>
+>>>
+
+# Inline image with quoted alt text
+<<<
+![the "alt text"](/path/img.jpg)
+--- Should become:
+<p><img src="/path/img.jpg" alt="the &quot;alt text&quot;"/></p>
+>>>
+
+
 # Reference image
 <<<
 ![alt text][id]
@@ -808,6 +865,7 @@ id sem consectetuer libero luctus adipiscing.
 --- Should become:
 <p><img src="/url/to/img.jpg" alt="alt text" title="Title"/></p>
 >>>
+
 
 
 ### [Emphasis]
@@ -1080,6 +1138,45 @@ Why not download your very own chandelier from <ftp://ftp.usuc.edu/pub/foof/mir/
 <<<
 *   Red
 *   Green
+*   Blue
+--- Should become:
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+>>>
+
+# Unordered list w/alt bullets
+<<<
+-   Red
+-   Green
+-   Blue
+--- Should become:
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+>>>
+
+# Unordered list w/alt bullets 2
+<<<
++   Red
++   Green
++   Blue
+--- Should become:
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+>>>
+
+# Unordered list w/mixed bullets
+<<<
++   Red
+-   Green
 *   Blue
 --- Should become:
 <ul>
