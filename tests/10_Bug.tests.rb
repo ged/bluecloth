@@ -17,8 +17,7 @@ require 'timeout'
 ### This test case tests ...
 class BugsTestCase < BlueCloth::TestCase
 
-	### Test to be sure the regexen used in #hide_html_blocks isn't deathly
-	### slow.
+	### Test to be sure the README file can be transformed.
 	def test_00_slow_block_regex
 		basedir = File::dirname( File::dirname(File::expand_path( __FILE__ )) )
 		contents = File::read( "README" )
@@ -31,7 +30,7 @@ class BugsTestCase < BlueCloth::TestCase
 		}
 	end
 
-
+	### :TODO: Add more documents and test their transforms.
 	
 end
 
