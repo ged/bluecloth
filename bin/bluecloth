@@ -45,10 +45,10 @@ def main
 		}
 
 		# Output destination
-		oparser.on( "--output=DESTINATION", "-o DESTINATION", String,
-			"Write output to DESTINATION instead of the current directory" ) {|arg|
-			destination = arg
-		}
+		#oparser.on( "--output=DESTINATION", "-o DESTINATION", String,
+		#	"Write output to DESTINATION instead of the current directory" ) {|arg|
+		#	destination = arg
+		#}
 
 		oparser.parse!
 	end
