@@ -82,7 +82,7 @@ class BlueCloth < String
 
 
 	# Release Version
-	Version = '0.0.2'
+	Version = '0.0.3'
 
 	# SVN Revision
 	SvnRev = %q$Rev$
