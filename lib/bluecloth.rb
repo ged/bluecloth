@@ -590,7 +590,7 @@ class BlueCloth < String
 			[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+
 		)
 		>
-	  }x
+	  }xi
 
 	### Transform URLs in a copy of the specified +str+ into links and return
 	### it.
@@ -1033,7 +1033,7 @@ class BlueCloth < String
 	XMLProcInstRegexp  = %r{ <\? .*? \?> }mx
 	MetaTag = Regexp::union( HTMLCommentRegexp, XMLProcInstRegexp )
 
-	HTMLTagOpenRegexp  = %r{ < [a-z/!$] [^<>]* }mx
+	HTMLTagOpenRegexp  = %r{ < [a-z/!$] [^<>]* }imx
 	HTMLTagCloseRegexp = %r{ > }x
 	HTMLTagPart = Regexp::union( HTMLTagOpenRegexp, HTMLTagCloseRegexp )
 

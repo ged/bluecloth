@@ -20,6 +20,10 @@ class SubfunctionsTestCase < BlueCloth::TestCase
 	Emails = %w[
 		address@example.com
 		foo-list-admin@bar.com
+		fu@bar.COM
+		baz@ruby-lang.org
+		foo-tim-bazzle@bar-hop.co.uk
+		littlestar@twinkle.twinkle.band.CO.ZA
 	]
 	def test_10_email_address
 		printTestHeader "BlueCloth: Inline email address"
@@ -31,6 +35,7 @@ class SubfunctionsTestCase < BlueCloth::TestCase
 			}
 
 			match = %r{<p><a href="([^\"]+)">[^<]+</a></p>}.match( rval )
+			assert_not_nil match, "Match against output #{rval}"
 			assert_equal "mailto:#{addr}", decode( match[1] )
 		}
 	end
@@ -282,6 +287,40 @@ preserved, and part of it emphasized.
 --- Should become:
 <p>This is some stuff with a <span class="foo">spanned bit of text</span> in
 it. And <del>this <em>should</em> be a bit of deleted text</del> which should be
+preserved, and part of it emphasized.</p>
+>>>
+
+# Inline HTML (Case-sensitivity)
+<<<
+This is a regular paragraph.
+
+<TABLE>
+    <TR>
+        <TD>Foo</TD>
+    </TR>
+</TABLE>
+
+This is another regular paragraph.
+--- Should become:
+<p>This is a regular paragraph.</p>
+
+<TABLE>
+    <TR>
+        <TD>Foo</TD>
+    </TR>
+</TABLE>
+
+<p>This is another regular paragraph.</p>
+>>>
+
+# Span-level HTML (Case-sensitivity)
+<<<
+This is some stuff with a <SPAN CLASS="foo">spanned bit of text</SPAN> in
+it. And <DEL>this *should* be a bit of deleted text</DEL> which should be
+preserved, and part of it emphasized.
+--- Should become:
+<p>This is some stuff with a <SPAN CLASS="foo">spanned bit of text</SPAN> in
+it. And <DEL>this <em>should</em> be a bit of deleted text</DEL> which should be
 preserved, and part of it emphasized.</p>
 >>>
 
