@@ -27,9 +27,9 @@ or by simply copying `lib/bluecloth.rb` to a directory in your load path.
 Dependencies
 ------------
 
-BlueCloth uses the `StringScanner` class from the `strscan` library, which
-comes with Ruby 1.8.x and later, or may be downloaded from the RAA for earlier
-versions.
+BlueCloth uses the `StringScanner` class from the `strscan` library, which comes
+with Ruby 1.8.x and later or may be downloaded from the RAA for earlier
+versions, and the `logger` library, which is also included in 1.8.x and later.
 
 
 Example Usage
