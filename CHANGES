@@ -1,0 +1,330 @@
+------------------------------------------------------------------------
+r41 | deveiant | 2004-04-29 20:40:38 -0700 (Thu, 29 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/MANIFEST
+
+- Added bin/ directory.
+
+------------------------------------------------------------------------
+r40 | deveiant | 2004-04-29 20:40:04 -0700 (Thu, 29 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/README
+
+- Set date.
+
+------------------------------------------------------------------------
+r39 | deveiant | 2004-04-29 20:39:24 -0700 (Thu, 29 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/tests/15_Contrib.tests.rb
+
+- Added test for Bug #543 (Safe mode does not work when there are no left
+  angle-brackets in the source).
+
+------------------------------------------------------------------------
+r38 | deveiant | 2004-04-29 20:38:42 -0700 (Thu, 29 Apr 2004) | 5 lines
+Changed paths:
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Added test for email address encoding (Bug #537).
+
+- Added test for bug #541 (Leading line of codeblock with more than one tab
+  width of indent mistakenly unindented).
+
+------------------------------------------------------------------------
+r37 | deveiant | 2004-04-29 20:35:26 -0700 (Thu, 29 Apr 2004) | 5 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fix for bug #543 (Safe mode does not work when there are no left
+  angle-brackets in the source).
+
+
+
+------------------------------------------------------------------------
+r36 | deveiant | 2004-04-29 20:33:01 -0700 (Thu, 29 Apr 2004) | 5 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fix for bug #541 (Leading line of codeblock with more than one tab
+  width of indent mistakenly unindented)
+
+
+
+------------------------------------------------------------------------
+r35 | deveiant | 2004-04-29 20:31:37 -0700 (Thu, 29 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fix for bug #537. Fix suggested by Marek Janukowicz.
+
+
+------------------------------------------------------------------------
+r32 | deveiant | 2004-04-22 21:47:42 -0700 (Thu, 22 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/makedist.rb
+
+- Temporary fixes until I have time to integrate SVN stuff.
+
+------------------------------------------------------------------------
+r31 | deveiant | 2004-04-22 21:46:51 -0700 (Thu, 22 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/.gemspec
+
+- Version bump.
+
+------------------------------------------------------------------------
+r30 | deveiant | 2004-04-22 21:46:15 -0700 (Thu, 22 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/README
+
+- Brought in line with most-recent release.
+
+------------------------------------------------------------------------
+r29 | deveiant | 2004-04-22 21:40:50 -0700 (Thu, 22 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Version bump.
+
+------------------------------------------------------------------------
+r28 | deveiant | 2004-04-22 21:39:05 -0700 (Thu, 22 Apr 2004) | 4 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Bugfixes for bugs 524 and 525. Thanks to David Heinemeier Hansson and Javier
+  Goizueta for bug reports and fixes.
+
+
+------------------------------------------------------------------------
+r27 | deveiant | 2004-04-22 21:34:31 -0700 (Thu, 22 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Test for bugs 524 and 525
+
+------------------------------------------------------------------------
+r25 | deveiant | 2004-04-15 18:55:19 -0700 (Thu, 15 Apr 2004) | 1 line
+Changed paths:
+   M /trunk/README
+
+- Corrected version
+------------------------------------------------------------------------
+r24 | deveiant | 2004-04-15 18:53:52 -0700 (Thu, 15 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Brought Version up to date.
+
+------------------------------------------------------------------------
+r23 | deveiant | 2004-04-15 18:52:17 -0700 (Thu, 15 Apr 2004) | 1 line
+Changed paths:
+   M /trunk
+
+- Updated ignore metadata.
+------------------------------------------------------------------------
+r22 | deveiant | 2004-04-15 18:51:14 -0700 (Thu, 15 Apr 2004) | 2 lines
+Changed paths:
+   A /trunk/.gemspec
+   A /trunk/tests/15_Contrib.tests.rb
+   A /trunk/tests/data
+   A /trunk/tests/data/antsugar.txt
+   A /trunk/tests/data/ml-announce.txt
+   A /trunk/web
+   A /trunk/web/base.css
+   A /trunk/web/index.html
+
+Initial checkin.
+
+------------------------------------------------------------------------
+r21 | deveiant | 2004-04-15 18:50:31 -0700 (Thu, 15 Apr 2004) | 6 lines
+Changed paths:
+   M /trunk/MANIFEST
+
+- Changed tests/ pattern to catch all tests.
+
+- Added CHANGES.
+
+- Dropped MANIFEST.
+
+------------------------------------------------------------------------
+r20 | deveiant | 2004-04-15 18:49:46 -0700 (Thu, 15 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/install.rb
+
+- Added missing dependency check for devel-logger.
+
+------------------------------------------------------------------------
+r19 | deveiant | 2004-04-15 18:49:12 -0700 (Thu, 15 Apr 2004) | 8 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Added contributors section to the header.
+
+- Integrated html- and style-filtering patch from Florian Gross <flgr@ccan.de>.
+
+- Corrections to RedCloth-compatibility.
+
+- Removed log from renderstate, as it's an attribute of the string itself.
+
+------------------------------------------------------------------------
+r18 | deveiant | 2004-04-15 18:48:27 -0700 (Thu, 15 Apr 2004) | 8 lines
+Changed paths:
+   M /trunk/README
+
+- Added contributors section to the header.
+
+- Integrated html- and style-filtering patch from Florian Gross <flgr@ccan.de>.
+
+- Corrections to RedCloth-compatibility.
+
+- Removed log from renderstate, as it's an attribute of the string itself.
+
+------------------------------------------------------------------------
+r15 | deveiant | 2004-04-11 23:02:54 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/tests/10_Bug.tests.rb
+
+- Added keywords.
+
+
+------------------------------------------------------------------------
+r14 | deveiant | 2004-04-11 23:01:40 -0700 (Sun, 11 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/10_Bug.tests.rb
+
+- Updated comments/added to-do marker.
+
+------------------------------------------------------------------------
+r13 | deveiant | 2004-04-11 22:47:16 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk
+
+- Updated ignore list.
+
+
+------------------------------------------------------------------------
+r12 | deveiant | 2004-04-11 22:46:49 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   A /trunk/bin
+   A /trunk/bin/bluecloth
+
+Initial checkin.
+
+
+------------------------------------------------------------------------
+r11 | deveiant | 2004-04-11 22:45:07 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/utils.rb
+
+- Added a time() function for timing bits of code.
+
+
+------------------------------------------------------------------------
+r10 | deveiant | 2004-04-11 22:43:10 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Changed keyword constants from CVS to SVN keywords.
+
+
+------------------------------------------------------------------------
+r9 | deveiant | 2004-04-11 22:29:37 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/README
+
+- Changed location of keyword stuff, added URL keyword.
+
+
+------------------------------------------------------------------------
+r8 | deveiant | 2004-04-11 22:26:38 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   M /trunk/README
+
+- Added the rest of the content.
+
+
+------------------------------------------------------------------------
+r7 | deveiant | 2004-04-11 22:21:47 -0700 (Sun, 11 Apr 2004) | 12 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fixed license in header
+
+- Fixed error message in exception class with no second argument.
+
+- Removed unnecessary (and slllooowww) 'm' flag from HTML block matching
+  patterns.
+
+- Fixed code-span scanning to match spans that occur at the beginning of the
+  line.
+
+- Fixed error in code-span exception case.
+
+------------------------------------------------------------------------
+r6 | deveiant | 2004-04-11 22:17:45 -0700 (Sun, 11 Apr 2004) | 3 lines
+Changed paths:
+   A /trunk/tests/10_Bug.tests.rb (from /trunk/tests/10_Output.tests.rb:5)
+   D /trunk/tests/10_Output.tests.rb
+
+- Renamed to reflect repurposing.
+
+
+------------------------------------------------------------------------
+r5 | deveiant | 2004-04-11 22:17:08 -0700 (Sun, 11 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/10_Output.tests.rb
+
+- Converted to bug-testing testcase.
+
+------------------------------------------------------------------------
+r4 | deveiant | 2004-04-11 22:15:34 -0700 (Sun, 11 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Added some mode code span tests to catch bugs.
+
+------------------------------------------------------------------------
+r3 | deveiant | 2004-04-10 21:40:29 -0700 (Sat, 10 Apr 2004) | 2 lines
+Changed paths:
+   M /trunk
+   A /trunk/MANIFEST
+   M /trunk/install.rb
+   M /trunk/makedist.rb
+   M /trunk/utils.rb
+
+- Updated dist/install utilities/libs.
+
+------------------------------------------------------------------------
+r2 | deveiant | 2004-04-10 13:36:46 -0700 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   D /trunk/Markdown_1.0b4
+
+Removed markdown reference source
+------------------------------------------------------------------------
+r1 | deveiant | 2004-04-10 13:35:02 -0700 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   A /trunk
+   A /trunk/.irbrc
+   A /trunk/LICENSE
+   A /trunk/Markdown_1.0b4
+   A /trunk/Markdown_1.0b4/Markdown Readme.text
+   A /trunk/Markdown_1.0b4/Markdown.pl
+   A /trunk/README
+   A /trunk/experiments
+   A /trunk/experiments/TEMPLATE.rb.tpl
+   A /trunk/experiments/benchstrscan.rb
+   A /trunk/experiments/tokentest.rb
+   A /trunk/install.rb
+   A /trunk/lib
+   A /trunk/lib/bluecloth.rb
+   A /trunk/makedist.rb
+   A /trunk/test.rb
+   A /trunk/tests
+   A /trunk/tests/00_Class.tests.rb
+   A /trunk/tests/05_Markdown.tests.rb
+   A /trunk/tests/10_Output.tests.rb
+   A /trunk/tests/TEMPLATE.rb.tpl
+   A /trunk/tests/bctestcase.rb
+   A /trunk/utils.rb
+
+Initial checkin

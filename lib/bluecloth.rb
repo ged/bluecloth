@@ -132,6 +132,8 @@ class BlueCloth < String
 
 		# Add any restrictions, and set the line-folding attribute to reflect
 		# what happens by default.
+		@filter_html = nil
+		@filter_styles = nil
 		restrictions.flatten.each {|r| __send__("#{r}=", true) }
 		@fold_lines = true
 
@@ -275,8 +277,11 @@ class BlueCloth < String
 
 	# The list of tags which are considered block-level constructs and an
 	# alternation pattern suitable for use in regexps made from the list
-	BlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script ]
-	BlockTagPattern = BlockTags.join('|')
+	StrictBlockTags = %w[ p div h[1-6] blockquote pre table dl ol ul script ins del]
+	StrictTagPattern = StrictBlockTags.join('|')
+
+	LooseBlockTags = StrictBlockTags - %w[ins del]
+	LooseTagPattern = LooseBlockTags.join('|')
 
 	# Nested blocks:
 	# 	<div>
@@ -286,7 +291,7 @@ class BlueCloth < String
 	# 	</div>
 	StrictBlockRegex = %r{
 		^						# Start of line
-		<(#{BlockTagPattern})	# Start tag: \2
+		<(#{StrictTagPattern})	# Start tag: \2
 		\b						# word break
 		(.*\n)*?				# Any number of lines, minimal match
 		</\1>					# Matching end tag
@@ -297,7 +302,7 @@ class BlueCloth < String
 	# More-liberal block-matching
 	LooseBlockRegex = %r{
 		^						# Start of line
-		<(#{BlockTagPattern})	# start tag: \2
+		<(#{LooseTagPattern})	# start tag: \2
 		\b						# word break
 		(.*\n)*?				# Any number of lines, minimal match
 		.*</\1>					# Anything + Matching end tag
@@ -357,7 +362,7 @@ class BlueCloth < String
 		  [ ]*
 		  \n?				# maybe *one* newline
 		  [ ]*
-		(\S+)				# url = $2
+		<?(\S+?)>?				# url = $2
 		  [ ]*
 		  \n?				# maybe one newline
 		  [ ]*
@@ -390,6 +395,9 @@ class BlueCloth < String
 	def escape_special_chars( str )
 		@log.debug "  Escaping special characters"
 		text = ''
+
+		# The original Markdown source has something called '$tags_to_skip'
+		# declared here, but it's never used, so I don't define it.
 
 		tokenize_html( str ) {|token, str|
 			@log.debug "   Adding %p token %p" % [ token, str ]
@@ -446,7 +454,7 @@ class BlueCloth < String
 	### +str+ and return it.
 	def transform_hrules( str, rs )
 		@log.debug " Transforming horizontal rules"
-		str.gsub( /^( ?[\-\*] ?){3,}$/, "\n<hr#{EmptyElementSuffix}\n" )
+		str.gsub( /^( ?[\-\*_] ?){3,}$/, "\n<hr#{EmptyElementSuffix}\n" )
 	end
 
 
@@ -573,7 +581,10 @@ class BlueCloth < String
 
 		str.gsub( BlockQuoteRegexp ) {|quote|
 			@log.debug "Making blockquote from %p" % quote
-			quote.gsub!( /^[ ]*>[ ]?/, '' )
+
+			quote.gsub!( /^ *> ?/, '' ) # Trim one level of quoting 
+			quote.gsub!( /^ +$/, '' )	# Trim whitespace-only lines
+
 			%{<blockquote>\n%s\n</blockquote>\n\n} %
 				apply_block_transforms( quote, rs ).
 				gsub( /^/, " " * TabWidth )
@@ -733,7 +744,7 @@ class BlueCloth < String
 	InlineLinkRegex = %r{
 		\(						# Literal paren
 			[ ]*				# Zero or more spaces
-			(.*?)				# URI = $1
+			<?(.+?)>?			# URI = $1
 			[ ]*				# Zero or more spaces
 			(?:					# 
 				([\"\'])		# Opening quote char = $2
@@ -844,6 +855,7 @@ class BlueCloth < String
 		return text
 	end
 
+
 	# Pattern to match strong emphasis in Markdown text
 	BoldRegexp = %r{ (\*\*|__) (\S|\S.+?\S) \1 }x
 
@@ -924,7 +936,9 @@ class BlueCloth < String
 	InlineImageRegexp = %r{
 		(					# Whole match = $1
 			!\[ (.*?) \]	# alt text = $2
-		  \([ ]* (\S+) [ ]*	# source url = $3
+		  \([ ]*
+			<?(\S+?)>?		# source url = $3
+		    [ ]*
 			(				# title = $4
 			  (["'])		# quote char = $5
 			  .*?
@@ -1023,8 +1037,8 @@ class BlueCloth < String
 	### it.
 	def escape_md( str )
 		str.
-			gsub( /\*/, '&#42;' ).
-			gsub( /_/,  '&#95;' )
+			gsub( /\*/, EscapeTable['*'][:md5] ).
+			gsub( /_/,  EscapeTable['_'][:md5] )
 	end
 
 
@@ -1112,7 +1126,7 @@ class BlueCloth < String
 
 	### Return a copy of +str+ with angle brackets and ampersands HTML-encoded.
 	def encode_html( str )
-		str.gsub( /&(?!#?[x]?(?:[0-9a-f]+|\w{1,8});)/i, "&amp;" ).
+		str.gsub( /&(?!#?[x]?(?:[0-9a-f]+|\w+);)/i, "&amp;" ).
 			gsub( %r{<(?![a-z/?\$!])}i, "&lt;" )
 	end
 

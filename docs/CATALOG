@@ -1,0 +1,7 @@
+#
+# Title:  BlueCloth: A Ruby implementation of Markdown
+# Main:   README
+# Webcvs: http://svn.FaerieMUD.org/BlueCloth/
+#
+lib/bluecloth.rb
+README
