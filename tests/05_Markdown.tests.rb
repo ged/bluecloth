@@ -850,6 +850,69 @@ You can include literal *\*splats\** by escaping them.
 <p>You can include literal <em>*splats*</em> by escaping them.</p>
 >>>
 
+# Two instances of asterisked emphasis on one line
+<<<
+If there's *two* splatted parts on a *single line* it should still work.
+--- Should become:
+<p>If there's <em>two</em> splatted parts on a <em>single line</em> it should still work.</p>
+>>> 
+
+# Two instances of double asterisked emphasis on one line
+<<<
+This **doubled** one should **work too**.
+--- Should become:
+<p>This <strong>doubled</strong> one should <strong>work too</strong>.</p>
+>>> 
+
+# Two instances of underscore emphasis on one line
+<<<
+If there's _two_ underbarred parts on a _single line_ it should still work.
+--- Should become:
+<p>If there's <em>two</em> underbarred parts on a <em>single line</em> it should still work.</p>
+>>> 
+
+# Two instances of doubled underscore emphasis on one line
+<<<
+This __doubled__ one should __work too__.
+--- Should become:
+<p>This <strong>doubled</strong> one should <strong>work too</strong>.</p>
+>>> 
+
+# Initial emphasis (asterisk)
+<<<
+*Something* like this should be bold.
+--- Should become:
+<p><em>Something</em> like this should be bold.</p>
+>>>
+
+# Initial emphasis (underscore)
+<<<
+_Something_ like this should be bold.
+--- Should become:
+<p><em>Something</em> like this should be bold.</p>
+>>>
+
+# Initial strong emphasis (asterisk)
+<<<
+**Something** like this should be bold.
+--- Should become:
+<p><strong>Something</strong> like this should be bold.</p>
+>>>
+
+# Initial strong emphasis (underscore)
+<<<
+__Something__ like this should be bold.
+--- Should become:
+<p><strong>Something</strong> like this should be bold.</p>
+>>>
+
+# Partial-word emphasis
+<<<
+**E**xtended **TURN**
+--- Should become:
+<p><strong>E</strong>xtended <strong>TURN</strong></p>
+>>>
+
 
 ### [Links]
 
