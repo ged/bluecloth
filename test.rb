@@ -1,13 +1,16 @@
 #!/usr/bin/ruby
 #
-#	Test suite for Linguistics classes
-#
+#	Test suite for BlueCloth classes
+#	$Id$
 #
 
 BEGIN {
-	$:.unshift "lib", "tests", "redist"
+	$basedir = File::dirname( __FILE__ )
+	["lib", "tests", "redist"].each do |subdir|
+		$LOAD_PATH.unshift File::join( $basedir, subdir )
+	end
 
-	require './utils'
+	require "#{$basedir}/utils"
 	include UtilityFunctions
 }
 
@@ -63,7 +66,7 @@ ARGV.each {|pat| patterns << Regexp::new( pat, Regexp::IGNORECASE )}
 $stderr.puts "#{patterns.length} patterns given on the command line"
 
 ### Load all the tests from the tests dir
-Find.find("tests") {|file|
+Find.find("#{$basedir}/tests") {|file|
 	Find.prune if /\/\./ =~ file or /~$/ =~ file
 	Find.prune if /TEMPLATE/ =~ file
 	next if File.stat( file ).directory?
