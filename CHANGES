@@ -1,4 +1,127 @@
 ------------------------------------------------------------------------
+r57 | deveiant | 2004-08-08 18:16:14 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/bctestcase.rb
+
+- Modified to work from wherever the test is run (RPA compat).
+
+------------------------------------------------------------------------
+r56 | deveiant | 2004-08-08 18:15:57 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/test.rb
+
+- Modified to work from wherever the test is run (RPA compat).
+
+------------------------------------------------------------------------
+r55 | deveiant | 2004-08-08 18:15:27 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/.gemspec
+
+- Updated version attribute.
+
+------------------------------------------------------------------------
+r54 | deveiant | 2004-08-08 18:14:58 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Brought markdown syntax up to date with Markdown 1.0fc1.
+
+------------------------------------------------------------------------
+r53 | deveiant | 2004-08-08 18:13:16 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/00_Class.tests.rb
+   M /trunk/tests/10_Bug.tests.rb
+   M /trunk/tests/15_Contrib.tests.rb
+   M /trunk/tests/TEMPLATE.rb.tpl
+
+- Made the require-header work wherever the test is run from (RPA compat).
+
+------------------------------------------------------------------------
+r51 | deveiant | 2004-06-21 08:20:59 -0700 (Mon, 21 Jun 2004) | 4 lines
+Changed paths:
+   M /trunk
+   A /trunk/CHANGES
+   M /trunk/README
+   A /trunk/docs
+   A /trunk/docs/CATALOG
+   A /trunk/docs/makedocs.rb
+   A /trunk/experiments/re-overflow.rb
+   M /trunk/lib/bluecloth.rb
+   M /trunk/tests/05_Markdown.tests.rb
+   M /trunk/tests/10_Bug.tests.rb
+
+- Brought up to date with Markdown 1.0b7.
+
+- Ignore list properties on the base and docs directories updated.
+
+------------------------------------------------------------------------
+r50 | deveiant | 2004-06-02 06:37:15 -0700 (Wed, 02 Jun 2004) | 1 line
+Changed paths:
+   M /trunk/bin/bluecloth
+
+- Commented out non-functional --output option for now.
+------------------------------------------------------------------------
+r49 | deveiant | 2004-06-01 20:30:18 -0700 (Tue, 01 Jun 2004) | 2 lines
+Changed paths:
+   A /trunk/tests/data/re-overflow.txt
+
+Initial checkin.
+
+------------------------------------------------------------------------
+r48 | deveiant | 2004-06-01 20:29:31 -0700 (Tue, 01 Jun 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/10_Bug.tests.rb
+
+- Added test for bug #574.
+
+------------------------------------------------------------------------
+r47 | deveiant | 2004-06-01 20:21:04 -0700 (Tue, 01 Jun 2004) | 8 lines
+Changed paths:
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Test for bug #620 - Unresolved reference-style links doubled the character
+  immediately after them.
+
+- Added additional test email addresses, including ones that use extended latin
+  charset.
+
+- Added bug reference to a test.
+
+------------------------------------------------------------------------
+r46 | deveiant | 2004-06-01 20:19:41 -0700 (Tue, 01 Jun 2004) | 4 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fix for bug #620 - Unresolved reference-style links doubled the character
+  immediately after them.
+
+
+------------------------------------------------------------------------
+r45 | deveiant | 2004-05-13 19:43:17 -0700 (Thu, 13 May 2004) | 4 lines
+Changed paths:
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Added tests for bug #568 (Two sets of bold text on one line doesn't render
+  properly). Tests confirmed that two sets of bold text did work, but single
+  characters being bolded does not.
+
+------------------------------------------------------------------------
+r44 | deveiant | 2004-05-13 19:41:52 -0700 (Thu, 13 May 2004) | 2 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+
+- Fixed bug with bolding of single characters (bug #568).
+
+------------------------------------------------------------------------
+r43 | deveiant | 2004-05-04 07:35:11 -0700 (Tue, 04 May 2004) | 2 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Additional fixes and tests for bug #537.
+
+------------------------------------------------------------------------
 r41 | deveiant | 2004-04-29 20:40:38 -0700 (Thu, 29 Apr 2004) | 2 lines
 Changed paths:
    M /trunk/MANIFEST
