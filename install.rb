@@ -31,6 +31,9 @@ RequiredLibraries = [
 	[ 'strscan', "StrScan", 
 		'http://raa.ruby-lang.org/list.rhtml?name=strscan',
 		'http://i.loveruby.net/archive/strscan/strscan-0.6.7.tar.gz' ],
+	[ 'logger', "Devel-Logger", 
+		'http://raa.ruby-lang.org/list.rhtml?name=devel-logger',
+		'http://rrr.jin.gr.jp/download/devel-logger-1_2_2.tar.gz' ],
 ]
 
 class Installer
