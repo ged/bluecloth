@@ -531,11 +531,14 @@ This is a chunk of code:
 
 	some.code > some.other_code
 
+Some stuff.
 --- Should become:
 <p>This is a chunk of code:</p>
 
 <pre><code>some.code &gt; some.other_code
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Para plus code block (literal tab, no colon)
@@ -544,11 +547,14 @@ This is a chunk of code
 
 	some.code > some.other_code
 
+Some stuff.
 --- Should become:
 <p>This is a chunk of code</p>
 
 <pre><code>some.code &gt; some.other_code
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Para plus code block (tab-width spaces)
@@ -557,11 +563,14 @@ This is a chunk of code:
 
     some.code > some.other_code
 
+Some stuff.
 --- Should become:
 <p>This is a chunk of code:</p>
 
 <pre><code>some.code &gt; some.other_code
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Para plus code block (tab-width spaces, no colon)
@@ -570,11 +579,14 @@ This is a chunk of code
 
     some.code > some.other_code
 
+Some stuff.
 --- Should become:
 <p>This is a chunk of code</p>
 
 <pre><code>some.code &gt; some.other_code
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Colon with preceeding space
@@ -582,11 +594,15 @@ This is a chunk of code
 A regular paragraph, without a colon. :
 
     This is a code block.
+
+Some stuff.
 --- Should become:
 <p>A regular paragraph, without a colon. :</p>
 
 <pre><code>This is a code block.
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Single colon
@@ -595,11 +611,14 @@ A regular paragraph, without a colon. :
 	
 	some.code > some.other_code
 
+Some stuff.
 --- Should become:
 <p>:</p>
 
 <pre><code>some.code &gt; some.other_code
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 # Preserve leading whitespace (Bug #541)
@@ -611,6 +630,8 @@ Examples:
           x = 1
           x += 1
           puts x
+
+Some stuff.
 --- Should become:
 <p>Examples:</p>
 
@@ -620,6 +641,8 @@ Examples:
       x += 1
       puts x
 </code></pre>
+
+<p>Some stuff.</p>
 >>>
 
 

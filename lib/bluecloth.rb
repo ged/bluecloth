@@ -557,10 +557,11 @@ class BlueCloth < String
 
 		str.gsub( CodeBlockRegexp ) {|block|
 			codeblock = $1
+			remainder = $2
 
 			# Generate the codeblock
-			%{\n\n<pre><code>%s\n</code></pre>\n\n} %
-				[ encode_code( outdent(codeblock), rs ).rstrip ]
+			%{\n\n<pre><code>%s\n</code></pre>\n\n%s} %
+				[ encode_code( outdent(codeblock), rs ).rstrip, remainder ]
 		}
 	end
 
