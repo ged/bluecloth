@@ -1,0 +1,19 @@
+
+# Bluecloth #
+
+Bluecloth is a Ruby implementation of [Markdown][1], a text-to-HTML conversion
+tool for web writers. To quote from the project page: Markdown allows you to
+write using an easy-to-read, easy-to-write plain text format, then convert it to
+structurally valid XHTML (or HTML).
+
+  [1]: http://daringfireball.net/projects/markdown/
+
+It borrows a naming convention and several helpings of interface from
+[Redcloth][2], [Why the Lucky Stiff][3]'s processor for a similar text-to-HTML
+conversion syntax called [Textile][4].
+
+  [2]: http://www.whytheluckystiff.net/ruby/redcloth/
+  [3]: http://www.whytheluckystiff.net/
+  [4]: http://www.textism.com/tools/textile/
+
+
