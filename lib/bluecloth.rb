@@ -549,7 +549,7 @@ class BlueCloth < String
 			# Generated the codeblock
 			%{%s\n\n<pre><code>%s\n</code></pre>\n\n} % [
 				(prevchar.empty? || /\s/ =~ prevchar) ? "" : "#{prevchar}:",
-				encode_code( outdent(codeblock), rs ).strip,
+				encode_code( outdent(codeblock), rs ).rstrip,
 			]
 		}
 	end
