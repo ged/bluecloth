@@ -261,6 +261,22 @@ Making `````code````` work for you
 <p>Making <code>code</code> work for you</p>
 >>>
 
+# Two in a row
+<<<
+This `thing` should be `two` spans.
+--- Should become:
+<p>This <code>thing</code> should be <code>two</code> spans.</p>
+>>>
+
+# At the beginning of a newline
+<<<
+I should think that the
+`tar` command would be universal.
+--- Should become:
+<p>I should think that the
+<code>tar</code> command would be universal.</p>
+>>>
+
 # Entity escaping
 <<<
 The left angle-bracket (`&lt;`) can also be written as a decimal-encoded
