@@ -33,11 +33,6 @@ class BugsTestCase < BlueCloth::TestCase
 	### :TODO: Add more documents and test their transforms.
 
 	def test_10_regexp_engine_overflow_bug
-		return skip(
-			"\n*** Known bug -- I need a way to prep the input so that it doesn't\n" +
-			"*** overflow Ruby's matcher."
-			)
-
 		contents = File::read( File::join(BaseDir,"tests/data/re-overflow.txt") )
 		bcobj = BlueCloth::new( contents )
 
