@@ -286,6 +286,14 @@ The left angle-bracket (`&lt;`) can also be written as a decimal-encoded
 (<code>&amp;#060;</code>) or hex-encoded (<code>&amp;#x3c;</code>) entity.</p>
 >>>
 
+# At the beginning of a document (Bug 525)
+<<<
+`world` views
+--- Should become:
+<p><code>world</code> views</p>
+>>>
+
+
 
 
 ### [Code blocks]
@@ -848,6 +856,13 @@ than from [Yahoo](http://search.yahoo.com/ "Yahoo Search") or
 <p>I get 10 times more traffic from <a href="http://google.com/" title="Google">Google</a>
 than from <a href="http://search.yahoo.com/" title="Yahoo Search">Yahoo</a> or
 <a href="http://search.msn.com/" title="MSN Search">MSN</a>.</p>
+>>>
+
+# Graceful fail for unclosed brackets (and bug #524)
+<<<
+This is just a [bracket opener; it should fail gracefully.
+--- Should become:
+<p>This is just a [bracket opener; it should fail gracefully.</p>
 >>>
 
 
