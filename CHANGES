@@ -1,4 +1,57 @@
 ------------------------------------------------------------------------
+r63 | ged | 2004-08-24 07:52:05 -0700 (Tue, 24 Aug 2004) | 3 lines
+Changed paths:
+   M /trunk
+
+- Added CHANGES.xml to ignore property for root directory.
+
+
+------------------------------------------------------------------------
+r62 | ged | 2004-08-24 07:48:44 -0700 (Tue, 24 Aug 2004) | 7 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Brought list of block-level tags up to date with Markdown 1.0's list
+- Propagated fix for overflow to the other two block-match patterns.
+- Abstracted list-item patterns out into constants to closer match Markdown's
+  code and to expose them for use in other code.
+- Fixed indentation of <pre> blocks inside blockquotes.
+- Added new tests for all of the above.
+
+------------------------------------------------------------------------
+r61 | ged | 2004-08-22 12:28:23 -0700 (Sun, 22 Aug 2004) | 5 lines
+Changed paths:
+   M /trunk/lib/bluecloth.rb
+   M /trunk/tests/05_Markdown.tests.rb
+
+- Fixed re-engine overflow for all tested cases (thanks to Martin Chase
+  <stillflame@FaerieMUD.org> for the fix).
+- Wrote some additional tests to be sure the block-level html escaper is working
+  after the above fix.
+
+------------------------------------------------------------------------
+r60 | ged | 2004-08-22 12:26:25 -0700 (Sun, 22 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/tests/10_Bug.tests.rb
+
+- Removed skip of overflow test.
+
+------------------------------------------------------------------------
+r59 | ged | 2004-08-22 12:24:35 -0700 (Sun, 22 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/experiments/re-overflow.rb
+
+- "Fixed" the test case so it overflows again.
+
+------------------------------------------------------------------------
+r58 | deveiant | 2004-08-08 22:12:02 -0700 (Sun, 08 Aug 2004) | 2 lines
+Changed paths:
+   M /trunk/CHANGES
+
+- Updated to 20040808.
+
+------------------------------------------------------------------------
 r57 | deveiant | 2004-08-08 18:16:14 -0700 (Sun, 08 Aug 2004) | 2 lines
 Changed paths:
    M /trunk/tests/bctestcase.rb
