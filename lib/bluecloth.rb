@@ -19,18 +19,22 @@
 # 
 # == Copyright
 #
-# Copyright (c) 2004 The FaerieMUD Consortium. All rights reserved.
+# Original version:
+#   Copyright (c) 2003-2004 John Gruber
+#   <http://daringfireball.net/>  
+#   All rights reserved.
+#
+# Ruby port:
+#   Copyright (c) 2004 The FaerieMUD Consortium.
 # 
-# This module is free software. You may use, modify, and/or redistribute this
-# software under the terms of the GNU Public License.
-#
-# I would also request that you honor John Gruber's social terms for Markdown
-# and pay him $50 per domain if you use this code commercially. See his license
-# page at:
-#
-#   http://daringfireball.net/projects/markdown/license
-#
-# for more. Thanks.
+# BlueCloth is free software; you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
+# 
+# BlueCloth is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 # 
 # == To-do
 #
@@ -62,9 +66,9 @@ class BlueCloth < String
 		### message about the +specific+ error.
 		def initialize( str, specific=nil )
 			if specific
-				msg = "Bad markdown format near '%s': %s" % [ str, specific ]
+				msg = "Bad markdown format near %p: %s" % [ str, specific ]
 			else
-				msg = "Bad markdown format near '%s'"
+				msg = "Bad markdown format near %p" % str
 			end
 
 			super( msg )
@@ -253,7 +257,7 @@ class BlueCloth < String
 		</\1>					# Matching end tag
 		[ ]*					# trailing spaces
 		(?=\n+|\Z)				# End of line or document
-	  }mix
+	  }ix
 
 	# More-liberal block-matching
 	LooseBlockRegex = %r{
@@ -264,7 +268,7 @@ class BlueCloth < String
 		.*</\1>					# Anything + Matching end tag
 		[ ]*					# trailing spaces
 		(?=\n+|\Z)				# End of line or document
-	  }mix
+	  }ix
 
 	# Special case for <hr />.
 	HruleBlockRegex = %r{
@@ -281,7 +285,7 @@ class BlueCloth < String
 			/?>					# Tag close
 			(?=\n\n|\Z)			# followed by a blank line or end of document
 		)
-	  }mix
+	  }ix
 
 	### Replace all blocks of HTML in +str+ that start in the left margin with
 	### tokens.
@@ -297,10 +301,18 @@ class BlueCloth < String
 			"\n\n#{key}\n\n"
 		}
 
-		str.
-			gsub( StrictBlockRegex, &tokenize ).
-			gsub( LooseBlockRegex, &tokenize ).
-			gsub( HruleBlockRegex ) {|match| $1 + tokenize[$2] }
+		rval = str.dup
+
+		@log.debug "Finding blocks with the strict regex..."
+		rval.gsub!( StrictBlockRegex, &tokenize )
+
+		@log.debug "Finding blocks with the loose regex..."
+		rval.gsub!( LooseBlockRegex, &tokenize )
+
+		@log.debug "Finding hrules..."
+		rval.gsub!( HruleBlockRegex ) {|match| $1 + tokenize[$2] }
+
+		return rval
 	end
 
 
@@ -835,8 +847,8 @@ class BlueCloth < String
 		# Scan to the end of the string
 		until @scanner.empty?
 
-			# Scan up until an opening backtick
-			if pre = @scanner.scan_until( /.(?=`)/ )
+			# Scan up to an opening backtick
+			if pre = @scanner.scan_until( /.(?=`)/m )
 				text += pre
 				@log.debug "Found backtick at %d after '...%s'" %
 					[ @scanner.pos, text[-10, 10] ]
@@ -851,8 +863,8 @@ class BlueCloth < String
 				# backticks off the resultant string, strip leading and trailing
 				# whitespace, and encode any enitites contained in it.
 				codespan = @scanner.scan_until( closer ) or
-					raise FormatError, @scanner[0,20],
-						"No %p found before end" % opener
+					raise FormatError::new( @scanner.rest[0,20],
+						"No %p found before end" % opener )
 
 				@log.debug "Found close of code span at %d: %p" %
 					[ @scanner.pos - len, codespan ]
