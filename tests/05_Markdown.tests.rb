@@ -16,6 +16,51 @@ end
 ### This test case tests ...
 class SubfunctionsTestCase < BlueCloth::TestCase
 
+	### Test email address output
+	Emails = %w[
+		address@example.com
+		foo-list-admin@bar.com
+	]
+	def test_10_email_address
+		printTestHeader "BlueCloth: Inline email address"
+		rval = match = nil
+
+		Emails.each {|addr|
+			assert_nothing_raised {
+				rval = BlueCloth::new( "<#{addr}>" ).to_html
+			}
+
+			match = %r{<p><a href="([^\"]+)">[^<]+</a></p>}.match( rval )
+			assert_equal "mailto:#{addr}", decode( match[1] )
+		}
+	end
+
+
+	def decode( str )
+		str.gsub( /&#(x[a-f0-9]+|\d{3});/i ) {|match|
+			code = $1
+			debugMsg "Decoding %p" % code
+
+			case code
+			when /^x([a-f0-9]+)/i
+				debugMsg "  (hex) = %p" % $1.to_i(16).chr
+				$1.to_i(16).chr
+			when /\d{3}/
+				debugMsg "  (oct) = %p" % code.to_i.chr
+				code.to_i.chr
+			else
+				raise "Hmmm... malformed entity %p" % code
+			end
+		} 
+	end
+
+
+
+	#################################################################
+	###	A U T O - G E N E R A T E D   T E S T S
+	#################################################################
+
+	# Parse the data section into a hash of test specifications
 	TestSets = {}
 	begin
 		seenEnd = false
@@ -93,18 +138,22 @@ class SubfunctionsTestCase < BlueCloth::TestCase
 
 	debugMsg "Test sets: %p" % TestSets
 
+	# Auto-generate tests out of the test specifications
 	TestSets.each {|sname, section|
 
+		# Generate a test method for each section
 		section.each do |desc, test|
 			methname = "test_%03d_%s" %
 				[ test[:line], desc.gsub(/\W+/, '_').downcase ]
 
+			# Header
 			code = %{
 				def #{methname}
 					printTestHeader "BlueCloth: #{desc}"
 					rval = nil
 			}
 
+			# An assertion for each input/output pair
 			test[:sets].each {|input, output|
 				code << %{
 					assert_nothing_raised {
@@ -286,7 +335,7 @@ The left angle-bracket (`&lt;`) can also be written as a decimal-encoded
 (<code>&amp;#060;</code>) or hex-encoded (<code>&amp;#x3c;</code>) entity.</p>
 >>>
 
-# At the beginning of a document (Bug 525)
+# At the beginning of a document (Bug #525)
 <<<
 `world` views
 --- Should become:
@@ -344,6 +393,25 @@ A regular paragraph, without a colon. :
 
 --- Should become:
 <pre><code>some.code &gt; some.other_code
+</code></pre>
+>>>
+
+# Preserve leading whitespace (Bug #541)
+<<<
+Examples:
+          # (Waste character because first line is flush left !!!)
+          # Example script1
+          x = 1
+          x += 1
+          puts x
+--- Should become:
+<p>Examples:</p>
+
+<pre><code>      # (Waste character because first line is flush left !!!)
+      # Example script1
+      x = 1
+      x += 1
+      puts x
 </code></pre>
 >>>
 
