@@ -778,7 +778,7 @@ class BlueCloth < String
 					else
 						@log.debug "  Missing closing brace, assuming non-link."
 						link += @scanner.rest
-						@scanner.finish
+						@scanner.terminate
 						return text + '[' + link
 					end
 				end
@@ -882,7 +882,7 @@ class BlueCloth < String
 		until @scanner.empty?
 
 			# Scan up to an opening backtick
-			if pre = @scanner.scan_until( /.(?=`)/m )
+			if pre = @scanner.scan_until( /.?(?=`)/m )
 				text += pre
 				@log.debug "Found backtick at %d after '...%s'" %
 					[ @scanner.pos, text[-10, 10] ]
