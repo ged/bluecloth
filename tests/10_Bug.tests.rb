@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -w
 #
 # Unit test for bugs found in BlueCloth
-# $Id: TEMPLATE.rb.tpl,v 1.2 2003/09/11 04:59:51 deveiant Exp $
+# $Id$
 #
 # Copyright (c) 2004 The FaerieMUD Consortium.
 # 
