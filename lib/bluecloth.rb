@@ -17,6 +17,11 @@
 # 
 # * Michael Granger <ged@FaerieMUD.org>
 # 
+# == Contributors
+#
+# * Martin Chase <stillflame@FaerieMUD.org> - Peer review, helpful suggestions
+# * Florian Gross <flgr@ccan.de> - Filter options, suggestions
+#
 # == Copyright
 #
 # Original version:
@@ -76,6 +81,9 @@ class BlueCloth < String
 	end
 
 
+	# Release Version
+	Version = '0.0.1'
+
 	# SVN Revision
 	SvnRev = %q$Rev$
 
@@ -115,14 +123,19 @@ class BlueCloth < String
 	#################################################################
 
 	### Create a new BlueCloth string.
-	def initialize( *args )
+	def initialize( content="", *restrictions )
 		@log = Logger::new( $deferr )
 		@log.level = $DEBUG ?
 			Logger::DEBUG :
 			($VERBOSE ? Logger::INFO : Logger::WARN)
 		@scanner = nil
 
-		super
+		# Add any restrictions, and set the line-folding attribute to reflect
+		# what happens by default.
+		restrictions.flatten.each {|r| __send__("#{r}=", true) }
+		@fold_lines = true
+
+		super( content )
 
 		@log.debug "String is: %p" % self
 	end
@@ -132,48 +145,65 @@ class BlueCloth < String
 	public
 	######
 
+	# Filters for controlling what gets output for untrusted input. (But really,
+	# you're filtering bad stuff out of untrusted input at submission-time via
+	# untainting, aren't you?)
+	attr_accessor :filter_html, :filter_styles
+
+	# RedCloth-compatibility accessor. Line-folding is part of Markdown syntax,
+	# so this isn't used by anything.
+	attr_accessor :fold_lines
+
+
 	### Render Markdown-formatted text in this string object as HTML and return
-	### it.
-	def to_html
+	### it. The parameter is for compatibility with RedCloth, and is currently
+	### unused, though that may change in the future.
+	def to_html( lite=false )
 
 		# Create a StringScanner we can reuse for various lexing tasks
 		@scanner = StringScanner::new( '' )
 
 		# Make a structure to carry around stuff that gets placeholdered out of
 		# the source.
-		rs = RenderState::new( {}, {}, {}, @log )
+		rs = RenderState::new( {}, {}, {} )
 
 		# Make a copy of the string with normalized line endings, tabs turned to
 		# spaces, and a couple of guaranteed newlines at the end
 		text = self.gsub( /\r\n?/, "\n" ).detab
 		text += "\n\n"
-		rs.log.debug "Normalized line-endings: %p" % text
+		@log.debug "Normalized line-endings: %p" % text
+
+		# Filter HTML if we're asked to do so
+		if self.filter_html
+			text.gsub!( "<", "&lt;" ).gsub!( ">", "&gt;" )
+			@log.debug "Filtered HTML: %p" % text
+		end
 
 		# Simplify blank lines
 		text.gsub!( /^ +$/, '' )
-		rs.log.debug "Tabs -> spaces/blank lines stripped: %p" % text
+		@log.debug "Tabs -> spaces/blank lines stripped: %p" % text
 
 		# Replace HTML blocks with placeholders
 		text = hide_html_blocks( text, rs )
-		rs.log.debug "Hid HTML blocks: %p" % text
-		rs.log.debug "Render state: %p" % rs
+		@log.debug "Hid HTML blocks: %p" % text
+		@log.debug "Render state: %p" % rs
 
 		# Strip link definitions, store in render state
 		text = strip_link_definitions( text, rs )
-		rs.log.debug "Stripped link definitions: %p" % text
-		rs.log.debug "Render state: %p" % rs
+		@log.debug "Stripped link definitions: %p" % text
+		@log.debug "Render state: %p" % rs
 
 		# Escape meta-characters
 		text = escape_special_chars( text )
-		rs.log.debug "Escaped special characters: %p" % text
+		@log.debug "Escaped special characters: %p" % text
 
 		# Transform block-level constructs
 		text = apply_block_transforms( text, rs )
-		rs.log.debug "After block-level transforms: %p" % text
+		@log.debug "After block-level transforms: %p" % text
 
 		# Now swap back in all the escaped characters
 		text = unescape_special_chars( text )
-		rs.log.debug "After unescaping special characters: %p" % text
+		@log.debug "After unescaping special characters: %p" % text
 
 		return text
 	end
