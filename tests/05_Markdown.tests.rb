@@ -3,7 +3,7 @@
 # Test case for BlueCloth Markdown transforms.
 # $Id: TEMPLATE.rb.tpl,v 1.2 2003/09/11 04:59:51 deveiant Exp $
 #
-# Copyright (c) 2004 The FaerieMUD Consortium.
+# Copyright (c) 2004, 2005 The FaerieMUD Consortium.
 # 
 
 if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
@@ -12,8 +12,8 @@ if !defined?( BlueCloth ) || !defined?( BlueCloth::TestCase )
 end
 
 
-### This test case tests ...
-class SubfunctionsTestCase < BlueCloth::TestCase
+### Test conformance to Markdown syntax specification
+class MarkdownTestCase < BlueCloth::TestCase
 
 	### Test email address output
 	Emails = %w[
@@ -186,8 +186,19 @@ class SubfunctionsTestCase < BlueCloth::TestCase
 				end
 			}
 
+			# Strip leading indent for prettier output of the code in debugging
+			code.gsub!( /^\t{4}/, '' )
+
+			# Support debugging for individual tests
+			olddb = nil
+			if $DebugPattern && $DebugPattern =~ methname
+				olddb = $DEBUG
+				$DEBUG = true
+			end
 
 			debugMsg "--- %s [%s]:\n%s\n---\n" % [sname, desc, code]
+
+			$DEBUG = olddb unless olddb.nil?
 			eval code
 		end
 
@@ -651,6 +662,13 @@ Some stuff.
 # Hrule 1
 <<<
 * * *
+--- Should become:
+<hr/>
+>>>
+
+# Indented Hrule 1
+<<<
+   * * *
 --- Should become:
 <hr/>
 >>>
@@ -1183,6 +1201,15 @@ An [example][ex] reference-style link.
 <p>An <a href="http://www.bluefi.com/">example</a> reference-style link.</p>
 >>>
 
+# Indented (less than tabwidth) reference-style link
+<<<
+An [example][ex] reference-style link.
+
+   [ex]: http://www.bluefi.com/
+--- Should become:
+<p>An <a href="http://www.bluefi.com/">example</a> reference-style link.</p>
+>>>
+
 # Reference-style link with quoted title
 <<<
 An [example][ex] reference-style link.
@@ -1467,6 +1494,34 @@ sit amet velit.</p></li>
 </ol>
 >>>
 
+# Multi-paragraph list items followed by paragraph
+<<<
+1.  This is a list item with two paragraphs. Lorem ipsum dolor
+    sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+    mi posuere lectus.
+
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+    vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
+    sit amet velit.
+
+2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+
+This is a following paragraph which shouldn't be part of the list.
+--- Should become:
+<ol>
+<li><p>This is a list item with two paragraphs. Lorem ipsum dolor
+sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+mi posuere lectus.</p>
+
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet
+vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
+sit amet velit.</p></li>
+<li><p>Suspendisse id sem consectetuer libero luctus adipiscing.</p></li>
+</ol>
+
+<p>This is a following paragraph which shouldn't be part of the list.</p>
+>>>
+
 # Lazy multi-paragraphs
 <<<
 *   This is a list item with two paragraphs.
@@ -1523,5 +1578,108 @@ sit amet, consectetuer adipiscing elit.</p></li>
 1986\. What a great season.
 --- Should become:
 <p>1986. What a great season.</p>
+>>>
+
+
+### [1.0.1 changes]
+
+# Escapes in code blocks shouldn't be touched.
+<<<
+Markdown allows you to use backslash escapes to generate literal
+characters which would otherwise have special meaning in Markdown's
+formatting syntax. For example, if you wanted to surround a word with
+literal asterisks (instead of an HTML `<em>` tag), you can backslashes
+before the asterisks, like this:
+
+    \*literal asterisks\*
+
+--- Should become:
+<p>Markdown allows you to use backslash escapes to generate literal
+characters which would otherwise have special meaning in Markdown's
+formatting syntax. For example, if you wanted to surround a word with
+literal asterisks (instead of an HTML <code>&lt;em&gt;</code> tag), you can backslashes
+before the asterisks, like this:</p>
+
+<pre><code>\*literal asterisks\*
+</code></pre>
+>>>
+
+# Escapes in code spans shouldn't be touched
+<<<
+You can escape the splat operator by backslashing it like this: `/foo\*/`.
+--- Should become:
+<p>You can escape the splat operator by backslashing it like this: <code>/foo\*/</code>.</p>
+>>>
+
+ 
+# Reference-style links at or deeper than tab width are code blocks.
+<<<
+An [example][ex] reference-style link.
+
+    [ex]: http://www.bluefi.com/
+--- Should become:
+<p>An [example][ex] reference-style link.</p>
+
+<pre><code>[ex]: http://www.bluefi.com/
+</code></pre>
+>>>
+
+# Inline links using < and > URL delimiters weren't working:
+<<<
+like [this](<http://example.com/>)
+--- Should become:
+<p>like <a href="http://example.com/">this</a></p>
+>>>
+
+# HTML comment blocks should remain as-is
+<<<
+<!-- This is a comment -->
+--- Should become:
+<!-- This is a comment -->
+>>>
+
+# Autolinks shouldn't affect code spans
+<<<
+like this: `<http://example.com/>`
+--- Should become:
+<p>like this: <code>&lt;http://example.com/&gt;</code></p>
+>>>
+
+
+# Lines in the middle of hard-wrapped paragraphs which look like the start of a
+# list item would accidentally trigger the creation of a list.
+<<<
+I recommend upgrading to version
+8. Oops, now this line is treated
+as a sub-list.
+--- Should become:
+<p>I recommend upgrading to version
+8. Oops, now this line is treated
+as a sub-list.</p>
+>>>
+
+
+# Header + list + code
+<<<
+## This is a header.
+
+1.   This is the first list item.
+2.   This is the second list item.
+
+Here's some example code:
+
+    return shell_exec("echo $input | $markdown_script");
+--- Should become:
+<h2>This is a header.</h2>
+
+<ol>
+<li>This is the first list item.</li>
+<li>This is the second list item.</li>
+</ol>
+
+<p>Here's some example code:</p>
+
+<pre><code>return shell_exec("echo $input | $markdown_script");
+</code></pre>
 >>>
 
