@@ -5,7 +5,7 @@
 # 
 # == Synopsis
 # 
-#   doc = BlueCloth::new "
+#   doc = BlueCloth.new "
 #     ## Test document ##
 #
 #     Just a simple test.
@@ -25,21 +25,48 @@
 # == Copyright
 #
 # Original version:
-#   Copyright (c) 2003-2004 John Gruber
+#   Copyright (c) 2004, 2005, John Gruber  
 #   <http://daringfireball.net/>  
 #   All rights reserved.
 #
+#   Redistribution and use in source and binary forms, with or without
+#   modification, are permitted provided that the following conditions are
+#   met:
+#   
+#   * Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#   
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#   
+#   * Neither the name "Markdown" nor the names of its contributors may
+#     be used to endorse or promote products derived from this software
+#     without specific prior written permission.
+#   
+#   This software is provided by the copyright holders and contributors "as
+#   is" and any express or implied warranties, including, but not limited
+#   to, the implied warranties of merchantability and fitness for a
+#   particular purpose are disclaimed. In no event shall the copyright owner
+#   or contributors be liable for any direct, indirect, incidental, special,
+#   exemplary, or consequential damages (including, but not limited to,
+#   procurement of substitute goods or services; loss of use, data, or
+#   profits; or business interruption) however caused and on any theory of
+#   liability, whether in contract, strict liability, or tort (including
+#   negligence or otherwise) arising in any way out of the use of this
+#   software, even if advised of the possibility of such damage.
+#
 # Ruby port:
-#   Copyright (c) 2004 The FaerieMUD Consortium.
+#   Copyright (c) 2004, 2005 The FaerieMUD Consortium.
 # 
-# BlueCloth is free software; you can redistribute it and/or modify it under the
-# terms of the GNU General Public License as published by the Free Software
-# Foundation; either version 2 of the License, or (at your option) any later
-# version.
-# 
-# BlueCloth is distributed in the hope that it will be useful, but WITHOUT ANY
-# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#   You may use, modify, and/or redistribute this software under the same terms
+#   as Ruby itself. A copy of Ruby's license should be included in this package;
+#   if not, it can be obtained online at:
+#     http://www.ruby-lang.org/en/LICENSE.txt.
+#   
+#   THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED
+#   WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+#   MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 # 
 # == To-do
 #
@@ -82,38 +109,38 @@ class BlueCloth < String
 
 
 	# Release Version
-	Version = '0.0.3'
+	VERSION = '1.1.0'
 
 	# SVN Revision
-	SvnRev = %q$Rev$
+	SVNREV = %q$Rev$
 
 	# SVN Id tag
-	SvnId = %q$Id$
+	SVNID = %q$Id$
 
-	# SVN URL
-	SvnUrl = %q$URL$
 
 
 	# Rendering state struct. Keeps track of URLs, titles, and HTML blocks
 	# midway through a render. I prefer this to the globals of the Perl version
 	# because globals make me break out in hives. Or something.
-	RenderState = Struct::new( "RenderState", :urls, :titles, :html_blocks, :log )
+	RenderState = Struct.new( "RenderState", :urls, :titles, :html_blocks, :list_level, :log )
 
 	# Tab width for #detab! if none is specified
-	TabWidth = 4
+	# :TODO: Make this DEFAULT_TAB_WIDTH and make tab width a per-instance setting instead.
+	TAB_WIDTH = 4
+	LESS_THAN_TAB_WIDTH = TAB_WIDTH - 1
 
 	# The tag-closing string -- set to '>' for HTML
-	EmptyElementSuffix = "/>";
+	EMPTY_ELEMENT_SUFFIX = "/>";
 
 	# Table of MD5 sums for escaped characters
-	EscapeTable = {}
-	'\\`*_{}[]()#.!'.split(//).each {|char|
-		hash = Digest::MD5::hexdigest( char )
+	ESCAPE_TABLE = {}
+	'\\`*_{}[]()>#+-.!'.split(//).each {|char|
+		hash = Digest::MD5.hexdigest( char )
 
-		EscapeTable[ char ] = {
+		ESCAPE_TABLE[ char ] = {
  			:md5 => hash,
-			:md5re => Regexp::new( hash ),
-			:re  => Regexp::new( '\\\\' + Regexp::escape(char) ),
+			:md5re => Regexp.new( hash ),
+			:re  => Regexp.new( '\\\\' + Regexp.escape(char) ),
 		}
 	}
 
@@ -124,7 +151,7 @@ class BlueCloth < String
 
 	### Create a new BlueCloth string.
 	def initialize( content="", *restrictions )
-		@log = Logger::new( $deferr )
+		@log = Logger.new( $deferr )
 		@log.level = $DEBUG ?
 			Logger::DEBUG :
 			($VERBOSE ? Logger::INFO : Logger::WARN)
@@ -163,11 +190,11 @@ class BlueCloth < String
 	def to_html( lite=false )
 
 		# Create a StringScanner we can reuse for various lexing tasks
-		@scanner = StringScanner::new( '' )
+		@scanner = StringScanner.new( '' )
 
 		# Make a structure to carry around stuff that gets placeholdered out of
 		# the source.
-		rs = RenderState::new( {}, {}, {} )
+		rs = RenderState.new( {}, {}, {}, 0 )
 
 		# Make a copy of the string with normalized line endings, tabs turned to
 		# spaces, and a couple of guaranteed newlines at the end
@@ -213,7 +240,7 @@ class BlueCloth < String
 	
 
 	### Convert tabs in +str+ to spaces.
-	def detab( tabwidth=TabWidth )
+	def detab( tabwidth=TAB_WIDTH )
 		copy = self.dup
 		copy.detab!( tabwidth )
 		return copy
@@ -221,7 +248,7 @@ class BlueCloth < String
 
 
 	### Convert tabs to spaces in place and return self if any were converted.
-	def detab!( tabwidth=TabWidth )
+	def detab!( tabwidth=TAB_WIDTH )
 		newstr = self.split( /\n/ ).collect {|line|
 			line.gsub( /(.*?)\t/ ) do
 				$1 + ' ' * (tabwidth - $1.length % tabwidth)
@@ -246,7 +273,6 @@ class BlueCloth < String
 		text = transform_lists( text, rs )
 		text = transform_code_blocks( text, rs )
 		text = transform_block_quotes( text, rs )
-		text = transform_auto_links( text, rs )
 		text = hide_html_blocks( text, rs )
 
 		text = form_paragraphs( text, rs )
@@ -262,13 +288,15 @@ class BlueCloth < String
 		@log.debug "Applying span transforms to:\n  %p" % str
 
 		str = transform_code_spans( str, rs )
-		str = encode_html( str )
+		str = escape_special_chars( str )
 		str = transform_images( str, rs )
 		str = transform_anchors( str, rs )
+		str = transform_auto_links( str, rs )
+		str = encode_html( str )
 		str = transform_italic_and_bold( str, rs )
 
 		# Hard breaks
-		str.gsub!( / {2,}\n/, "<br#{EmptyElementSuffix}\n" )
+		str.gsub!( / {2,}\n/, "<br#{EMPTY_ELEMENT_SUFFIX}\n" )
 
 		@log.debug "Done with span transforms:\n  %p" % str
 		return str
@@ -319,11 +347,29 @@ class BlueCloth < String
 			.*\n\n				# anything + blank line
 		)
 		(						# save in $2
-			[ ]*				# Any spaces
+			[ ]{0,#{LESS_THAN_TAB_WIDTH}}				# Any spaces
 			<hr					# Tag open
 			\b					# Word break
 			([^<>])*?			# Attributes
 			/?>					# Tag close
+			$					# followed by a blank line or end of document
+		)
+	  }ix
+
+	# Special case for standalone HTML comments
+	CommentBlockRegex = %r{
+		(						# $1
+			\A\n?				# Start of doc + optional \n
+			|					# or
+			.*\n\n				# anything + blank line
+		)
+		(						# save in $2
+			[ ]{0,#{LESS_THAN_TAB_WIDTH}}				# Any spaces
+			(?:
+				<!
+				(--.*?--\s*)+
+				>
+			)
 			$					# followed by a blank line or end of document
 		)
 	  }ix
@@ -335,7 +381,7 @@ class BlueCloth < String
 		
 		# Tokenizer proc to pass to gsub
 		tokenize = lambda {|match|
-			key = Digest::MD5::hexdigest( match )
+			key = Digest::MD5.hexdigest( match )
 			rs.html_blocks[ key ] = match
 			@log.debug "Replacing %p with %p" % [ match, key ]
 			"\n\n#{key}\n\n"
@@ -352,13 +398,16 @@ class BlueCloth < String
 		@log.debug "Finding hrules..."
 		rval.gsub!( HruleBlockRegex ) {|match| $1 + tokenize[$2] }
 
+		@log.debug "Finding comments..."
+		rval.gsub!( CommentBlockRegex ) {|match| $1 + tokenize[$2] }
+
 		return rval
 	end
 
 
 	# Link defs are in the form: ^[id]: url "optional title"
 	LinkRegex = %r{
-		^[ ]*\[(.+)\]:		# id = $1
+		^[ ]{0,#{LESS_THAN_TAB_WIDTH}}\[(.+)\]:		# id = $1
 		  [ ]*
 		  \n?				# maybe *one* newline
 		  [ ]*
@@ -396,9 +445,8 @@ class BlueCloth < String
 		@log.debug "  Escaping special characters"
 		text = ''
 
-		# The original Markdown source has something called '$tags_to_skip'
-		# declared here, but it's never used, so I don't define it.
-
+		# Split the HTML into tags and text, calling back into this block for
+		# each chunk.
 		tokenize_html( str ) {|token, str|
 			@log.debug "   Adding %p token %p" % [ token, str ]
 			case token
@@ -406,8 +454,8 @@ class BlueCloth < String
 			# Within tags, encode * and _
 			when :tag
 				text += str.
-					gsub( /\*/, EscapeTable['*'][:md5] ).
-					gsub( /_/, EscapeTable['_'][:md5] )
+					gsub( /\*/, ESCAPE_TABLE['*'][:md5] ).
+					gsub( /_/, ESCAPE_TABLE['_'][:md5] )
 
 			# Encode backslashed stuff in regular text
 			when :text
@@ -425,7 +473,7 @@ class BlueCloth < String
 	### Swap escaped special characters in a copy of the given +str+ and return
 	### it.
 	def unescape_special_chars( str )
-		EscapeTable.each {|char, hash|
+		ESCAPE_TABLE.each {|char, hash|
 			@log.debug "Unescaping escaped %p with %p" % [ char, hash[:md5re] ]
 			str.gsub!( hash[:md5re], char )
 		}
@@ -438,9 +486,9 @@ class BlueCloth < String
 	### in it replaced with MD5 placeholders.
 	def encode_backslash_escapes( str )
 		# Make a copy with any double-escaped backslashes encoded
-		text = str.gsub( /\\\\/, EscapeTable['\\'][:md5] )
+		text = str.gsub( /\\\\/, ESCAPE_TABLE['\\'][:md5] )
 		
-		EscapeTable.each_pair {|char, esc|
+		ESCAPE_TABLE.each_pair {|char, esc|
 			next if char == '\\'
 			text.gsub!( esc[:re], esc[:md5] )
 		}
@@ -453,7 +501,7 @@ class BlueCloth < String
 	### +str+ and return it.
 	def transform_hrules( str, rs )
 		@log.debug " Transforming horizontal rules"
-		str.gsub( /^( ?[\-\*_] ?){3,}$/, "\n<hr#{EmptyElementSuffix}\n" )
+		str.gsub( /^[ ]{0,2}( ?[\-\*_] ?){3,} *$/, "\n<hr#{EMPTY_ELEMENT_SUFFIX}\n" )
 	end
 
 
@@ -461,24 +509,41 @@ class BlueCloth < String
 	# Patterns to match and transform lists
 	ListMarkerOl = %r{\d+\.}
 	ListMarkerUl = %r{[*+-]}
-	ListMarkerAny = Regexp::union( ListMarkerOl, ListMarkerUl )
+	ListMarkerAny = Regexp.union( ListMarkerOl, ListMarkerUl )
 
-	ListRegexp = %r{
-		  (?:
-			^[ ]{0,#{TabWidth - 1}}		# Indent < tab width
-			(#{ListMarkerAny})			# unordered or ordered ($1)
-			[ ]+						# At least one space
-		  )
-		  (?m:.+?)						# item content (include newlines)
-		  (?:
-			  \z						# Either EOF
-			|							#  or
-			  \n{2,}					# Blank line...
-			  (?=\S)					# ...followed by non-space
-			  (?![ ]*					# ...but not another item
-				(#{ListMarkerAny})
-			   [ ]+)
-		  )
+	# Part of list-pattern common to both first-level and n-level lists
+	ListBodyPattern = %Q{
+		(?:
+		  [ ]{0,#{LESS_THAN_TAB_WIDTH}}	# Indent < tab width
+		  (#{ListMarkerAny})			# $3 (see below): unordered or ordered
+		  [ ]+							# At least one space
+		)
+		(?m:.+?)						# item content (include newlines)
+		(?:
+			\\z							# Either EOF
+		  |								#  or
+			\\n{2,}						# Blank line...
+			(?=\S)						# ...followed by non-space
+			(?![ ]*						# ...but not another item
+			  (#{ListMarkerAny})
+			 [ ]+)
+		)
+	  }
+
+	# Regexp to match first-level lists
+	OuterListRegexp = %r{
+		(								# $1
+			\A\n?						# Start of doc + optional \n
+			|							# or
+			.*\n\n						# anything + blank line
+		)
+		(#{ListBodyPattern})			# $2
+	  }x
+
+	# Regexp to match n-level lists
+	InnerListRegexp = %r{
+		(^)								# $1
+		(#{ListBodyPattern})			# $2
 	  }x
 
 	### Transform Markdown-style lists in a copy of the specified +str+ and
@@ -486,13 +551,20 @@ class BlueCloth < String
 	def transform_lists( str, rs )
 		@log.debug " Transforming lists at %p" % (str[0,100] + '...')
 
-		str.gsub( ListRegexp ) {|list|
-			@log.debug "  Found list %p" % list
-			bullet = $1
+		# Choose a regexp based on whether we're already in a list or not
+		re = if rs.list_level.zero? then OuterListRegexp else InnerListRegexp end
+
+		# Use the chosen regexp to find lists
+		str.gsub( re ) {
+			pre, list, bullet = $1, $2, $3
+			@log.debug "  Found list bullet %p after %p: %p" %
+				[ bullet, pre, list ]
+
 			list_type = (ListMarkerUl.match(bullet) ? "ul" : "ol")
 			list.gsub!( /\n{2,}/, "\n\n\n" )
 
-			%{<%s>\n%s</%s>\n} % [
+			%{%s<%s>\n%s</%s>\n} % [
+				pre,
 				list_type,
 				transform_list_items( list, rs ),
 				list_type,
@@ -515,6 +587,9 @@ class BlueCloth < String
 	def transform_list_items( str, rs )
 		@log.debug " Transforming list items"
 
+		# Increment the marker for parsing sublists
+		rs.list_level += 1
+
 		# Trim trailing blank lines
 		str = str.sub( /\n{2,}\z/, "\n" )
 
@@ -534,6 +609,9 @@ class BlueCloth < String
 
 			%{<li>%s</li>\n} % item
 		}
+	ensure
+		# Decrement the list-level counter
+		rs.list_level -= 1
 	end
 
 
@@ -542,11 +620,11 @@ class BlueCloth < String
 		(?:\n\n|\A)
 		(									# $1 = the code block
 		  (?:
-			(?:[ ]{#{TabWidth}} | \t)		# a tab or tab-width of spaces
+			(?:[ ]{#{TAB_WIDTH}} | \t)		# a tab or tab-width of spaces
 			.*\n+
 		  )+
 		)
-		(^[ ]{0,#{TabWidth - 1}}\S|\Z)		# Lookahead for non-space at
+		(^[ ]{0,#{TAB_WIDTH - 1}}\S|\Z)		# Lookahead for non-space at
 											# line-start, or end of doc
 	  }x
 
@@ -588,7 +666,7 @@ class BlueCloth < String
 			quote.gsub!( /^ *> ?/, '' ) # Trim one level of quoting 
 			quote.gsub!( /^ +$/, '' )	# Trim whitespace-only lines
 
-			indent = " " * TabWidth
+			indent = " " * TAB_WIDTH
 			quoted = %{<blockquote>\n%s\n</blockquote>\n\n} %
 				apply_block_transforms( quote, rs ).
 				gsub( /^/, indent ).
@@ -769,7 +847,7 @@ class BlueCloth < String
 		text = ''
 
 		# Scan the whole string
-		until @scanner.empty?
+		until @scanner.eos?
 		
 			if @scanner.scan( /\[/ )
 				link = ''; linkid = ''
@@ -856,7 +934,7 @@ class BlueCloth < String
 				text += @scanner.scan( /[^\[]+/ )
 			end
 
-		end # until @scanner.empty?
+		end # until @scanner.eos?
 
 		return text
 	end
@@ -898,7 +976,7 @@ class BlueCloth < String
 		text = ''
 
 		# Scan to the end of the string
-		until @scanner.empty?
+		until @scanner.eos?
 
 			# Scan up to an opening backtick
 			if pre = @scanner.scan_until( /.?(?=`)/m )
@@ -908,14 +986,14 @@ class BlueCloth < String
 				# Make a pattern to find the end of the span
 				opener = @scanner.scan( /`+/ )
 				len = opener.length
-				closer = Regexp::new( opener )
+				closer = Regexp.new( opener )
 				@log.debug "Scanning for end of code span with %p" % closer
 
 				# Scan until the end of the closing backtick sequence. Chop the
 				# backticks off the resultant string, strip leading and trailing
 				# whitespace, and encode any enitites contained in it.
 				codespan = @scanner.scan_until( closer ) or
-					raise FormatError::new( @scanner.rest[0,20],
+					raise FormatError.new( @scanner.rest[0,20],
 						"No %p found before end" % opener )
 
 				@log.debug "Found close of code span at %d: %p" % [ @scanner.pos - len, codespan ]
@@ -966,7 +1044,7 @@ class BlueCloth < String
 
 	### Turn image markup into image tags.
 	def transform_images( str, rs )
-		@log.debug " Transforming images" % str
+		@log.debug " Transforming images (%p)" % [str]
 
 		# Handle reference-style labeled images: ![alt text][id]
 		str.
@@ -988,7 +1066,7 @@ class BlueCloth < String
 					if rs.titles.key?( linkid )
 						result += %{ title="%s"} % escape_md( rs.titles[linkid] )
 					end
-					result += EmptyElementSuffix
+					result += EMPTY_ELEMENT_SUFFIX
 
 				else
 					result = whole
@@ -1011,7 +1089,7 @@ class BlueCloth < String
 					title.gsub!( /"/, '&quot;' )
 					result += %{ title="%s"} % escape_md( title )
 				end
-				result += EmptyElementSuffix
+				result += EMPTY_ELEMENT_SUFFIX
 
 				@log.debug "Replacing %p with %p" % [ match, result ]
 				result
@@ -1028,7 +1106,7 @@ class BlueCloth < String
 		str.gsub( %r{&}, '&amp;' ).
 			gsub( %r{<}, '&lt;' ).
 			gsub( %r{>}, '&gt;' ).
-			gsub( CodeEscapeRegexp ) {|match| EscapeTable[match][:md5]}
+			gsub( CodeEscapeRegexp ) {|match| ESCAPE_TABLE[match][:md5]}
 	end
 				
 
@@ -1041,19 +1119,19 @@ class BlueCloth < String
 	### it.
 	def escape_md( str )
 		str.
-			gsub( /\*/, EscapeTable['*'][:md5] ).
-			gsub( /_/,  EscapeTable['_'][:md5] )
+			gsub( /\*/, ESCAPE_TABLE['*'][:md5] ).
+			gsub( /_/,  ESCAPE_TABLE['_'][:md5] )
 	end
 
 
 	# Matching constructs for tokenizing X/HTML
 	HTMLCommentRegexp  = %r{ <! ( -- .*? -- \s* )+ > }mx
 	XMLProcInstRegexp  = %r{ <\? .*? \?> }mx
-	MetaTag = Regexp::union( HTMLCommentRegexp, XMLProcInstRegexp )
+	MetaTag = Regexp.union( HTMLCommentRegexp, XMLProcInstRegexp )
 
 	HTMLTagOpenRegexp  = %r{ < [a-z/!$] [^<>]* }imx
 	HTMLTagCloseRegexp = %r{ > }x
-	HTMLTagPart = Regexp::union( HTMLTagOpenRegexp, HTMLTagCloseRegexp )
+	HTMLTagPart = Regexp.union( HTMLTagOpenRegexp, HTMLTagCloseRegexp )
 
 	### Break the HTML source in +str+ into a series of tokens and return
 	### them. The tokens are just 2-element Array tuples with a type and the
@@ -1066,7 +1144,7 @@ class BlueCloth < String
 		@scanner.string = str.dup
 		type, token = nil, nil
 
-		until @scanner.empty?
+		until @scanner.eos?
 			@log.debug "Scanning from %p" % @scanner.rest
 
 			# Match comments and PIs without nesting
@@ -1137,7 +1215,7 @@ class BlueCloth < String
 	### Return one level of line-leading tabs or spaces from a copy of +str+ and
 	### return it.
 	def outdent( str )
-		str.gsub( /^(\t|[ ]{1,#{TabWidth}})/, '')
+		str.gsub( /^(\t|[ ]{1,#{TAB_WIDTH}})/, '')
 	end
 	
 end # class BlueCloth

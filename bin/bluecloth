@@ -64,6 +64,7 @@ def main
 		end
 
 		bc = BlueCloth::new( contents.join )
+		$stderr.puts "Using BlueCloth version #{BlueCloth::Version}"
 
 		if fragment
 			$stdout.puts bc.to_html
