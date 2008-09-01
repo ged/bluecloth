@@ -31,7 +31,7 @@ end
 
 describe BlueCloth, "bugfixes" do
 	include BlueCloth::TestConstants,
-		BlueClothMatchers
+		BlueCloth::Matchers
 
 	before( :all ) do
 		@basedir = Pathname.new( __FILE__ ).dirname.parent

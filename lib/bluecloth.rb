@@ -130,7 +130,7 @@ class BlueCloth < String
 	LESS_THAN_TAB_WIDTH = TAB_WIDTH - 1
 
 	# The tag-closing string -- set to '>' for HTML
-	EMPTY_ELEMENT_SUFFIX = "/>";
+	EMPTY_ELEMENT_SUFFIX = " />";
 
 	# Table of MD5 sums for escaped characters
 	ESCAPE_TABLE = {}
@@ -941,10 +941,10 @@ class BlueCloth < String
 
 
 	# Pattern to match strong emphasis in Markdown text
-	BoldRegexp = %r{ (\*\*|__) (\S|\S.+?\S) \1 }x
+	BoldRegexp = %r{ (\*\*|__) (\S|\S.*?\S) \1 }x
 
 	# Pattern to match normal emphasis in Markdown text
-	ItalicRegexp = %r{ (\*|_) (\S|\S.+?\S) \1 }x
+	ItalicRegexp = %r{ (\*|_) (\S|\S.*?\S) \1 }x
 
 	### Transform italic- and bold-encoded text in a copy of the specified +str+
 	### and return it.

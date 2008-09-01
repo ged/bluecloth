@@ -39,7 +39,8 @@ EXTDIR        = BASEDIR + 'ext'
 DOCSDIR       = BASEDIR + 'docs'
 PKGDIR        = BASEDIR + 'pkg'
 
-PKG_NAME      = 'bluecloth'
+PROJECT_NAME  = 'BlueCloth'
+PKG_NAME      = PROJECT_NAME.downcase
 PKG_SUMMARY   = 'BlueCloth is a Ruby implementation of Markdown'
 VERSION_FILE  = LIBDIR + 'bluecloth.rb'
 PKG_VERSION   = VERSION_FILE.read[ /VERSION = '(\d+\.\d+\.\d+)'/, 1 ]
@@ -107,6 +108,7 @@ SNAPSHOT_PKG_NAME = "#{PKG_FILE_NAME}.#{PKG_BUILD}"
 SNAPSHOT_GEM_NAME = "#{SNAPSHOT_PKG_NAME}.gem"
 
 # Documentation constants
+RDOCDIR = DOCSDIR + 'api'
 RDOC_OPTIONS = [
 	'-w', '4',
 	'-SHN',
@@ -173,6 +175,9 @@ GEMSPEC   = Gem::Specification.new do |gem|
 		gem.requirements << [ name, version ].compact.join(' ')
 	end
 end
+
+# Manual-generation config
+MANUALDIR = DOCSDIR + 'manual'
 
 $trace = Rake.application.options.trace ? true : false
 $dryrun = Rake.application.options.dryrun ? true : false

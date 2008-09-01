@@ -1,10 +1,21 @@
 #!/usr/bin/env ruby
 
-require 'bluecloth'
-require 'spec/matchers'
+begin
+	require 'bluecloth'
+	require 'diff/lcs'
+	require 'diff/lcs/callbacks'
+	require 'spec/lib/constants'
+rescue LoadError
+	unless Object.const_defined?( :Gem )
+		require 'rubygems'
+		retry
+	end
+	raise
+end
+
 
 ### Fixturing functions
-module BlueClothMatchers
+module BlueCloth::Matchers
 
 	class TransformMatcher
 		
@@ -18,13 +29,14 @@ module BlueClothMatchers
 		def matches?( bluecloth )
 			@bluecloth = bluecloth
 			@output_html = bluecloth.to_html
-			return @output_html == @html
+			return @output_html.strip == @html.strip
 		end
 		
 		### Build a failure message for the matching case.
 		def failure_message
-			return "Expected the generated html:\n\n  %p\n\nto be the same as:\n\n  %p\n\n" %
-				[ @output_html, @html ]
+			patch = self.make_patch( @html, @output_html )
+			return "Expected the generated html:\n\n  %p\n\nto be the same as:\n\n  %p\n\nDiffs:\n\n%s" %
+				[ @output_html, @html, patch ]
 		end
 		
 		### Build a failure message for the non-matching case.
@@ -32,6 +44,32 @@ module BlueClothMatchers
 			return "Expected the generated html:\n\n  %p\n\nnot to be the same as:\n\n  %p\n\n" %
 				[ @output_html, @html ]
 		end
+		
+		### Compute a patch between the given +expected+ output and the +actual+ output
+		### and return it as a string.
+		def make_patch( expected, actual )
+			diffs = Diff::LCS.sdiff( expected.split("\n"), actual.split("\n"),
+				Diff::LCS::ContextDiffCallbacks )
+
+			maxcol = diffs.flatten.
+				collect {|d| [d.old_element.to_s.length, d.new_element.to_s.length ] }.
+				flatten.max || 0
+			maxcol += 4
+
+			patch = "              %#{maxcol}s | %s\n" % [ "Expected", "Actual" ]
+			patch << diffs.collect do |changeset|
+				changeset.collect do |change|
+					"%s [%03d, %03d]: %#{maxcol}s | %-#{maxcol}s" % [
+						change.action,
+						change.old_position,
+						change.new_position,
+						change.old_element.inspect,
+						change.new_element.inspect,
+					]
+				end.join("\n")
+			end.join("\n---\n")
+		end
+		
 	end
 
 
@@ -86,14 +124,13 @@ module BlueClothMatchers
 			html.gsub!( /^#{indent}|\A\n|\n\t*\Z/m, '' )
 		end
 		
-		return BlueClothMatchers::TransformMatcher.new( html )
+		return BlueCloth::Matchers::TransformMatcher.new( html )
 	end
 	
 	### Generate a matcher that expects to match the given +regexp+.
 	def be_transformed_into_html_matching( regexp )
-		return BlueClothMatchers::TransformMatcher.new( regexp )
+		return BlueCloth::Matchers::TransformMatcher.new( regexp )
 	end
 	
-end
-
+end # module BlueCloth::Matchers
 

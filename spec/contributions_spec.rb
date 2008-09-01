@@ -31,7 +31,7 @@ end
 
 describe BlueCloth, " contributed features" do
 	include BlueCloth::TestConstants,
-		BlueClothMatchers
+		BlueCloth::Matchers
 
 	### HTML filter options contributed by Florian Gross.
 	describe "Florian Gross's HTML filtering" do

@@ -11,9 +11,10 @@ BEGIN {
 
 begin
 	require 'spec/runner'
-	require 'logger'
+
 	require 'bluecloth'
 	require 'spec/lib/constants'
+	require 'spec/lib/helpers'
 	require 'spec/lib/matchers'
 rescue LoadError
 	unless Object.const_defined?( :Gem )
@@ -31,7 +32,7 @@ end
 
 describe BlueCloth, "-- MarkdownTest 1.0: " do
 	include BlueCloth::TestConstants,
-		BlueClothMatchers
+		BlueCloth::Matchers
 
 	markdowntest_dir = Pathname.new( __FILE__ ).dirname + 'data/markdowntest'
 	Pathname.glob( markdowntest_dir + '*.text' ).each do |textfile|

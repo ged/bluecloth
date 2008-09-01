@@ -31,7 +31,7 @@ end
 
 describe BlueCloth, "-- Markdown" do
 	include BlueCloth::TestConstants,
-		BlueClothMatchers
+		BlueCloth::Matchers
 
 
 	### Output some debugging if $DEBUG is true
