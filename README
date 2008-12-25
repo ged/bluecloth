@@ -1,116 +1,71 @@
+= BlueCloth 2
 
-BlueCloth
-=========
-
-Version 1.0.0 - 2004/08/24
-
-Original version by John Gruber <http://daringfireball.net/>.  
-Ruby port by Michael Granger <http://www.deveiate.org/>.
-
-BlueCloth is a Ruby implementation of [Markdown][1], a text-to-HTML conversion
-tool for web writers. To quote from the project page: Markdown allows you to
-write using an easy-to-read, easy-to-write plain text format, then convert it to
-structurally valid XHTML (or HTML).
+BlueCloth is a Ruby implementation of John Gruber's
+Markdown[http://daringfireball.net/projects/markdown/], a text-to-HTML
+conversion tool for web writers. To quote from the project page: Markdown
+allows you to write using an easy-to-read, easy-to-write plain text format,
+then convert it to structurally valid XHTML (or HTML).
 
 It borrows a naming convention and several helpings of interface from
-[Redcloth][2], [Why the Lucky Stiff][3]'s processor for a similar text-to-HTML
-conversion syntax called [Textile][4].
+Redcloth[http://www.whytheluckystiff.net/ruby/redcloth/], 
+{Why the Lucky Stiff}[http://www.whytheluckystiff.net/] 's processor for a 
+similar text-to-HTML conversion syntax called 
+Textile[http://www.textism.com/tools/textile/].
+
+BlueCloth 2 is a complete rewrite using David Parsons' Discount library, a C
+implementation of Markdown. I rewrote it using the extension for speed and
+accuracy; the original was a quick hack I wrote in a few days for my own use
+just to avoid having to shell out to Markdown.pl, and it was quite buggy and
+slow. I apologize to all the good people that sent me patches for it that were
+never released.
 
 
-Installation
-------------
+== Authors
 
-You can install this module either by running the included `install.rb` script,
-or by simply copying `lib/bluecloth.rb` to a directory in your load path.
+* Michael Granger (ged@FaerieMUD.org)
 
 
-Dependencies
-------------
-
-BlueCloth uses the `StringScanner` class from the `strscan` library, which comes
-with Ruby 1.8.x and later or may be downloaded from the RAA for earlier
-versions, and the `logger` library, which is also included in 1.8.x and later.
-
-
-Example Usage
--------------
-
-The BlueCloth class is a subclass of Ruby's String, and can be used thusly:
-
-    bc = BlueCloth::new( str )
-    puts bc.to_html
-
-This `README` file is an example of Markdown syntax. The sample program
-`bluecloth` in the `bin/` directory can be used to convert this (or any other)
-file with Markdown syntax into HTML:
-
-    $ bin/bluecloth README > README.html
-
-
-Acknowledgements
-----------------
-
-This library is a port of the canonical Perl one, and so owes most of its
-functionality to its author, John Gruber. The bugs in this code are most
-certainly an artifact of my porting it and not an artifact of the excellent code
-from which it is derived.
-
-It also, as mentioned before, borrows its API liberally from RedCloth, both for
-compatibility's sake, and because I think Why's code is beautiful. His excellent
-code and peerless prose have been an inspiration to me, and this module is
-intended as the sincerest flattery.
-
-Also contributing to any success this module may enjoy are those among my peers
-who have taken the time to help out, either by submitting patches, testing, or
-offering suggestions and review:
+== Contributors
 
 * Martin Chase <stillflame@FaerieMUD.org>
 * Florian Gross <flgr@ccan.de>
 
-
-Author/Legal
-------------
-
-Original version:  
-  Copyright (c) 2004, John Gruber  
-  <http://daringfireball.net/>  
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  * Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-  * Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-  * Neither the name "Markdown" nor the names of its contributors may
-	be used to endorse or promote products derived from this software
-	without specific prior written permission.
-
-  This software is provided by the copyright holders and contributors "as
-  is" and any express or implied warranties, including, but not limited
-  to, the implied warranties of merchantability and fitness for a
-  particular purpose are disclaimed. In no event shall the copyright owner
-  or contributors be liable for any direct, indirect, incidental, special,
-  exemplary, or consequential damages (including, but not limited to,
-  procurement of substitute goods or services; loss of use, data, or
-  profits; or business interruption) however caused and on any theory of
-  liability, whether in contract, strict liability, or tort (including
-  negligence or otherwise) arising in any way out of the use of this
-  software, even if advised of the possibility of such damage.
+This product includes software developed by David Loren 
+Parsons <http://www.pell.portland.or.us/~orc>.
 
 
-Ruby version:  
-  See the LICENSE file for details.
+== Installation
 
-[1]: http://daringfireball.net/projects/markdown/
-[2]: http://www.whytheluckystiff.net/ruby/redcloth/
-[3]: http://www.whytheluckystiff.net/
-[4]: http://www.textism.com/tools/textile/
+If you use RubyGems, you can install it via:
 
-$Id$  
-$URL$
+  $ sudo gem install bluecloth
+
+You can also install as a site library via the Rakefile:
+
+  $ wget http://deveiate.org/code/bluecloth-x.y.z.tar.gz
+  $ tar xzvf bluecloth-x.y.z.tar.gz
+  $ cd bluecloth-x.y.z
+  $ sudo rake install
+
+
+== Source 
+
+You can check out the current development source with Subversion from the
+following URL:
+
+  svn://deveiate.org/BlueCloth/trunk
+
+You can report bugs, suggest improvements, or check on development activity at 
+the project page:
+
+  http://deveiate.org/projects/BlueCloth/
+
+
+== License
+
+See the LICENSE file included with the distribution for licensing and 
+copyright details.
+
+The licensing terms of Discount are described in the LICENSE.discount file, 
+also included with the distribution.
+

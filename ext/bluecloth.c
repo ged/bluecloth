@@ -31,10 +31,10 @@ VALUE bluecloth_default_opthash;
 
 /* Get a Discount document for the specified text */
 static MMIOT *
-bluecloth_alloc( VALUE text ) {
+bluecloth_alloc( VALUE text, int flags ) {
 	MMIOT *document;
 	
-	document = mkd_string( RSTRING_PTR(text), RSTRING_LEN(text), 0 );
+	document = mkd_string( RSTRING_PTR(text), RSTRING_LEN(text), flags );
 	if ( !document ) rb_sys_fail( RSTRING_PTR(text) );
 	
 	return document;
@@ -158,8 +158,27 @@ bluecloth_s_discount_version( VALUE klass ) {
  *
  * Create a new BlueCloth object that will process the given +string+. The +options+ 
  * argument is a Hash that can be used to control the generated markup, and to 
- * enable/disable extensions. See the documentation for DEFAULT_OPTIONS for the
- * available settings.
+ * enable/disable extensions. The supported options are:
+ * 
+ * [:remove_links]
+ *   Ignore links in Markdown, and escape A tags in the output. Defaults to +false+.
+ * [:remove_images]
+ *   Ignore images in Markdown, and escape IMG tags in the output. Defaults to +false+.
+ * [:smartypants]
+ *   Do Smartypants-style mangling of quotes, dashes, or ellipses. Defaults to +true+.
+ * [:pseudoprotocols]
+ *   Support Discount's pseudo-protocol links. Defaults to +false+.
+ * [:pandoc_headers]
+ *   Support the extraction of 
+ *   {Pandoc headers}[http://johnmacfarlane.net/pandoc/README.html#title-blocks], which 
+ *   can be fetched as a Hash via the #header method. Defaults to +false+.
+ * [:header_labels]
+ *   Generate ID attributes for all headers. Defaults to +false+.
+ * [:escape_html]
+ *   Escape all HTML in the input string. Defaults to +false+.
+ * [:strict_mode]
+ *   Disables Discount's relaxed emphasis (ignores underscores in the middle of words) and
+ *   superscript notation. Defaults to +true+.
  * 
  */
 static VALUE 
@@ -167,6 +186,7 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 	if ( !bluecloth_check_ptr(self) ) {
 		MMIOT *document;
 		VALUE text, textcopy, optflags, fullhash, opthash = Qnil;
+		int flags = 0;
 
 		rb_scan_args( argc, argv, "02", &text, &opthash );
 
@@ -186,8 +206,9 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 		optflags = rb_funcall( bluecloth_cBlueCloth, rb_intern("flags_from_opthash"), 1, opthash );
 		fullhash = rb_funcall( bluecloth_cBlueCloth, rb_intern("opthash_from_flags"), 1, optflags );
 
-		DATA_PTR( self ) = document = bluecloth_alloc( text );
-		if ( !mkd_compile(document, NUM2INT(optflags)) )
+		flags = NUM2INT( optflags );
+		DATA_PTR( self ) = document = bluecloth_alloc( text, flags );
+		if ( !mkd_compile(document, flags) )
 			rb_raise( rb_eRuntimeError, "Failed to compile markdown" );
 
 		textcopy = rb_str_dup( text );
@@ -248,25 +269,47 @@ void Init_bluecloth_ext( void ) {
 
 	rb_define_method( bluecloth_cBlueCloth, "to_html", bluecloth_to_html, 0 );
 	
+	/* The original Markdown text the object was constructed with */
 	rb_define_attr( bluecloth_cBlueCloth, "text", 1, 0 );
+	
+	/* The options hash that describes the options in effect when the object was created */
 	rb_define_attr( bluecloth_cBlueCloth, "options", 1, 0 );
 	
 	/* --- Constants ----- */
 	/* special flags for markdown() and mkd_text() */
+
+	/* Do not process `[]' and remove A tags from the output. */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOLINKS", INT2FIX(MKD_NOLINKS) );
+
+	/* Do not process `![]' and remove IMG tags from the output. */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOIMAGE", INT2FIX(MKD_NOIMAGE) );
+
+	/* Do not do Smartypants-style mangling of quotes, dashes, or ellipses. */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOPANTS", INT2FIX(MKD_NOPANTS) );
+	
+	/* Escape all opening angle brackets in the input text instead of allowing block-level HTML */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHTML",  INT2FIX(MKD_NOHTML) );
+
+	/* disable SUPERSCRIPT, RELAXED_EMPHASIS */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_STRICT",  INT2FIX(MKD_STRICT) );
+	
+	/* don't expand `_` and `*` */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TAGTEXT", INT2FIX(MKD_TAGTEXT) );
+	
+	/* don't allow pseudo-protocols */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",  INT2FIX(MKD_NO_EXT) );
-	rb_define_const( bluecloth_cBlueCloth, "MKD_CDATA",   INT2FIX(MKD_CDATA) );
+	
+	/* do table-of-contents processing */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TOC",     INT2FIX(MKD_TOC) );
+	
+	/* MKD_NOLINKS|MKD_NOIMAGE|MKD_TAGTEXT */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_EMBED",   INT2FIX(MKD_EMBED) );
 
-	/* special flags for mkd_in() and mkd_string() */
+	/* -- special flags for mkd_in() and mkd_string() */
+
+	/* don't process header blocks */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHEADER", INT2FIX(MKD_NOHEADER) );
-	rb_define_const( bluecloth_cBlueCloth, "MKD_TABSTOP",  INT2FIX(MKD_TABSTOP) );
+
 
 	/* Make sure the Ruby side is loaded */
 	rb_require( "bluecloth" );

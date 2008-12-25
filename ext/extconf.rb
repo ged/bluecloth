@@ -29,3 +29,5 @@ end
 have_header( 'mkdio.h' ) or fail( "missing mkdio.h" )
 
 create_makefile( 'bluecloth_ext' )
+
+FileUtils.rm_rf( 'conftest.dSYM' ) # MacOS X cleanup

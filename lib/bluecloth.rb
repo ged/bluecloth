@@ -13,6 +13,9 @@
 # * Martin Chase <stillflame@FaerieMUD.org> - Peer review, helpful suggestions
 # * Florian Gross <flgr@ccan.de> - Filter options, suggestions
 #
+# This product includes software developed by David Loren Parsons
+# <http://www.pell.portland.or.us/~orc>.
+# 
 # == Version
 #
 #  $Id$
@@ -34,18 +37,16 @@ class BlueCloth
 	# SVN Id tag
 	SVNID = %q$Id$
 
-	# The default options
+	# The defaults for all supported options.
 	DEFAULT_OPTIONS = {
 		:remove_links    => false,
 		:remove_images   => false,
 		:smartypants     => true,
-		:tagtext_enabled => false,
 		:pseudoprotocols => false,
 		:pandoc_headers  => false,
 		:header_labels   => false,
-		:strip_html      => false,
+		:escape_html     => false,
 		:strict_mode     => true,
-		:xml_mode        => false,
 	}.freeze
 
 	# The number of characters of the original markdown source to include in the 
@@ -65,7 +66,7 @@ class BlueCloth
 
 		# Support BlueCloth1-style options
 		if opthash == :filter_html || opthash == [:filter_html]
-			opthash = { :strip_html => true }
+			opthash = { :escape_html => true }
 		elsif opthash == :filter_styles
 			opthash = {}
 		elsif !opthash.is_a?( Hash )
@@ -77,13 +78,11 @@ class BlueCloth
         if   opthash[:remove_links]    then flags |= MKD_NOLINKS;  end
         if   opthash[:remove_images]   then flags |= MKD_NOIMAGE;  end
         if ! opthash[:smartypants]     then flags |= MKD_NOPANTS;  end
-        if   opthash[:tagtext_enabled] then flags |= MKD_TAGTEXT;  end
         if ! opthash[:pseudoprotocols] then flags |= MKD_NO_EXT;   end
         if ! opthash[:pandoc_headers]  then flags |= MKD_NOHEADER; end
         if   opthash[:header_labels]   then flags |= MKD_TOC;      end
-        if   opthash[:strip_html]      then flags |= MKD_NOHTML;   end
+        if   opthash[:escape_html]     then flags |= MKD_NOHTML;   end
         if   opthash[:strict_mode]     then flags |= MKD_STRICT;   end
-        if   opthash[:xml_mode]        then flags |= MKD_CDATA;    end
 
 		return flags
 	end
@@ -97,13 +96,11 @@ class BlueCloth
         if  ( flags & MKD_NOLINKS  ).nonzero? then opthash[:remove_links]    = true; end
         if  ( flags & MKD_NOIMAGE  ).nonzero? then opthash[:remove_images]   = true; end
         if !( flags & MKD_NOPANTS  ).nonzero? then opthash[:smartypants]     = true; end
-        if  ( flags & MKD_TAGTEXT  ).nonzero? then opthash[:tagtext_enabled] = true; end
         if !( flags & MKD_NO_EXT   ).nonzero? then opthash[:pseudoprotocols] = true; end
         if !( flags & MKD_NOHEADER ).nonzero? then opthash[:pandoc_headers]  = true; end
         if  ( flags & MKD_TOC      ).nonzero? then opthash[:header_labels]   = true; end
-        if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:strip_html]      = true; end
+        if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]      = true; end
         if  ( flags & MKD_STRICT   ).nonzero? then opthash[:strict_mode]     = true; end
-        if  ( flags & MKD_CDATA    ).nonzero? then opthash[:xml_mode]        = true; end
 
 		return opthash
 	end
@@ -126,10 +123,10 @@ class BlueCloth
 	end
 
 
-	### Backward-compatible method: return +true+ if the object's :strip_html option was
+	### Backward-compatible method: return +true+ if the object's :escape_html option was
 	### set.
 	def filter_html
-		return self.options[:strip_html]
+		return self.options[:escape_html]
 	end
 	
 	
@@ -138,7 +135,7 @@ class BlueCloth
 	def filter_html=( arg )
 		raise NotImplementedError,
 			"Sorry, this version of BlueCloth no longer supports toggling of HTML filtering" +
-			"via #filter_html=. You now must create the BlueCloth object with the :strip_html" +
+			"via #filter_html=. You now must create the BlueCloth object with the :escape_html" +
 			"option set to true instead."
 	end
 	

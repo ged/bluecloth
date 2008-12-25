@@ -1,0 +1,538 @@
+-- Thu, 25 Dec 2008 03:29:19 -0000 by deveiant (r89) -----
+   Added:   ext/docheader.c (new)
+            ext/resource.c (new)
+            Rakefile.local (new)
+            ext/mkdio.c (new)
+            ext/mkdio.h (new)
+            ext/amalloc.h (new) (and 11 other/s)
+   Changed: README
+            project.yml
+            spec/lib/matchers.rb
+            experiments/re-overflow.rb
+            .irbrc
+            Rakefile (and 13 other/s)
+
+   First working commit of Discount-backed BlueCloth 2.0.
+
+
+-- Mon, 01 Sep 2008 22:24:13 -0000 by deveiant (r87) -----
+   Added:   LICENSE (new)
+            spec/lib/helpers.rb (new)
+   Changed: README
+            Rakefile
+            spec/bluecloth_spec.rb
+            spec/contributions_spec.rb
+            spec/lib/matchers.rb
+            spec/markdowntest_spec.rb (and 3 other/s)
+   Deleted: tests
+
+    * Checkpoint commit of MarkdownTest integration
+
+
+-- Wed, 20 Aug 2008 21:46:31 -0000 by deveiant (r86) -----
+   Added:   project.yml (new)
+            spec/data/markdowntest/Markdown Documentation - Syntax.text (new)
+            spec/data/re-overflow2.txt (new)
+            spec/lib/constants.rb (new)
+            spec/data/markdowntest/Auto links.text (new)
+            spec/data/markdowntest/Inline HTML comments.text (new) (and 52 other/s)
+   Changed: /trunk
+            tests/contrib.tests.rb
+            web/index.html
+            lib/bluecloth.rb
+            bin/bluecloth
+   Deleted: LICENSE.txt
+            MANIFEST
+            install.rb
+            LICENSE
+            docs/CATALOG
+            makedist.rb (and 3 other/s)
+
+   Adding MarkdownTest tests, new build system. [broken build]
+
+
+-- Thu, 12 May 2005 21:31:59 -0000 by ged (r76) -----
+   Added:   tests/bug.tests.rb
+            -> renamed from /trunk/tests/10_Bug.tests.rb@r74
+            tests/contrib.tests.rb
+            -> renamed from /trunk/tests/15_Contrib.tests.rb@r74
+            tests/markdown.tests.rb
+            -> renamed from /trunk/tests/05_Markdown.tests.rb@r74
+            tests/class.tests.rb
+            -> renamed from /trunk/tests/00_Class.tests.rb@r74
+   Deleted: tests/10_Bug.tests.rb
+            tests/00_Class.tests.rb
+            tests/15_Contrib.tests.rb
+            tests/05_Markdown.tests.rb
+
+   - Renamed tests without goofy numbers.
+
+
+-- Thu, 12 May 2005 20:31:10 -0000 by ged (r75) -----
+   Added:   LICENSE.txt (new)
+   Changed: README
+
+   - Updated license to BSD/Ruby's; included LICENSE.txt from Ruby dist.
+
+
+-- Thu, 12 May 2005 19:48:27 -0000 by ged (r74) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Added tests to make sure I dont break lists trying to fix #15
+   - Added tests for Markdown 1.0.1 syntax (#18).
+
+
+-- Thu, 12 May 2005 19:26:33 -0000 by ged (r73) -----
+   Changed: tests/10_Bug.tests.rb
+
+   - Added new tests for bug #17 (two-character bold/italic bug)
+   - Added new test for bug #12 (Ruby with warnings enabled causes ArgumentError)
+
+
+-- Tue, 31 Aug 2004 05:19:45 -0000 by ged (r72) -----
+   Changed: MANIFEST
+            CHANGES
+
+   - Updated for 1.0.0fc3 release.
+
+
+-- Wed, 25 Aug 2004 05:27:15 -0000 by ged (r69) -----
+   Changed: lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Fixed bug introduced by the last bugfix, fixed tests that missed the new bug.
+
+
+-- Wed, 25 Aug 2004 05:14:37 -0000 by ged (r68) -----
+   Added:   experiments/re-overflow2.rb (new)
+            tests/data/re-overflow2.txt (new)
+   Changed: tests/10_Bug.tests.rb
+            lib/bluecloth.rb
+
+   - Tracked down and fixed another regexp engine overflow bug; added a new test,
+   datafile, and minimal testcase that illustrates it.
+
+
+-- Tue, 24 Aug 2004 14:57:17 -0000 by ged (r66) -----
+   Changed: .gemspec
+
+   - Updated to v1.0.0.
+
+
+-- Tue, 24 Aug 2004 14:56:47 -0000 by ged (r65) -----
+   Changed: README
+
+   - Updated to v1.0.0.
+
+
+-- Tue, 24 Aug 2004 14:53:32 -0000 by ged (r64) -----
+   Changed: CHANGES
+
+   - Updated to 20040824.
+
+
+-- Tue, 24 Aug 2004 14:52:05 -0000 by ged (r63) -----
+   Changed: /trunk
+
+   - Added CHANGES.xml to ignore property for root directory.
+
+
+-- Tue, 24 Aug 2004 14:48:44 -0000 by ged (r62) -----
+   Changed: lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Brought list of block-level tags up to date with Markdown 1.0's list
+   - Propagated fix for overflow to the other two block-match patterns.
+   - Abstracted list-item patterns out into constants to closer match Markdown's
+   code and to expose them for use in other code.
+   - Fixed indentation of <pre> blocks inside blockquotes.
+   - Added new tests for all of the above.
+
+
+-- Sun, 22 Aug 2004 19:28:23 -0000 by ged (r61) -----
+   Changed: lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Fixed re-engine overflow for all tested cases (thanks to Martin Chase
+   <stillflame@FaerieMUD.org> for the fix).
+   - Wrote some additional tests to be sure the block-level html escaper is working
+   after the above fix.
+
+
+-- Sun, 22 Aug 2004 19:26:25 -0000 by ged (r60) -----
+   Changed: tests/10_Bug.tests.rb
+
+   - Removed skip of overflow test.
+
+
+-- Sun, 22 Aug 2004 19:24:35 -0000 by ged (r59) -----
+   Changed: experiments/re-overflow.rb
+
+   - "Fixed" the test case so it overflows again.
+
+
+-- Mon, 09 Aug 2004 05:12:02 -0000 by deveiant (r58) -----
+   Changed: CHANGES
+
+   - Updated to 20040808.
+
+
+-- Mon, 09 Aug 2004 01:16:14 -0000 by deveiant (r57) -----
+   Changed: tests/bctestcase.rb
+
+   - Modified to work from wherever the test is run (RPA compat).
+
+
+-- Mon, 09 Aug 2004 01:15:57 -0000 by deveiant (r56) -----
+   Changed: test.rb
+
+   - Modified to work from wherever the test is run (RPA compat).
+
+
+-- Mon, 09 Aug 2004 01:15:27 -0000 by deveiant (r55) -----
+   Changed: .gemspec
+
+   - Updated version attribute.
+
+
+-- Mon, 09 Aug 2004 01:14:58 -0000 by deveiant (r54) -----
+   Changed: lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Brought markdown syntax up to date with Markdown 1.0fc1.
+
+
+-- Mon, 09 Aug 2004 01:13:16 -0000 by deveiant (r53) -----
+   Changed: tests/TEMPLATE.rb.tpl
+            tests/10_Bug.tests.rb
+            tests/00_Class.tests.rb
+            tests/15_Contrib.tests.rb
+
+   - Made the require-header work wherever the test is run from (RPA compat).
+
+
+-- Mon, 21 Jun 2004 15:20:59 -0000 by deveiant (r51) -----
+   Added:   docs/makedocs.rb (new)
+            docs/CATALOG (new)
+            CHANGES (new)
+            docs (new)
+            experiments/re-overflow.rb (new)
+   Changed: README
+            /trunk
+            tests/10_Bug.tests.rb
+            lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Brought up to date with Markdown 1.0b7.
+   - Ignore list properties on the base and docs directories updated.
+
+
+-- Wed, 02 Jun 2004 13:37:15 -0000 by deveiant (r50) -----
+   Changed: bin/bluecloth
+
+   - Commented out non-functional --output option for now.
+
+
+-- Wed, 02 Jun 2004 03:30:18 -0000 by deveiant (r49) -----
+   Added:   tests/data/re-overflow.txt (new)
+
+   Initial checkin.
+
+
+-- Wed, 02 Jun 2004 03:29:31 -0000 by deveiant (r48) -----
+   Changed: tests/10_Bug.tests.rb
+
+   - Added test for bug #574.
+
+
+-- Wed, 02 Jun 2004 03:21:04 -0000 by deveiant (r47) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Test for bug #620 - Unresolved reference-style links doubled the character
+   immediately after them.
+   - Added additional test email addresses, including ones that use extended latin
+   charset.
+   - Added bug reference to a test.
+
+
+-- Wed, 02 Jun 2004 03:19:41 -0000 by deveiant (r46) -----
+   Changed: lib/bluecloth.rb
+
+   - Fix for bug #620 - Unresolved reference-style links doubled the character
+   immediately after them.
+
+
+-- Fri, 14 May 2004 02:43:17 -0000 by deveiant (r45) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Added tests for bug #568 (Two sets of bold text on one line doesn't render
+   properly). Tests confirmed that two sets of bold text did work, but single
+   characters being bolded does not.
+
+
+-- Fri, 14 May 2004 02:41:52 -0000 by deveiant (r44) -----
+   Changed: lib/bluecloth.rb
+
+   - Fixed bug with bolding of single characters (bug #568).
+
+
+-- Tue, 04 May 2004 14:35:11 -0000 by deveiant (r43) -----
+   Changed: lib/bluecloth.rb
+            tests/05_Markdown.tests.rb
+
+   - Additional fixes and tests for bug #537.
+
+
+-- Fri, 30 Apr 2004 03:40:38 -0000 by deveiant (r41) -----
+   Changed: MANIFEST
+
+   - Added bin/ directory.
+
+
+-- Fri, 30 Apr 2004 03:40:04 -0000 by deveiant (r40) -----
+   Changed: README
+
+   - Set date.
+
+
+-- Fri, 30 Apr 2004 03:39:24 -0000 by deveiant (r39) -----
+   Changed: tests/15_Contrib.tests.rb
+
+   - Added test for Bug #543 (Safe mode does not work when there are no left
+   angle-brackets in the source).
+
+
+-- Fri, 30 Apr 2004 03:38:42 -0000 by deveiant (r38) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Added test for email address encoding (Bug #537).
+   - Added test for bug #541 (Leading line of codeblock with more than one tab
+   width of indent mistakenly unindented).
+
+
+-- Fri, 30 Apr 2004 03:35:26 -0000 by deveiant (r37) -----
+   Changed: lib/bluecloth.rb
+
+   - Fix for bug #543 (Safe mode does not work when there are no left
+   angle-brackets in the source).
+
+
+-- Fri, 30 Apr 2004 03:33:01 -0000 by deveiant (r36) -----
+   Changed: lib/bluecloth.rb
+
+   - Fix for bug #541 (Leading line of codeblock with more than one tab
+   width of indent mistakenly unindented)
+
+
+-- Fri, 30 Apr 2004 03:31:37 -0000 by deveiant (r35) -----
+   Changed: lib/bluecloth.rb
+
+   - Fix for bug #537. Fix suggested by Marek Janukowicz.
+
+
+-- Fri, 23 Apr 2004 04:47:42 -0000 by deveiant (r32) -----
+   Changed: makedist.rb
+
+   - Temporary fixes until I have time to integrate SVN stuff.
+
+
+-- Fri, 23 Apr 2004 04:46:51 -0000 by deveiant (r31) -----
+   Changed: .gemspec
+
+   - Version bump.
+
+
+-- Fri, 23 Apr 2004 04:46:15 -0000 by deveiant (r30) -----
+   Changed: README
+
+   - Brought in line with most-recent release.
+
+
+-- Fri, 23 Apr 2004 04:40:50 -0000 by deveiant (r29) -----
+   Changed: lib/bluecloth.rb
+
+   - Version bump.
+
+
+-- Fri, 23 Apr 2004 04:39:05 -0000 by deveiant (r28) -----
+   Changed: lib/bluecloth.rb
+
+   - Bugfixes for bugs 524 and 525. Thanks to David Heinemeier Hansson and Javier
+   Goizueta for bug reports and fixes.
+
+
+-- Fri, 23 Apr 2004 04:34:31 -0000 by deveiant (r27) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Test for bugs 524 and 525
+
+
+-- Fri, 16 Apr 2004 01:55:19 -0000 by deveiant (r25) -----
+   Changed: README
+
+   - Corrected version
+
+
+-- Fri, 16 Apr 2004 01:53:52 -0000 by deveiant (r24) -----
+   Changed: lib/bluecloth.rb
+
+   - Brought Version up to date.
+
+
+-- Fri, 16 Apr 2004 01:52:17 -0000 by deveiant (r23) -----
+   Changed: /trunk
+
+   - Updated ignore metadata.
+
+
+-- Fri, 16 Apr 2004 01:51:14 -0000 by deveiant (r22) -----
+   Added:   tests/data/antsugar.txt (new)
+            web (new)
+            web/base.css (new)
+            .gemspec (new)
+            tests/data/ml-announce.txt (new)
+            web/index.html (new) (and 3 other/s)
+
+   Initial checkin.
+
+
+-- Fri, 16 Apr 2004 01:50:31 -0000 by deveiant (r21) -----
+   Changed: MANIFEST
+
+   - Changed tests/ pattern to catch all tests.
+   - Added CHANGES.
+   - Dropped MANIFEST.
+
+
+-- Fri, 16 Apr 2004 01:49:46 -0000 by deveiant (r20) -----
+   Changed: install.rb
+
+   - Added missing dependency check for devel-logger.
+
+
+-- Fri, 16 Apr 2004 01:49:12 -0000 by deveiant (r19) -----
+   Changed: lib/bluecloth.rb
+
+   - Added contributors section to the header.
+   - Integrated html- and style-filtering patch from Florian Gross <flgr@ccan.de>.
+   - Corrections to RedCloth-compatibility.
+   - Removed log from renderstate, as it's an attribute of the string itself.
+
+
+-- Fri, 16 Apr 2004 01:48:27 -0000 by deveiant (r18) -----
+   Changed: README
+
+   - Added contributors section to the header.
+   - Integrated html- and style-filtering patch from Florian Gross <flgr@ccan.de>.
+   - Corrections to RedCloth-compatibility.
+   - Removed log from renderstate, as it's an attribute of the string itself.
+
+
+-- Mon, 12 Apr 2004 06:02:54 -0000 by deveiant (r15) -----
+   Changed: tests/10_Bug.tests.rb
+
+   - Added keywords.
+
+
+-- Mon, 12 Apr 2004 06:01:40 -0000 by deveiant (r14) -----
+   Changed: tests/10_Bug.tests.rb
+
+   - Updated comments/added to-do marker.
+
+
+-- Mon, 12 Apr 2004 05:47:16 -0000 by deveiant (r13) -----
+   Changed: /trunk
+
+   - Updated ignore list.
+
+
+-- Mon, 12 Apr 2004 05:46:49 -0000 by deveiant (r12) -----
+   Added:   bin (new)
+            bin/bluecloth (new)
+
+   Initial checkin.
+
+
+-- Mon, 12 Apr 2004 05:45:07 -0000 by deveiant (r11) -----
+   Changed: utils.rb
+
+   - Added a time() function for timing bits of code.
+
+
+-- Mon, 12 Apr 2004 05:43:10 -0000 by deveiant (r10) -----
+   Changed: lib/bluecloth.rb
+
+   - Changed keyword constants from CVS to SVN keywords.
+
+
+-- Mon, 12 Apr 2004 05:29:37 -0000 by deveiant (r9) -----
+   Changed: README
+
+   - Changed location of keyword stuff, added URL keyword.
+
+
+-- Mon, 12 Apr 2004 05:26:38 -0000 by deveiant (r8) -----
+   Changed: README
+
+   - Added the rest of the content.
+
+
+-- Mon, 12 Apr 2004 05:21:47 -0000 by deveiant (r7) -----
+   Changed: lib/bluecloth.rb
+
+   - Fixed license in header
+   - Fixed error message in exception class with no second argument.
+   - Removed unnecessary (and slllooowww) 'm' flag from HTML block matching
+   patterns.
+   - Fixed code-span scanning to match spans that occur at the beginning of the
+   line.
+   - Fixed error in code-span exception case.
+
+
+-- Mon, 12 Apr 2004 05:17:45 -0000 by deveiant (r6) -----
+   Added:   tests/10_Bug.tests.rb
+            -> renamed from /trunk/tests/10_Output.tests.rb@r5
+   Deleted: tests/10_Output.tests.rb
+
+   - Renamed to reflect repurposing.
+
+
+-- Mon, 12 Apr 2004 05:17:08 -0000 by deveiant (r5) -----
+   Changed: tests/10_Output.tests.rb
+
+   - Converted to bug-testing testcase.
+
+
+-- Mon, 12 Apr 2004 05:15:34 -0000 by deveiant (r4) -----
+   Changed: tests/05_Markdown.tests.rb
+
+   - Added some mode code span tests to catch bugs.
+
+
+-- Sun, 11 Apr 2004 04:40:29 -0000 by deveiant (r3) -----
+   Added:   MANIFEST (new)
+   Changed: /trunk
+            utils.rb
+            makedist.rb
+            install.rb
+
+   - Updated dist/install utilities/libs.
+
+
+-- Sat, 10 Apr 2004 20:36:46 -0000 by deveiant (r2) -----
+   Deleted: Markdown_1.0b4
+
+   Removed markdown reference source
+
+
+-- Sat, 10 Apr 2004 20:35:02 -0000 by deveiant (r1) -----
+   Added:   README (new)
+            /trunk (new)
+            utils.rb (new)
+            tests (new)
+            experiments (new)
+            makedist.rb (new) (and 18 other/s)
+
+   Initial checkin
+
+

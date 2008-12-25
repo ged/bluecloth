@@ -36,6 +36,10 @@ describe BlueCloth do
 		BlueCloth::Matchers
 
 
+	it "knows what version of Discount was used to build it" do
+		BlueCloth.discount_version.should =~ /^\d+\.\d+\.\d+.*RELAXED/
+	end
+
 	it "can build a flags bitmask out of an options hash" do
 		flags = BlueCloth.flags_from_opthash(
 			:remove_links => true,
@@ -57,11 +61,25 @@ describe BlueCloth do
 	
 	it "correctly applies the :remove_links option to the output" do
 		input = "An [example](http://url.com/). A <a href='http://example.com/'>link</a>."
-		bc = BlueCloth.new( input, :remove_links => true )
-		bc.to_html.should == 
-			"<p>An [example](http://url.com/). A &lt;a href='http://example.com/'>link</a>.</p>"
+		expected = "<p>An [example](http://url.com/). A &lt;a href='http://example.com/'>link</a>.</p>"
+
+		the_markdown( input, :remove_links => true ).should be_transformed_into( expected )
 	end
 	
+	it "correctly applies the :remove_images option to the output" do
+		input = %{An ![alt text](/path/img.jpg "Title"). An <img href='http://example.com/1.jpg' />.}
+		expected = %{<p>An ![alt text](/path/img.jpg "Title"). An &lt;img href='http://example.com/1.jpg' />.</p>}
+
+		the_markdown( input, :remove_images => true ).should be_transformed_into( expected )
+	end
+	
+	it "correctly applies the :smartypants option to the output" do
+		input = %{He was known to frequent that "other establishment"...}
+		expected = %{<p>He was known to frequent that &ldquo;other establishment&rdquo;&hellip;</p>}
+
+		the_markdown( input, :smartypants => true ).should be_transformed_into( expected )
+	end
+
 
 	### Test email address output
 	describe " email obfuscation" do
@@ -201,8 +219,6 @@ describe BlueCloth do
 			end
 		}			
 	end
-
-	debug_msg "Test sets: %p" % TestSets
 
 	# Auto-generate tests out of the test specifications
 	TestSets.each do |sname, section|

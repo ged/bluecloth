@@ -79,7 +79,7 @@ module BlueCloth::Matchers
 		def self::tidy_object
 			unless @tidy
 				require 'tidy'
-				soext = Config::CONFIG['LIBRUBY_SO'].sub( /.*\./, '' )
+				soext = Config::CONFIG['LIBRUBY_ALIASES'].sub( /.*\./, '' )
 				Tidy.path = "libtidy.#{soext}"
 				@tidy = Tidy.new( TIDY_OPTIONS )
 			end

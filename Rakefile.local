@@ -5,6 +5,8 @@ EXT_MAKEFILE  = EXTDIR + 'Makefile'
 EXT_SOURCES   = FileList[ EXTDIR + '*.c' ]
 EXT_SO        = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
 
+GEMSPEC.extra_rdoc_files << 'LICENSE.discount'
+DOCFILES << 'LICENSE.discount'
 
 #####################################################################
 ###	T A S K S

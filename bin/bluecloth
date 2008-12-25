@@ -58,12 +58,12 @@ def main
 
 	ARGV.each {|file|
 		if file == '-'
-			contents = $stdin.readlines(nil)
+			contents = $stdin.read
 		else
-			contents = File::readlines( file, nil )
+			contents = File::read( file )
 		end
 
-		bc = BlueCloth::new( contents.join )
+		bc = BlueCloth::new( contents )
 		$stderr.puts "Using BlueCloth version #{BlueCloth::Version}"
 
 		if fragment
