@@ -32,7 +32,7 @@ describe BlueCloth, "-- MarkdownTest 1.0: " do
 		BlueCloth::Matchers
 
 	before( :all ) do
-		soext = Config::CONFIG['LIBRUBY_SO'].sub( /.*\./, '' )
+		soext = Config::CONFIG['LIBRUBY_ALIASES'].sub( /.*\./, '' )
 		@dlname = "libtidy.#{soext}"
 
 		begin
