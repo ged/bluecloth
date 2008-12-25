@@ -44,10 +44,17 @@ describe BlueCloth, "-- MarkdownTest 1.0: " do
 			@have_libtidy = true
 			@tidy_error = nil
 		end
+		
+		begin
+			require 'tidy'
+		rescue LoadError => err
+			@have_libtidy = false
+			@tidy_error = err.message
+		end
 	end
 	
 	before( :each ) do
-		pending( "These tests require #@dlname: #@tidy_error" ) unless @have_libtidy
+		pending( "These tests require the tidy library: #@tidy_error" ) unless @have_libtidy
 	end
 	
 	
