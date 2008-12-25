@@ -1,18 +1,9 @@
 #!/usr/bin/ruby
 
-begin
-	require 'spec/runner'
-	
-	require 'bluecloth'
-	require 'spec/lib/matchers'
-	require 'spec/lib/constants'
-rescue LoadError
-	unless Object.const_defined?( :Gem )
-		require 'rubygems'
-		retry
-	end
-	raise
-end
+require 'rubygems'
+require 'spec'
+require 'bluecloth'
+
 
 module BlueCloth::SpecHelpers
 
@@ -21,6 +12,7 @@ module BlueCloth::SpecHelpers
 	###############
 
 end
+
 
 # Override the badly-formatted output of the RSpec HTML formatter
 require 'spec/runner/formatter/html_formatter'

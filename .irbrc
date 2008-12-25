@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 puts ">>> Adding lib and ext to load path..."
-$LOAD_PATH.unshift( "lib", "redist" )
+$LOAD_PATH.unshift( "lib", "ext" )
 
 require './utils'
 include UtilityFunctions

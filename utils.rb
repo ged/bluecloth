@@ -1,6 +1,6 @@
 #
 #	Install/distribution utility functions
-#	$Id: utils.rb,v 1.5 2004/01/18 19:15:18 deveiant Exp $
+#	$Id$
 #
 #	Copyright (c) 2001-2004, The FaerieMUD Consortium.
 #

@@ -1,0 +1,61 @@
+#!rake
+
+# C extension constants
+EXT_MAKEFILE  = EXTDIR + 'Makefile'
+EXT_SOURCES   = FileList[ EXTDIR + '*.c' ]
+EXT_SO        = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
+
+
+#####################################################################
+###	T A S K S
+#####################################################################
+
+# Make both the default task and the spec task depend on building the extension
+task :local => :build
+task :spec => :build
+namespace :spec do
+	task :doc   => [ :build ]
+	task :quiet => [ :build ]
+	task :html  => [ :build ]
+	task :text  => [ :build ]
+end
+
+desc "Make the Makefile for the C extension"
+file EXT_MAKEFILE.to_s => EXT_SOURCES do
+	log "Configuring BlueCloth C extension"
+	in_subdirectory( EXTDIR ) do
+		ruby 'extconf.rb'
+	end
+end
+CLOBBER.include( EXTDIR + 'mkmf.log', EXTDIR + 'conftest.dSYM', EXT_SO )
+
+desc "Build the C extension"
+task :build => EXT_SO
+file EXT_SO => [ EXT_MAKEFILE.to_s, *EXT_SOURCES ] do
+	in_subdirectory( EXTDIR ) do
+		sh 'make'
+	end
+end
+
+
+desc "Rebuild the C extension"
+task :rebuild => [ :clobber, :build ]
+
+
+task :clean do
+	if EXT_MAKEFILE.exist?
+		in_subdirectory( EXTDIR ) do
+			sh 'make clean'
+		end
+	end
+end	
+
+task :clobber do
+	if EXT_MAKEFILE.exist?
+		in_subdirectory( EXTDIR ) do
+			sh 'make distclean'
+		end
+	end
+end	
+CLOBBER.include( EXT_MAKEFILE )
+

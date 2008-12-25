@@ -4,23 +4,25 @@ BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent
 	
-	libdir = basedir + "lib"
+	libdir = basedir + 'lib'
+	extdir = basedir + 'ext'
 	
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
+	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-begin
-	require 'spec/runner'
-	require 'logger'
-	require 'bluecloth'
-	require 'spec/lib/constants'
-	require 'spec/lib/matchers'
-rescue LoadError
-	unless Object.const_defined?( :Gem )
-		require 'rubygems'
-		retry
-	end
-	raise
+require 'rubygems'
+require 'spec'
+require 'bluecloth'
+
+require 'spec/lib/helpers'
+require 'spec/lib/constants'
+require 'spec/lib/matchers'
+
+
+### Output some debugging if $DEBUG is true
+def debug_msg( *args )
+	$stderr.puts( *args ) if $DEBUG
 end
 
 
@@ -29,14 +31,35 @@ end
 ###	C O N T E X T S
 #####################################################################
 
-describe BlueCloth, "-- Markdown" do
+describe BlueCloth do
 	include BlueCloth::TestConstants,
 		BlueCloth::Matchers
 
 
-	### Output some debugging if $DEBUG is true
-	def self::debug_msg( *args )
-		$stderr.puts( *args ) if $DEBUG
+	it "can build a flags bitmask out of an options hash" do
+		flags = BlueCloth.flags_from_opthash(
+			:remove_links => true,
+			:header_labels => true,
+			:pandoc_headers => false
+		  )
+		
+		( flags & BlueCloth::MKD_NOLINKS ).should be_nonzero()
+		( flags & BlueCloth::MKD_TOC ).should be_nonzero()
+		( flags & BlueCloth::MKD_NOHEADER ).should be_nonzero()
+	end
+	
+	
+	it "allows output to be rendered several times" do
+		bc = BlueCloth.new( "Some text" )
+		bc.to_html.should == bc.to_html
+	end
+	
+	
+	it "correctly applies the :remove_links option to the output" do
+		input = "An [example](http://url.com/). A <a href='http://example.com/'>link</a>."
+		bc = BlueCloth.new( input, :remove_links => true )
+		bc.to_html.should == 
+			"<p>An [example](http://url.com/). A &lt;a href='http://example.com/'>link</a>.</p>"
 	end
 	
 
@@ -64,13 +87,16 @@ describe BlueCloth, "-- Markdown" do
 		#]
 
 		def decode( str )
-			str.gsub( /&#(x[a-f0-9]+|\d{3});/i ) do |match|
+			str.gsub( /&#(x[a-f0-9]+|\d{1,3});/i ) do |match|
 				code = $1
+				debug_msg "Decoding &##{code};"
 
 				case code
 				when /^x([a-f0-9]+)/i
+					debug_msg "-> #{$1.to_i(16).chr}"
 					$1.to_i(16).chr
-				when /\d{3}/
+				when /^\d+$/
+					debug_msg "-> #{code.to_i.chr}"
 					code.to_i.chr
 				else
 					raise "Hmmm... malformed entity %p" % code
@@ -84,10 +110,13 @@ describe BlueCloth, "-- Markdown" do
 
 				expected_output = %r{<p><a href="([^"]+)">[^<]+</a></p>}
 				match = expected_output.match( html )
-				
 				match.should be_an_instance_of( MatchData )
-				unencoded_href = decode( match[1] )
-				unencoded_href.should == "mailto:#{addr}"
+
+				match[1].should_not == addr
+
+				decoded_href = decode( match[1] )
+				debug_msg "Unencoded href = %p" % [ decoded_href ]
+				decoded_href.should == "mailto:#{addr}"
 			end
 		end
 	end

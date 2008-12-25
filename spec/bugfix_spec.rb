@@ -4,25 +4,20 @@ BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent
 	
-	libdir = basedir + "lib"
+	libdir = basedir + 'lib'
+	extdir = basedir + 'ext'
 	
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
+	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-begin
-	require 'spec/runner'
-	require 'logger'
-	require 'bluecloth'
-	require 'spec/lib/constants'
-	require 'spec/lib/matchers'
-rescue LoadError
-	unless Object.const_defined?( :Gem )
-		require 'rubygems'
-		retry
-	end
-	raise
-end
+require 'rubygems'
+require 'spec'
+require 'bluecloth'
 
+require 'spec/lib/helpers'
+require 'spec/lib/constants'
+require 'spec/lib/matchers'
 
 
 #####################################################################
