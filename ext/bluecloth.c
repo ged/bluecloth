@@ -34,8 +34,11 @@ static MMIOT *
 bluecloth_alloc( VALUE text, int flags ) {
 	MMIOT *document;
 	
+	bluecloth_debug( "Allocating document. Pandoc headers: %s", (flags & MKD_NOHEADER) ? "disabled" : "enabled" );
+
 	document = mkd_string( RSTRING_PTR(text), RSTRING_LEN(text), flags );
-	if ( !document ) rb_sys_fail( RSTRING_PTR(text) );
+	if ( !document )
+		rb_raise( rb_eRuntimeError, "Failed to create a BlueCloth object for: %s", RSTRING_PTR(text) );
 	
 	return document;
 }
@@ -252,6 +255,54 @@ bluecloth_to_html( VALUE self ) {
 }
 
 
+char * (*header_functions[3])(MMIOT *) = {
+	mkd_doc_title,
+	mkd_doc_author,
+	mkd_doc_date
+};
+
+/*
+ *  call-seq:
+ *     bluecloth.header   -> hash
+ *
+ *  Return the hash of 
+ *  {Pandoc-style headers}[http://johnmacfarlane.net/pandoc/README.html#title-blocks]
+ *  from the parsed document. If there were no headers, or the BlueCloth object was not
+ *  constructed with the :pandoc_headers option enabled, an empty Hash is returned.
+ *
+ *     markdown = "%title My Essay\n%author Me\n%date Today\n\nSome stuff..."
+ *     bc = BlueCloth.new( markdown, :pandoc_headers => true )
+ *     # => 
+ *     bc.header
+ *     # => 
+ */
+static VALUE
+bluecloth_header( VALUE self ) {
+	MMIOT *document = bluecloth_get_ptr( self );
+	char *field;
+	VALUE fieldstring, headers = rb_hash_new();
+
+	bluecloth_debug( "Fetching pandoc headers for document %p", document );
+	
+	if ( (field = mkd_doc_title(document)) ) {
+		fieldstring = rb_str_new2( field );
+		OBJ_INFECT( fieldstring, self );
+		rb_hash_aset( headers, ID2SYM(rb_intern("title")), fieldstring );
+	}
+	if ( (field = mkd_doc_author(document)) ) {
+		fieldstring = rb_str_new2( field );
+		OBJ_INFECT( fieldstring, self );
+		rb_hash_aset( headers, ID2SYM(rb_intern("author")), fieldstring );
+	}
+	if ( (field = mkd_doc_date(document)) ) {
+		fieldstring = rb_str_new2( field );
+		OBJ_INFECT( fieldstring, self );
+		rb_hash_aset( headers, ID2SYM(rb_intern("date")), fieldstring );
+	}
+
+	return headers;
+}
+
 
 
 /* --------------------------------------------------------------
@@ -268,6 +319,8 @@ void Init_bluecloth_ext( void ) {
 	rb_define_method( bluecloth_cBlueCloth, "initialize", bluecloth_initialize, -1 );
 
 	rb_define_method( bluecloth_cBlueCloth, "to_html", bluecloth_to_html, 0 );
+	rb_define_method( bluecloth_cBlueCloth, "header", bluecloth_header, 0 );
+	rb_define_alias( bluecloth_cBlueCloth, "pandoc_header", "header" );
 	
 	/* The original Markdown text the object was constructed with */
 	rb_define_attr( bluecloth_cBlueCloth, "text", 1, 0 );
