@@ -1,3 +1,46 @@
+-- Sat, 27 Dec 2008 02:28:32 -0000 by deveiant (r93) -----
+   Changed: ext/bluecloth.c
+            spec/bluecloth_spec.rb
+
+   Added support for Discount Markdown extensions and Pandoc header.
+
+
+-- Thu, 25 Dec 2008 09:53:24 -0000 by deveiant (r92) -----
+   Changed: spec/markdowntest_spec.rb
+
+   Handle the 'tidy' library not being installed.
+
+
+-- Thu, 25 Dec 2008 09:41:29 -0000 by deveiant (r91) -----
+   Changed: spec/markdowntest_spec.rb
+
+   Forgot to change the libtidy name hack to the spec itself.
+
+
+-- Thu, 25 Dec 2008 09:37:04 -0000 by deveiant (r90) -----
+   Added:   ChangeLog (new)
+            LICENSE.discount (new)
+   Changed: README
+            .irbrc
+            LICENSE
+            ext/bluecloth.c
+            spec/bluecloth_spec.rb
+            ext/extconf.rb (and 5 other/s)
+   Deleted: utils.rb
+            CHANGES
+
+    * Cleaned up a bunch of stuff from the first version.
+    * Initial whack at README/RDoc updates
+    * Trying a new hack to figure out what file extension libtidy might have on
+    any platform. This will work under MacOS X and FreeBSD; needs testing under
+    other platforms.
+    * Pass the flags to the allocator so MKD_NOHEADER is applied.
+    * Removed some options that aren't useful with the way the extension works, or which
+    don't seem to behave as advertised.
+    * Renamed :strip_html option to :escape_html as it's a more-accurate description of what it's
+    actually for.
+
+
 -- Thu, 25 Dec 2008 03:29:19 -0000 by deveiant (r89) -----
    Added:   ext/docheader.c (new)
             ext/resource.c (new)

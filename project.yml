@@ -18,6 +18,7 @@ version_file: bluecloth.rb
 additional_pkgfiles: 
 - COPYRIGHT.discount
 - spec/data/**/*.{txt,text,html}
+- ext/VERSION
 dev_dependencies: {}
 
 author_email: ged@FaerieMUD.org

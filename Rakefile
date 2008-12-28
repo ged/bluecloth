@@ -84,6 +84,7 @@ LOCAL_RAKEFILE = BASEDIR + 'Rakefile.local'
 EXTRA_PKGFILES = []
 EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'COPYRIGHT.discount' ).delete_if {|item| item =~ /\.svn/ } 
 EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'spec/data/**/*.{txt,text,html}' ).delete_if {|item| item =~ /\.svn/ } 
+EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'ext/VERSION' ).delete_if {|item| item =~ /\.svn/ } 
 
 RELEASE_FILES = TEXT_FILES + 
 	SPEC_FILES + 
