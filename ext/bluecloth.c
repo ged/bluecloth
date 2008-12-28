@@ -34,8 +34,6 @@ static MMIOT *
 bluecloth_alloc( VALUE text, int flags ) {
 	MMIOT *document;
 	
-	bluecloth_debug( "Allocating document. Pandoc headers: %s", (flags & MKD_NOHEADER) ? "disabled" : "enabled" );
-
 	document = mkd_string( RSTRING_PTR(text), RSTRING_LEN(text), flags );
 	if ( !document )
 		rb_raise( rb_eRuntimeError, "Failed to create a BlueCloth object for: %s", RSTRING_PTR(text) );

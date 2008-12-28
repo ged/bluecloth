@@ -7,7 +7,7 @@ require 'rubygems'
 require 'benchmark'
 require 'pathname'
 
-require 'old-bluecloth'
+require 'old-bluecloth' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
 require 'bluecloth'
 require 'rdiscount'
 require 'maruku'
