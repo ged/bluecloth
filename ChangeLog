@@ -1,3 +1,23 @@
+-- Sun, 28 Dec 2008 06:19:13 -0000 by deveiant (r95) -----
+   Changed: experiments/benchmark.rb
+            ext/bluecloth.c
+
+    * Removed some chatty memory-allocation debugging.
+    * Added an explanatory comment in the benchmark script.
+
+
+-- Sun, 28 Dec 2008 03:04:23 -0000 by deveiant (r94) -----
+   Added:   experiments/benchmark.rb (new)
+            experiments/benchmark.txt (new)
+   Changed: /trunk
+            Rakefile
+            project.yml
+            ChangeLog
+
+    * Include the ext/VERSION file in the gem, as it's required for building.
+    * Added a benchmark script
+
+
 -- Sat, 27 Dec 2008 02:28:32 -0000 by deveiant (r93) -----
    Changed: ext/bluecloth.c
             spec/bluecloth_spec.rb
