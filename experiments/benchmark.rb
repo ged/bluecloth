@@ -7,14 +7,17 @@ require 'rubygems'
 require 'benchmark'
 require 'pathname'
 
-require 'old-bluecloth' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
+EXPERIMENTS = Pathname.new( __FILE__ ).dirname
+
+require EXPERIMENTS + 'old-bluecloth.rb' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
+
 require 'bluecloth'
 require 'rdiscount'
 require 'maruku'
 require 'peg_markdown'
 
 ITERATIONS = 100
-TEST_FILE = Pathname.new( __FILE__ ).dirname + 'benchmark.txt'
+TEST_FILE = EXPERIMENTS + 'benchmark.txt'
 TEST_DATA = TEST_FILE.read
 TEST_DATA.freeze
 
