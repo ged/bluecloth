@@ -3,12 +3,24 @@
 require 'mkmf'
 require 'fileutils'
 require 'pathname'
+require 'rbconfig'
+include Config
 
 versionfile = Pathname.new( __FILE__ ).dirname + 'VERSION'
 version = versionfile.read.chomp
 
-$CFLAGS << ' -I.' << ' -Wall' << ' -ggdb' << ' -DDEBUG'
+# Thanks to Daniel Berger for helping me out with this. :)
+if CONFIG['host_os'].match( 'mswin' )
+	$CFLAGS << ' -I.' << ' -W3' << ' -Zi'
+else
+	$CFLAGS << ' -I.' << ' -Wall'
+end
 $CPPFLAGS << %Q{ -DVERSION=\\"#{version}\\"}
+
+# Add my own debugging hooks if building for me
+if ENV['DEBUGGING_BUILD']
+	$CFLAGS << ' -ggdb' << ' -DDEBUG' 
+end
 
 def fail( *messages )
 	$stderr.puts( *messages )

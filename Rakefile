@@ -4,7 +4,7 @@
 #
 # Based on various other Rakefiles, especially one by Ben Bleything
 #
-# Copyright (c) 2008 The FaerieMUD Consortium
+# Copyright (c) 2007-2009 The FaerieMUD Consortium
 #
 # Authors:
 #  * Michael Granger <ged@FaerieMUD.org>
