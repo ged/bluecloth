@@ -153,7 +153,7 @@ module BlueCloth::Matchers
 		if indent = html[/\A\s+/]
 			indent.gsub!( /\A\n/m, '' )
 			$stderr.puts "Output indent is: %p" % [ indent ] if $DEBUG
-			html.gsub!( /^#{indent}|\A\n|\n\t*\Z/m, '' )
+			html.gsub!( /^#{indent}|\A\n|[\n\t]*\Z/m, '' )
 		end
 		
 		return BlueCloth::Matchers::TransformMatcher.new( html )

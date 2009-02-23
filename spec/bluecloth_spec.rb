@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 
 BEGIN {
 	require 'pathname'
@@ -276,9 +277,9 @@ describe BlueCloth do
 				# Anything else adds to either input or output
 				else
 					if inInputSection
-						input += line
+						input << line
 					else
-						output += line
+						output << line
 					end
 				end
 			end

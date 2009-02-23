@@ -1,3 +1,24 @@
+-- Fri, 02 Jan 2009 23:46:50 -0000 by deveiant (r98) -----
+   Added:   experiments/old-bluecloth.rb (new)
+   Changed: experiments/benchmark.rb
+            /trunk
+
+   Made the benchmark run with no additional prep (other than installing the requisite alternative implementations).
+
+
+-- Fri, 02 Jan 2009 17:56:30 -0000 by deveiant (r97) -----
+   Changed: /trunk
+            Rakefile
+            ChangeLog
+            docs
+            ext/extconf.rb
+            bin/bluecloth (and 1 other/s)
+
+    * Updated build system
+    * Added some stuff for building under Windows. Thanks to Daniel J. Berger for the help.
+    * Fixed bug in bin/bluecloth.
+
+
 -- Tue, 30 Dec 2008 08:16:47 -0000 by deveiant (r96) -----
    Changed: ChangeLog
             ext/generate.c
