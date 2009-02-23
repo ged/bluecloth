@@ -59,7 +59,8 @@ describe BlueCloth, "-- MarkdownTest 1.0: " do
 	
 	
 	markdowntest_dir = Pathname.new( __FILE__ ).dirname + 'data/markdowntest'
-	Pathname.glob( markdowntest_dir + '*.text' ).each do |textfile|
+	pattern = markdowntest_dir + '*.text'
+	Pathname.glob( pattern.to_s ).each do |textfile|
 		resultfile = Pathname.new( textfile.to_s.sub(/\.text/, '.html') )
 
 		it textfile.basename( '.text' ) do

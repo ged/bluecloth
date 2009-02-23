@@ -1,19 +1,21 @@
 --- 
-project_pubdir: /usr/local/www/public/code
-project_pubhost: deveiate
-project_homepage: http://deveiate.org/projects/BlueCloth/
-rubyforge_group: deveiate
+rubyforge_project: bluecloth
 project_requirements: {}
 
-author_name: Michael Granger
+project_pubdir: /usr/local/www/public/code
 project_description: |-
   BlueCloth is a Ruby implementation of [Markdown][1], a text-to-HTML conversion
   tool for web writers. To quote from the project page: Markdown allows you to
   write using an easy-to-read, easy-to-write plain text format, then convert it to
   structurally valid XHTML (or HTML).
+rubyforge_group: deveiate
+author_name: Michael Granger
+project_pubhost: deveiate
+project_homepage: http://deveiate.org/projects/BlueCloth/
 project_dependencies: {}
 
 project_summary: BlueCloth is a Ruby implementation of Markdown
+project_name: BlueCloth
 version_file: bluecloth.rb
 additional_pkgfiles: 
 - COPYRIGHT.discount
@@ -23,5 +25,3 @@ dev_dependencies: {}
 
 author_email: ged@FaerieMUD.org
 post_install_message: ""
-project_name: BlueCloth
-rubyforge_project: bluecloth

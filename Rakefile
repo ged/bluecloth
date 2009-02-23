@@ -21,15 +21,13 @@ BEGIN {
 	$LOAD_PATH.unshift( extdir.to_s ) unless $LOAD_PATH.include?( extdir.to_s )
 }
 
-require 'rubygems'
-gem 'rake', '>= 0.8.3'
-
 require 'rbconfig'
 require 'rake'
 require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/clean'
+require 'rake/191_compat.rb'
 
 $dryrun = false
 
