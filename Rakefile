@@ -241,7 +241,8 @@ $dryrun = Rake.application.options.dryrun ? true : false
 RAKE_TASKLIBS.each do |tasklib|
 	next if tasklib =~ %r{/(helpers|svn|verifytask)\.rb$}
 	begin
-		require tasklib
+		trace "  loading tasklib %s" % [ tasklib ]
+		require tasklib.expand_path
 	rescue ScriptError => err
 		fail "Task library '%s' failed to load: %s: %s" %
 			[ tasklib, err.class.name, err.message ]
