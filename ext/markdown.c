@@ -30,7 +30,7 @@ static struct kw blocktags[] = { KW("!--"), KW("STYLE"), KW("SCRIPT"),
 				 KW("ADDRESS"), KW("BDO"), KW("BLOCKQUOTE"),
 				 KW("CENTER"), KW("DFN"), KW("DIV"), KW("H1"),
 				 KW("H2"), KW("H3"), KW("H4"), KW("H5"),
-				 KW("H6"), KW("LISTING"), KW("NOBR"),
+				 KW("H6"), KW("IFRAME"), KW("LISTING"), KW("NOBR"),
 				 KW("UL"), KW("P"), KW("OL"), KW("DL"),
 				 KW("PLAINTEXT"), KW("PRE"), KW("TABLE"),
 				 KW("WBR"), KW("XMP"), KW("HR"), KW("BR") };
@@ -121,6 +121,14 @@ skipempty(Line *p)
     while ( p && (p->dle == S(p->text)) )
 	p = p->next;
     return p;
+}
+
+
+void
+___mkd_tidy(Line *t)
+{
+    while ( S(t->text) && isspace(T(t->text)[S(t->text)-1]) )
+	--S(t->text);
 }
 
 
@@ -434,12 +442,6 @@ codeblock(Paragraph *p)
 {
     Line *t = p->text, *r;
 
-    /* HORRIBLE STANDARDS KLUDGE: the first line of every block
-     * has trailing whitespace trimmed off.
-     */
-    while ( S(t->text) && isspace(T(t->text)[S(t->text)-1]) )
-	--S(t->text);
-
     for ( ; t; t = r ) {
 	CLIP(t->text,0,4);
 	t->dle = mkd_firstnonblank(t);
@@ -492,12 +494,13 @@ textblock(Paragraph *p, int toplevel)
 {
     Line *t, *next;
 
-    for ( t = p->text; t ; t = next )
+    for ( t = p->text; t ; t = next ) {
 	if ( ((next = t->next) == 0) || endoftextblock(next, toplevel) ) {
 	    p->align = centered(p->text, t);
 	    t->next = 0;
 	    return next;
 	}
+    }
     return t;
 }
 
@@ -833,6 +836,14 @@ compile(Line *ptr, int toplevel, MMIOT *f)
 	}
 	else if ( iscode(ptr) ) {
 	    p = Pp(&d, ptr, CODE);
+	    
+	    if ( f->flags & MKD_1_COMPAT) {
+		/* HORRIBLE STANDARDS KLUDGE: the first line of every block
+		 * has trailing whitespace trimmed off.
+		 */
+		___mkd_tidy(p->text);
+	    }
+	    
 	    ptr = codeblock(p);
 	}
 	else if ( ishr(ptr) ) {

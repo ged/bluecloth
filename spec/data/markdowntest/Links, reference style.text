@@ -29,3 +29,43 @@ Indented [four][] times.
 
 
 [b]: /url/
+
+* * *
+
+[this] [this] should work
+
+So should [this][this].
+
+And [this] [].
+
+And [this][].
+
+And [this].
+
+But not [that] [].
+
+Nor [that][].
+
+Nor [that].
+
+[Something in brackets like [this][] should work]
+
+[Same with [this].]
+
+In this case, [this](/somethingelse/) points to something else.
+
+Backslashing should suppress \[this] and [this\].
+
+[this]: foo
+
+
+* * *
+
+Here's one where the [link
+breaks] across lines.
+
+Here's another where the [link 
+breaks] across lines, but with a line-ending space.
+
+
+[link breaks]: /url/

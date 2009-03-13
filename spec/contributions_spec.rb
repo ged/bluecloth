@@ -24,7 +24,7 @@ require 'spec/lib/matchers'
 ###	C O N T E X T S
 #####################################################################
 
-describe BlueCloth, " contributed features: " do
+describe BlueCloth, "contributed features: " do
 	include BlueCloth::TestConstants,
 		BlueCloth::Matchers
 

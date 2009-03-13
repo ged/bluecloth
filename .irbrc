@@ -6,8 +6,7 @@ $LOAD_PATH.unshift( "lib", "ext" )
 # Try to require the 'bluecloth' library
 begin
 	puts "Requiring Bluecloth..."
-	require 'rubygems'
-	require "bluecloth"
+		require "bluecloth"
 rescue => e
 	$stderr.puts "Ack! Bluecloth library failed to load: #{e.message}\n\t" +
 		e.backtrace.join( "\n\t" )

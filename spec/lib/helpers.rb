@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 # encoding: utf-8
 
-require 'rubygems'
 require 'spec'
 require 'bluecloth'
 
@@ -28,7 +27,7 @@ class Spec::Runner::Formatter::HtmlFormatter
 		end
 		
 		unless @example_group_red
-			css_class = 'example_group_%d' % [current_example_group_number]
+			css_class = 'example_group_%d' % [current_example_group_number||0]
 			@output.puts "    <script type=\"text/javascript\">makeRed('#{css_class}');</script>"
 			@example_group_red = true
 		end

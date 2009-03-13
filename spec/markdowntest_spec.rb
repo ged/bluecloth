@@ -11,7 +11,6 @@ BEGIN {
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-require 'rubygems'
 require 'spec'
 require 'bluecloth'
 
@@ -27,14 +26,14 @@ require 'dl'
 ###	C O N T E X T S
 #####################################################################
 
-describe BlueCloth, "-- MarkdownTest 1.0: " do
+describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 	include BlueCloth::TestConstants,
-		BlueCloth::Matchers
+	        BlueCloth::Matchers
 
 	before( :all ) do
 		soext = Config::CONFIG['LIBRUBY_ALIASES'].sub( /.*\./, '' )
 		@dlname = "libtidy.#{soext}"
-
+	
 		begin
 			DL.dlopen( @dlname )
 		rescue RuntimeError => err
@@ -47,10 +46,11 @@ describe BlueCloth, "-- MarkdownTest 1.0: " do
 		
 		begin
 			require 'tidy'
-		rescue LoadError => err
+		rescue LoadError, NameError => err
 			@have_libtidy = false
 			@tidy_error = err.message
 		end
+
 	end
 	
 	before( :each ) do

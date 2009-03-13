@@ -330,31 +330,34 @@ void Init_bluecloth_ext( void ) {
 	/* special flags for markdown() and mkd_text() */
 
 	/* Do not process `[]' and remove A tags from the output. */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_NOLINKS", INT2FIX(MKD_NOLINKS) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOLINKS",  INT2FIX(MKD_NOLINKS) );
 
 	/* Do not process `![]' and remove IMG tags from the output. */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_NOIMAGE", INT2FIX(MKD_NOIMAGE) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOIMAGE",  INT2FIX(MKD_NOIMAGE) );
 
 	/* Do not do Smartypants-style mangling of quotes, dashes, or ellipses. */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_NOPANTS", INT2FIX(MKD_NOPANTS) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOPANTS",  INT2FIX(MKD_NOPANTS) );
 	
 	/* Escape all opening angle brackets in the input text instead of allowing block-level HTML */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHTML",  INT2FIX(MKD_NOHTML) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHTML",   INT2FIX(MKD_NOHTML) );
 
 	/* disable SUPERSCRIPT, RELAXED_EMPHASIS */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_STRICT",  INT2FIX(MKD_STRICT) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_STRICT",   INT2FIX(MKD_STRICT) );
 	
 	/* don't expand `_` and `*` */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_TAGTEXT", INT2FIX(MKD_TAGTEXT) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_TAGTEXT",  INT2FIX(MKD_TAGTEXT) );
 	
 	/* don't allow pseudo-protocols */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",  INT2FIX(MKD_NO_EXT) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",   INT2FIX(MKD_NO_EXT) );
 	
 	/* do table-of-contents processing */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_TOC",     INT2FIX(MKD_TOC) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_TOC",      INT2FIX(MKD_TOC) );
 	
+	/* MarkdownTest 1.0 Compatibility Mode */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_1_COMPAT", INT2FIX(MKD_1_COMPAT) );
+
 	/* MKD_NOLINKS|MKD_NOIMAGE|MKD_TAGTEXT */
-	rb_define_const( bluecloth_cBlueCloth, "MKD_EMBED",   INT2FIX(MKD_EMBED) );
+	rb_define_const( bluecloth_cBlueCloth, "MKD_EMBED",    INT2FIX(MKD_EMBED) );
 
 	/* -- special flags for mkd_in() and mkd_string() */
 

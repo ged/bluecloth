@@ -3,7 +3,6 @@
 # Based on Ryan Tomayako's benchmark script from:
 #   http://tomayko.com/writings/ruby-markdown-libraries-real-cheap-for-you-two-for-price-of-one
 
-require 'rubygems'
 require 'benchmark'
 require 'pathname'
 

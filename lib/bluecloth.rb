@@ -81,6 +81,7 @@ class BlueCloth
         if ! opthash[:pseudoprotocols] then flags |= MKD_NO_EXT;   end
         if ! opthash[:pandoc_headers]  then flags |= MKD_NOHEADER; end
         if   opthash[:header_labels]   then flags |= MKD_TOC;      end
+        if   opthash[:mdtest_1_compat] then flags |= MKD_1_COMPAT; end
         if   opthash[:escape_html]     then flags |= MKD_NOHTML;   end
         if   opthash[:strict_mode]     then flags |= MKD_STRICT;   end
 
@@ -99,7 +100,8 @@ class BlueCloth
         if !( flags & MKD_NO_EXT   ).nonzero? then opthash[:pseudoprotocols] = true; end
         if !( flags & MKD_NOHEADER ).nonzero? then opthash[:pandoc_headers]  = true; end
         if  ( flags & MKD_TOC      ).nonzero? then opthash[:header_labels]   = true; end
-        if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]      = true; end
+        if  ( flags & MKD_1_COMPAT ).nonzero? then opthash[:mdtest_1_compat] = true; end
+        if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]     = true; end
         if  ( flags & MKD_STRICT   ).nonzero? then opthash[:strict_mode]     = true; end
 
 		return opthash

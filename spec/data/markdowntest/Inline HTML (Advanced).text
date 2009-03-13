@@ -9,6 +9,7 @@ And nested without indentation:
 <div>
 foo
 </div>
+<div style=">"/>
 </div>
 <div>bar</div>
 </div>

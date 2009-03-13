@@ -1,12 +1,13 @@
 #!rake
 
 # C extension constants
-EXT_MAKEFILE  = EXTDIR + 'Makefile'
-EXT_SOURCES   = FileList[ EXTDIR + '*.c' ]
-EXT_SO        = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
+EXT_MAKEFILE       = EXTDIR + 'Makefile'
+EXT_SOURCES        = FileList[ EXTDIR + '*.c' ]
+EXT_SO             = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
 
 GEMSPEC.extra_rdoc_files << 'LICENSE.discount'
 DOCFILES << 'LICENSE.discount'
+
 
 #####################################################################
 ###	T A S K S
@@ -38,7 +39,6 @@ file EXT_SO => [ EXT_MAKEFILE.to_s, *EXT_SOURCES ] do
 		sh 'make'
 	end
 end
-
 
 desc "Rebuild the C extension"
 task :rebuild => [ :clobber, :build ]
