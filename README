@@ -14,10 +14,10 @@ Textile[http://www.textism.com/tools/textile/].
 
 BlueCloth 2 is a complete rewrite using David Parsons' Discount library, a C
 implementation of Markdown. I rewrote it using the extension for speed and
-accuracy; the original was a quick hack I wrote in a few days for my own use
-just to avoid having to shell out to Markdown.pl, and it was quite buggy and
-slow. I apologize to all the good people that sent me patches for it that were
-never released.
+accuracy; the original BlueCloth was a straight port from the Perl version 
+that I wrote in a few days for my own use just to avoid having to shell out 
+to Markdown.pl, and it was quite buggy and slow. I apologize to all the good 
+people that sent me patches for it that were never released.
 
 
 == Authors

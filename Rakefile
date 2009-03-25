@@ -61,28 +61,28 @@ EXTCONF       = EXTDIR + 'extconf.rb'
 ARTIFACTS_DIR = Pathname.new( ENV['CC_BUILD_ARTIFACTS'] || 'artifacts' )
 
 TEXT_FILES    = %w( Rakefile ChangeLog README LICENSE ).collect {|filename| BASEDIR + filename }
-BIN_FILES     = Pathname.glob( BINDIR + '*' ).delete_if {|item| item =~ /\.svn/ }
-LIB_FILES     = Pathname.glob( LIBDIR + '**/*.rb' ).delete_if {|item| item =~ /\.svn/ }
-EXT_FILES     = Pathname.glob( EXTDIR + '**/*.{c,h,rb}' ).delete_if {|item| item =~ /\.svn/ }
-DATA_FILES    = Pathname.glob( DATADIR + '**/*' ).delete_if {|item| item =~ /\.svn/ }
+BIN_FILES     = Pathname.glob( "#{BINDIR}/*" ).delete_if {|item| item.to_s =~ /\.svn/ }
+LIB_FILES     = Pathname.glob( "#{LIBDIR}/**/*.rb" ).delete_if {|item| item.to_s =~ /\.svn/ }
+EXT_FILES     = Pathname.glob( "#{EXTDIR}/**/*.{c,h,rb}" ).delete_if {|item| item.to_s =~ /\.svn/ }
+DATA_FILES    = Pathname.glob( "#{DATADIR}/**/*" ).delete_if {|item| item.to_s =~ /\.svn/ }
 
 SPECDIR       = BASEDIR + 'spec'
 SPECLIBDIR    = SPECDIR + 'lib'
-SPEC_FILES    = Pathname.glob( SPECDIR + '**/*_spec.rb' ).delete_if {|item| item =~ /\.svn/ } +
-                Pathname.glob( SPECLIBDIR + '**/*.rb' ).delete_if {|item| item =~ /\.svn/ }
+SPEC_FILES    = Pathname.glob( "#{SPECDIR}/**/*_spec.rb" ).delete_if {|item| item.to_s =~ /\.svn/ } +
+                Pathname.glob( "#{SPECLIBDIR}/**/*.rb" ).delete_if {|item| item.to_s =~ /\.svn/ }
 
 TESTDIR       = BASEDIR + 'tests'
-TEST_FILES    = Pathname.glob( TESTDIR + '**/*.tests.rb' ).delete_if {|item| item =~ /\.svn/ }
+TEST_FILES    = Pathname.glob( "#{TESTDIR}/**/*.tests.rb" ).delete_if {|item| item.to_s =~ /\.svn/ }
 
 RAKE_TASKDIR  = BASEDIR + 'rake'
-RAKE_TASKLIBS = Pathname.glob( RAKE_TASKDIR + '*.rb' )
+RAKE_TASKLIBS = Pathname.glob( "#{RAKE_TASKDIR}/*.rb" )
 
 LOCAL_RAKEFILE = BASEDIR + 'Rakefile.local'
 
 EXTRA_PKGFILES = []
-EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'COPYRIGHT.discount' ).delete_if {|item| item =~ /\.svn/ } 
-EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'spec/data/**/*.{txt,text,html}' ).delete_if {|item| item =~ /\.svn/ } 
-EXTRA_PKGFILES.concat Pathname.glob( BASEDIR + 'ext/VERSION' ).delete_if {|item| item =~ /\.svn/ } 
+EXTRA_PKGFILES.concat Pathname.glob( "#{BASEDIR}/COPYRIGHT.discount" ).delete_if {|item| item.to_s =~ /\.svn/ } 
+EXTRA_PKGFILES.concat Pathname.glob( "#{BASEDIR}/spec/data/**/*.{txt,text,html}" ).delete_if {|item| item.to_s =~ /\.svn/ } 
+EXTRA_PKGFILES.concat Pathname.glob( "#{BASEDIR}/ext/VERSION" ).delete_if {|item| item.to_s =~ /\.svn/ } 
 
 RELEASE_FILES = TEXT_FILES + 
 	SPEC_FILES + 
@@ -190,8 +190,8 @@ GEMSPEC   = Gem::Specification.new do |gem|
 		"structurally valid XHTML (or HTML).",
   	  ].join( "\n" )
 
-	gem.authors           = 'Michael Granger'
-	gem.email             = 'ged@FaerieMUD.org'
+	gem.authors           = "Michael Granger"
+	gem.email             = "ged@FaerieMUD.org"
 	gem.homepage          = 'http://deveiate.org/projects/BlueCloth/'
 	gem.rubyforge_project = RUBYFORGE_PROJECT
 
@@ -239,7 +239,7 @@ $dryrun = Rake.application.options.dryrun ? true : false
 
 # Load any remaining task libraries
 RAKE_TASKLIBS.each do |tasklib|
-	next if tasklib =~ %r{/(helpers|svn|verifytask)\.rb$}
+	next if tasklib.to_s =~ %r{/(helpers|svn|verifytask)\.rb$}
 	begin
 		trace "  loading tasklib %s" % [ tasklib ]
 		require tasklib.expand_path
