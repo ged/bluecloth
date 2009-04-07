@@ -44,6 +44,10 @@ PROJECT_NAME  = 'BlueCloth'
 PKG_NAME      = PROJECT_NAME.downcase
 PKG_SUMMARY   = 'BlueCloth is a Ruby implementation of Markdown'
 
+# Cruisecontrol stuff
+CC_BUILD_LABEL     = ENV['CC_BUILD_LABEL']
+CC_BUILD_ARTIFACTS = ENV['CC_BUILD_ARTIFACTS'] || 'artifacts'
+
 VERSION_FILE  = LIBDIR + 'bluecloth.rb'
 if VERSION_FILE.exist? && buildrev = ENV['CC_BUILD_LABEL']
 	PKG_VERSION = VERSION_FILE.read[ /VERSION\s*=\s*['"](\d+\.\d+\.\d+)['"]/, 1 ] + '.' + buildrev
@@ -58,7 +62,7 @@ GEM_FILE_NAME = "#{PKG_FILE_NAME}.gem"
 
 EXTCONF       = EXTDIR + 'extconf.rb'
 
-ARTIFACTS_DIR = Pathname.new( ENV['CC_BUILD_ARTIFACTS'] || 'artifacts' )
+ARTIFACTS_DIR = Pathname.new( CC_BUILD_ARTIFACTS )
 
 TEXT_FILES    = %w( Rakefile ChangeLog README LICENSE ).collect {|filename| BASEDIR + filename }
 BIN_FILES     = Pathname.glob( "#{BINDIR}/*" ).delete_if {|item| item.to_s =~ /\.svn/ }
@@ -291,7 +295,7 @@ end
 desc "Cruisecontrol build"
 task :cruise => [:clean, 'spec:quiet', :package] do |task|
 	raise "Artifacts dir not set." if ARTIFACTS_DIR.to_s.empty?
-	artifact_dir = ARTIFACTS_DIR.cleanpath + ENV['CC_BUILD_LABEL']
+	artifact_dir = ARTIFACTS_DIR.cleanpath + (CC_BUILD_LABEL || Time.now.strftime('%Y%m%d-%T'))
 	artifact_dir.mkpath
 	
 	coverage = BASEDIR + 'coverage'

@@ -10,20 +10,59 @@ EXPERIMENTS = Pathname.new( __FILE__ ).dirname
 
 require EXPERIMENTS + 'old-bluecloth.rb' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
 
+require 'rubygems'
 require 'bluecloth'
 require 'rdiscount'
 require 'maruku'
 require 'peg_markdown'
+require 'bluefeather'
+require 'tartan/markdown'
 
 ITERATIONS = 100
 TEST_FILE = EXPERIMENTS + 'benchmark.txt'
 TEST_DATA = TEST_FILE.read
 TEST_DATA.freeze
 
+class BlueFeatherWrapper
+	VERSION = BlueFeather::VERSION
+
+	def initialize( text )
+		@text = text
+	end
+	
+	def to_html
+		return BlueFeather.parse( @text )
+	end
+
+	def self::name
+		return "BlueFeather"
+	end
+end
+
+class PEGMarkdown
+	VERSION = Gem.loaded_specs['rpeg-markdown'].version.to_s
+end
+
+class Tartan::Markdown::Parser
+	VERSION = Gem.loaded_specs['tartan'].version.to_s
+end
+
+
+IMPLEMENTATIONS = [
+	OldBlueCloth,
+	BlueCloth,
+	RDiscount,
+	Maruku,
+	PEGMarkdown,
+	BlueFeatherWrapper,
+	Tartan::Markdown::Parser,
+]
+
 $stderr.puts "Markdown -> HTML, %d iterations (%s, %d bytes)" % [ ITERATIONS, TEST_FILE, TEST_DATA.length ]
 Benchmark.bmbm do |bench|
-	[ OldBlueCloth, BlueCloth, RDiscount, Maruku, PEGMarkdown ].each do |impl|
-		bench.report( impl.name ) { ITERATIONS.times {impl.new(TEST_DATA).to_html} }
+	IMPLEMENTATIONS.each do |impl|
+		heading = "%s (%s)" % [ impl.name, impl.const_get(:VERSION) ]
+		bench.report( heading ) { ITERATIONS.times {impl.new(TEST_DATA).to_html} }
 	end
 end
 
