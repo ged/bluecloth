@@ -52,7 +52,7 @@ class BlueCloth
 	# The number of characters of the original markdown source to include in the 
 	# output of #inspect
 	INSPECT_TEXT_LENGTH = 50
-	
+
 
 	#################################################################
 	###	C L A S S   M E T H O D S
@@ -84,6 +84,7 @@ class BlueCloth
         if   opthash[:mdtest_1_compat] then flags |= MKD_1_COMPAT; end
         if   opthash[:escape_html]     then flags |= MKD_NOHTML;   end
         if   opthash[:strict_mode]     then flags |= MKD_STRICT;   end
+        if   opthash[:tagtext_mode]    then flags |= MKD_TAGTEXT;  end
 
 		return flags
 	end
@@ -92,7 +93,7 @@ class BlueCloth
 	### Returns a Hash that reflects the settings from the specified +flags+ Integer.
 	def self::opthash_from_flags( flags=0 )
 		flags = flags.to_i
-		
+
 		opthash = {}
         if  ( flags & MKD_NOLINKS  ).nonzero? then opthash[:remove_links]    = true; end
         if  ( flags & MKD_NOIMAGE  ).nonzero? then opthash[:remove_images]   = true; end
@@ -103,6 +104,7 @@ class BlueCloth
         if  ( flags & MKD_1_COMPAT ).nonzero? then opthash[:mdtest_1_compat] = true; end
         if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]     = true; end
         if  ( flags & MKD_STRICT   ).nonzero? then opthash[:strict_mode]     = true; end
+        if  ( flags & MKD_TAGTEXT  ).nonzero? then opthash[:tagtext_mode]    = true; end
 
 		return opthash
 	end
@@ -130,8 +132,8 @@ class BlueCloth
 	def filter_html
 		return self.options[:escape_html]
 	end
-	
-	
+
+
 	### Backward-compatible method: raises an appropriate error notifying the user that
 	### BlueCloth2 doesn't support this option.
 	def filter_html=( arg )
@@ -140,8 +142,8 @@ class BlueCloth
 			"via #filter_html=. You now must create the BlueCloth object with the :escape_html" +
 			"option set to true instead."
 	end
-	
-	
+
+
 
 end # class BlueCloth
 

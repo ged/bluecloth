@@ -327,7 +327,6 @@ void Init_bluecloth_ext( void ) {
 	rb_define_attr( bluecloth_cBlueCloth, "options", 1, 0 );
 	
 	/* --- Constants ----- */
-	/* special flags for markdown() and mkd_text() */
 
 	/* Do not process `[]' and remove A tags from the output. */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOLINKS",  INT2FIX(MKD_NOLINKS) );
@@ -344,7 +343,7 @@ void Init_bluecloth_ext( void ) {
 	/* disable SUPERSCRIPT, RELAXED_EMPHASIS */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_STRICT",   INT2FIX(MKD_STRICT) );
 	
-	/* don't expand `_` and `*` */
+	/* process text inside an html tag; no <em>, no <bold>, no html or [] expansion */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TAGTEXT",  INT2FIX(MKD_TAGTEXT) );
 	
 	/* don't allow pseudo-protocols */
@@ -359,7 +358,6 @@ void Init_bluecloth_ext( void ) {
 	/* MKD_NOLINKS|MKD_NOIMAGE|MKD_TAGTEXT */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_EMBED",    INT2FIX(MKD_EMBED) );
 
-	/* -- special flags for mkd_in() and mkd_string() */
 
 	/* don't process header blocks */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHEADER", INT2FIX(MKD_NOHEADER) );

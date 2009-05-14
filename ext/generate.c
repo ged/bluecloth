@@ -410,6 +410,11 @@ linkyurl(MMIOT *f, int *sizep)
 
     ptr = cursor(f);
 
+    /* if I do (title:blah blah blah) embedded links, I need to subvert
+     * linkyurl to do a lookahead for the pseudo-protocol, then snarf
+     * up everything up to the terminating ')'
+     */
+
     if ( c == '<' ) {
 	pull(f);
 	ptr++;
@@ -1311,29 +1316,6 @@ display(Paragraph *p, MMIOT *f)
 }
 
 
-/*
- * dump out stylesheet sections.
- */
-static int
-stylesheets(Paragraph *p, FILE *f)
-{
-    Line* q;
-
-    for ( ; p ; p = p->next ) {
-	if ( p->typ == STYLE ) {
-	    for ( q = p->text; q ; q = q->next )
-		if ( fwrite(T(q->text), S(q->text), 1, f) == 1 )
-		    putc('\n', f);
-		else
-		    return EOF;
-	}
-	if ( p->down && (stylesheets(p->down, f) == EOF) )
-	    return EOF;
-    }
-    return 0;
-}
-
-
 /* return a pointer to the compiled markdown
  * document.
  */
@@ -1349,39 +1331,6 @@ mkd_document(Document *p, char **res)
 	*res = T(p->ctx->out);
 	return S(p->ctx->out);
     }
-    return EOF;
-}
-
-
-/*  public interface for ___mkd_reparse()
- */
-int
-mkd_text(char *bfr, int size, FILE *output, int flags)
-{
-    MMIOT f;
-
-    ___mkd_initmmiot(&f, 0);
-    f.flags = flags & USER_FLAGS;
-    
-    ___mkd_reparse(bfr, size, 0, &f);
-    ___mkd_emblock(&f);
-    if ( flags & CDATA_OUTPUT )
-	___mkd_xml(T(f.out), S(f.out), output);
-    else
-	fwrite(T(f.out), S(f.out), 1, output);
-
-    ___mkd_freemmiot(&f, 0);
-    return 0;
-}
-
-
-/* dump any embedded styles
- */
-int
-mkd_style(Document *d, FILE *f)
-{
-    if ( d && d->compiled )
-	return stylesheets(d->code, f);
     return EOF;
 }
 

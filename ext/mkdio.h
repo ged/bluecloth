@@ -15,19 +15,15 @@ void mkd_basename(MMIOT*,char*);
 /* compilation, debugging, cleanup
  */
 int mkd_compile(MMIOT*, int);
-int mkd_generatehtml(MMIOT*,FILE*);
-int mkd_generatetoc(MMIOT*,FILE*);
-int mkd_xhtmlpage(MMIOT*,int,FILE*);
 int mkd_cleanup(MMIOT*);
 
 /* markup functions
  */
-int mkd_text(char *, int, FILE*, int);
-int mkd_style(MMIOT*, FILE*);
 int mkd_dump(MMIOT*, FILE*, int, char*);
 int markdown(MMIOT*, FILE*, int);
-void mkd_basename(MMIOT*,char*);
+int mkd_line(char *, int, char **, int);
 void mkd_string_to_anchor(char *, int, int (*)(int,void*), void*);
+int mkd_xhtmlpage(MMIOT*,int,FILE*);
 
 /* header block access
  */
@@ -38,6 +34,19 @@ char* mkd_doc_date(MMIOT*);
 /* compiled data access
  */
 int mkd_document(MMIOT*, char**);
+int mkd_toc(MMIOT*, char**);
+int mkd_css(MMIOT*, char **);
+int mkd_xml(char *, int, char **);
+
+/* write-to-file functions
+ */
+int mkd_generatehtml(MMIOT*,FILE*);
+int mkd_generatetoc(MMIOT*,FILE*);
+int mkd_generatexml(char *, int,FILE*);
+int mkd_generatecss(MMIOT*,FILE*);
+#define mkd_style mkd_generatecss
+int mkd_generateline(char *, int, FILE*, int);
+#define mkd_text mkd_generateline
 
 /* version#.
  */
@@ -50,7 +59,8 @@ extern char markdown_version[];
 #define MKD_NOPANTS	0x0004	/* don't run smartypants() */
 #define MKD_NOHTML	0x0008	/* don't allow raw html through AT ALL */
 #define MKD_STRICT	0x0010	/* disable SUPERSCRIPT, RELAXED_EMPHASIS */
-#define MKD_TAGTEXT	0x0020	/* don't expand `_` and `*` */
+#define MKD_TAGTEXT	0x0020	/* process text inside an html tag; no
+				 * <em>, no <bold>, no html or [] expansion */
 #define MKD_NO_EXT	0x0040	/* don't allow pseudo-protocols */
 #define MKD_CDATA	0x0080	/* generate code for xml ![CDATA[...]] */
 #define MKD_TOC		0x1000	/* do table-of-contents processing */
