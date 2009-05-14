@@ -29,7 +29,7 @@
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.0'
+	VERSION = '2.0.2'
 
 	# SVN Revision
 	SVNREV = %q$Rev$
