@@ -39,6 +39,9 @@ describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 		rescue RuntimeError => err
 			@have_libtidy = false
 			@tidy_error = err.message
+		rescue DL::DLError => err
+			@have_libtidy = false
+			@tidy_error = err.message
 		else
 			@have_libtidy = true
 			@tidy_error = nil
