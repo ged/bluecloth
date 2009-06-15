@@ -29,7 +29,7 @@
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.2'
+	VERSION = '2.0.4'
 
 	# SVN Revision
 	SVNREV = %q$Rev$
@@ -47,6 +47,8 @@ class BlueCloth
 		:header_labels   => false,
 		:escape_html     => false,
 		:strict_mode     => true,
+		:auto_links      => false,
+		:safe_links      => false,
 	}.freeze
 
 	# The number of characters of the original markdown source to include in the 
@@ -85,6 +87,8 @@ class BlueCloth
         if   opthash[:escape_html]     then flags |= MKD_NOHTML;   end
         if   opthash[:strict_mode]     then flags |= MKD_STRICT;   end
         if   opthash[:tagtext_mode]    then flags |= MKD_TAGTEXT;  end
+        if   opthash[:auto_links]      then flags |= MKD_AUTOLINK; end
+        if   opthash[:safe_links]      then flags |= MKD_SAFELINK; end
 
 		return flags
 	end
@@ -105,6 +109,8 @@ class BlueCloth
         if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]     = true; end
         if  ( flags & MKD_STRICT   ).nonzero? then opthash[:strict_mode]     = true; end
         if  ( flags & MKD_TAGTEXT  ).nonzero? then opthash[:tagtext_mode]    = true; end
+        if  ( flags & MKD_AUTOLINK ).nonzero? then opthash[:auto_links]      = true; end
+        if  ( flags & MKD_SAFELINK ).nonzero? then opthash[:safe_links]      = true; end
 
 		return opthash
 	end

@@ -4,10 +4,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
@@ -47,7 +47,7 @@ describe BlueCloth, "links" do
 	it "supports reference-style links with no title" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 		An [example][ex] reference-style link.
-		
+
 		  [ex]: http://www.bluefi.com/
 		---
 		<p>An <a href="http://www.bluefi.com/">example</a> reference-style link.</p>

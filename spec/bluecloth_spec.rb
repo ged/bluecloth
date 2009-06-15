@@ -80,6 +80,40 @@ describe BlueCloth do
 		the_markdown( input, :smartypants => true ).should be_transformed_into( expected )
 	end
 
+	it "correctly applies the :auto_links option to the output" do
+		the_indented_markdown( <<-"---", :auto_links => true ).should be_transformed_into(<<-"---").without_indentation
+		I wonder how many people have
+		http://google.com/ as their home page.
+		---
+		<p>I wonder how many people have
+		<a href="http://google.com/">http://google.com/</a> as their home page.</p>
+		---
+	end
+
+	it "doesn't form links for protocols it doesn't know about under :safe_links mode" do
+		the_indented_markdown( <<-"---", :safe_links => true ).should be_transformed_into(<<-"---").without_indentation
+		This is an example 
+		[of something](javascript:do_something_bad(\\)) 
+		you might want to prevent.
+		---
+		<p>This is an example
+		[of something](javascript:do_something_bad())
+		you might want to prevent.</p>
+		---
+	end
+
+	it "forms links for protocols it doesn't know about when not under :safe_links mode" do
+		the_indented_markdown( <<-"---", :safe_links => false ).should be_transformed_into(<<-"---").without_indentation
+		This is an example 
+		[of something](javascript:do_something_benign(\\)) 
+		you might want to allow.
+		---
+		<p>This is an example
+		<a href="javascript:do_something_benign()">of something</a>
+		you might want to allow.</p>
+		---
+	end
+
 
 	describe "Discount extensions" do
 

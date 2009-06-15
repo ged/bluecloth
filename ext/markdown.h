@@ -11,6 +11,7 @@ typedef struct footnote {
     Cstring link;		/* what this footnote points to */
     Cstring title;		/* what it's called (TITLE= attribute) */
     int height, width;		/* dimensions (for image link) */
+    int dealloc;		/* deallocation needed? */
 } Footnote;
 
 /* each input line is read into a Line, which contains the line,
@@ -75,6 +76,8 @@ typedef struct mmiot {
 #define CDATA_OUTPUT	0x0080
 #define TOC		0x1000
 #define MKD_1_COMPAT	0x2000
+#define AUTOLINK	0x4000
+#define SAFELINK	0x8000
 #define USER_FLAGS	0xF0FF
 #define EMBEDDED	DENY_A|DENY_IMG|NO_PSEUDO_PROTO|CDATA_OUTPUT
     char *base;
@@ -136,6 +139,6 @@ extern void ___mkd_freeLineRange(Line *, Line *);
 extern void ___mkd_xml(char *, int, FILE *);
 extern void ___mkd_reparse(char *, int, int, MMIOT*);
 extern void ___mkd_emblock(MMIOT*);
-extern void ___mkd_tidy(Line *);
+extern void ___mkd_tidy(Cstring *);
 
 #endif/*_MARKDOWN_D*/

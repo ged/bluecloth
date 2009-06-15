@@ -358,6 +358,12 @@ void Init_bluecloth_ext( void ) {
 	/* MKD_NOLINKS|MKD_NOIMAGE|MKD_TAGTEXT */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_EMBED",    INT2FIX(MKD_EMBED) );
 
+	/* Create links for inline URIs */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_AUTOLINK", INT2FIX(MKD_AUTOLINK) );
+
+	/* Be paranoid about link protocols */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_SAFELINK", INT2FIX(MKD_SAFELINK) );
+
 
 	/* don't process header blocks */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHEADER", INT2FIX(MKD_NOHEADER) );

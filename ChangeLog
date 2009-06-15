@@ -1,3 +1,110 @@
+-- Tue, 26 May 2009 05:08:15 -0000 by deveiant (r121) -----
+   Added:   ext/Csio.c (new)
+            ext/xmlpage.c (new)
+            ext/xml.c (new)
+            ext/css.c (new)
+   Changed: spec/markdowntest_spec.rb
+
+    * Fixing tests under Ruby 1.9.1. Thanks to Diego Elio Pettenò for the fix.
+    * Adding Discount files for missing symbols on some platforms.
+
+
+-- Thu, 14 May 2009 15:26:02 -0000 by deveiant (r118) -----
+   Changed: lib/bluecloth.rb
+
+   Bumping version to 2.0.2.
+
+
+-- Thu, 14 May 2009 15:21:03 -0000 by deveiant (r117) -----
+   Changed: ext/cstring.h
+            ext/bluecloth.c
+            ext/markdown.c
+            ext/mkdio.c
+            ext/VERSION
+            spec/bluecloth_spec.rb (and 6 other/s)
+
+    * Updated to Discount 1.4.0.
+    * Added support for the MKD_TAGTEXT constant.
+
+
+-- Tue, 07 Apr 2009 22:07:46 -0000 by deveiant (r114) -----
+   Changed: README
+            experiments/benchmark.rb
+            /trunk
+            Rakefile
+
+    * Updated build system.
+    * Rewrapped the README to 72 columns to avoid having to rewrap it for
+    email.
+    * Added BlueFeather and TartanMarkdown to the benchmark script
+
+
+-- Wed, 25 Mar 2009 14:42:18 -0000 by deveiant (r111) -----
+   Added:   LICENSE
+            -> copied from /trunk/LICENSE@r101
+   Changed: README
+            ext
+            Rakefile
+            ChangeLog
+
+   Merged build system update and README changes from the [log:branches/spec-and-19-fixes@109:110 spec-and-19-fixes branch].
+
+
+-- Fri, 13 Mar 2009 23:26:24 -0000 by deveiant (r108) -----
+   Changed: ext
+            Rakefile
+            ChangeLog
+
+    * Updated build system
+    * Fixed the description of the markdowntest spec.
+
+
+-- Fri, 13 Mar 2009 22:56:29 -0000 by deveiant (r107) -----
+   Added:   spec/data/markdowntest/Code Blocks.text
+            -> renamed from /branches/spec-and-19-fixes/spec/data/markdowntest/Code Blocks.text@r106
+            spec/data/markdowntest/Code Spans.text
+            -> renamed from /branches/spec-and-19-fixes/spec/data/markdowntest/Code Spans.text@r106
+            spec/data/markdowntest/Code Blocks.html
+            -> renamed from /branches/spec-and-19-fixes/spec/data/markdowntest/Code Blocks.html@r106
+            spec/data/markdowntest/Links, shortcut references.text
+            -> renamed from /branches/spec-and-19-fixes/spec/data/markdowntest/Links, shortcut references.text@r106
+            spec/data/markdowntest/Code Spans.html
+            -> renamed from /branches/spec-and-19-fixes/spec/data/markdowntest/Code Spans.html@r106
+            spec/bluecloth
+            -> renamed from /branches/spec-and-19-fixes/spec/bluecloth@r106 (and 3 other/s)
+   Changed: experiments/benchmark.rb
+            spec/data/markdowntest/Ordered and unordered lists.text
+            spec/data/markdowntest/Backslash escapes.text
+            spec/lib/matchers.rb
+            spec/data/markdowntest/Markdown Documentation - Syntax.text
+            Rakefile.local (and 22 other/s)
+
+   Merged spec updates, new version of Discount, updated MarkdownTest and Ruby 1.9.1 fixes from [log:branches/spec-and-19-fixes@102:106 the spec-and-19-fixes branch].
+
+
+-- Mon, 23 Feb 2009 14:16:32 -0000 by deveiant (r101) -----
+   Changed: ChangeLog
+            spec/bluecloth_spec.rb
+            spec/lib/matchers.rb
+
+    * Trying to fix whitespace differences in generated output.
+
+
+-- Mon, 23 Feb 2009 06:58:24 -0000 by deveiant (r100) -----
+   Changed: Rakefile
+            spec/lib/helpers.rb
+            project.yml
+            spec/markdowntest_spec.rb
+
+   Started work on fixes for 1.9.1.
+
+
+-- Wed, 07 Jan 2009 21:43:14 -0000 by deveiant (r99) -----
+   Changed: ext/VERSION
+
+   Fixed the VERSION
+
+
 -- Fri, 02 Jan 2009 23:46:50 -0000 by deveiant (r98) -----
    Added:   experiments/old-bluecloth.rb (new)
    Changed: experiments/benchmark.rb
