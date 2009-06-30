@@ -35,7 +35,8 @@ static struct kw blocktags[] = { KW("!--"), KW("STYLE"), KW("SCRIPT"),
 				 KW("H6"), KW("IFRAME"), KW("LISTING"), KW("NOBR"),
 				 KW("UL"), KW("P"), KW("OL"), KW("DL"),
 				 KW("PLAINTEXT"), KW("PRE"), KW("TABLE"),
-				 KW("WBR"), KW("XMP"), SC("HR"), SC("BR") };
+				 KW("WBR"), KW("XMP"), SC("HR"), SC("BR"),
+				 KW("MAP") };
 #define SZTAGS	(sizeof blocktags / sizeof blocktags[0])
 #define MAXTAG	11 /* sizeof "BLOCKQUOTE" */
 
@@ -337,7 +338,7 @@ ishdr(Line *t, int *htyp)
 
     /* ANY leading `#`'s make this into an ETX header
      */
-    if ( i ) {
+    if ( i && (i < S(t->text) || i > 1) ) {
 	*htyp = ETX;
 	return 1;
     }

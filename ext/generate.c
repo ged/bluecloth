@@ -323,18 +323,27 @@ ___mkd_reparse(char *bfr, int size, int flags, MMIOT *f)
  * write out a url, escaping problematic characters
  */
 static void
-puturl(char *s, int size, MMIOT *f)
+puturl(char *s, int size, MMIOT *f, int display)
 {
     unsigned char c;
 
     while ( size-- > 0 ) {
 	c = *s++;
 
+	if ( c == '\\' && size-- > 0 ) {
+	    c = *s++;
+
+	    if ( !( ispunct(c) || isspace(c) ) )
+		Qchar('\\', f);
+	}
+	
 	if ( c == '&' )
 	    Qstring("&amp;", f);
 	else if ( c == '<' )
 	    Qstring("&lt;", f);
-	else if ( isalnum(c) || ispunct(c) )
+	else if ( c == '"' )
+	    Qstring("%22", f);
+	else if ( isalnum(c) || ispunct(c) || (display && isspace(c)) )
 	    Qchar(c, f);
 	else
 	    Qprintf(f, "%%%02X", c);
@@ -367,6 +376,10 @@ parenthetical(int in, int out, MMIOT *f)
 	    return EOF;
 	else if ( c == in )
 	    ++indent;
+	else if ( (c == '\\') && (peek(f,1) == out) ) {
+	    ++size;
+	    pull(f);
+	}
 	else if ( c == out )
 	    --indent;
     }
@@ -391,6 +404,65 @@ linkylabel(MMIOT *f, Cstring *res)
 }
 
 
+/* see if the quote-prefixed linky segment is actually a title.
+ */
+static int
+linkytitle(MMIOT *f, char quote, Footnote *ref)
+{
+    int whence = mmiottell(f);
+    char *title = cursor(f);
+    char *e;
+    register int c;
+
+    while ( (c = pull(f)) != EOF ) {
+	e = cursor(f);
+	if ( c == quote ) {
+	    if ( (c = eatspace(f)) == ')' ) {
+		T(ref->title) = 1+title;
+		S(ref->title) = (e-title)-2;
+		return 1;
+	    }
+	}
+    }
+    mmiotseek(f, whence);
+    return 0;
+}
+
+
+/* extract a =HHHxWWW size from the input stream
+ */
+static int
+linkysize(MMIOT *f, Footnote *ref)
+{
+    int height=0, width=0;
+    int whence = mmiottell(f);
+    int c;
+
+    if ( isspace(peek(f,0)) ) {
+	pull(f);	/* eat '=' */
+
+	for ( c = pull(f); isdigit(c); c = pull(f))
+	    width = (width * 10) + (c - '0');
+
+	if ( c == 'x' ) {
+	    for ( c = pull(f); isdigit(c); c = pull(f))
+		height = (height*10) + (c - '0');
+
+	    if ( isspace(c) )
+		c = eatspace(f);
+
+	    if ( (c == ')') || ((c == '\'' || c == '"') && linkytitle(f, c, ref)) ) {
+		ref->height = height;
+		ref->width  = width;
+		return 1;
+	    }
+	}
+    }
+    mmiotseek(f, whence);
+    return 0;
+}
+
+
 /* extract a (-prefixed url from the input stream.
  * the label is either of the format `<link>`, where I
  * extract until I find a >, or it is of the format
@@ -400,97 +472,42 @@ linkylabel(MMIOT *f, Cstring *res)
 static int
 linkyurl(MMIOT *f, int image, Footnote *p)
 {
-    int size = 0;
-    char *ptr;
     int c;
-    char *stopper = image ? "='\")" : "'\")";
+    int mayneedtotrim=0;
 
     if ( (c = eatspace(f)) == EOF )
 	return 0;
 
     if ( c == '<' ) {
 	pull(f);
-	ptr = cursor(f);
-	if ( (size = parenthetical('<', '>', f)) == EOF )
+	mayneedtotrim=1;
+    }
+
+    T(p->link) = cursor(f);
+    for ( S(p->link)=0; (c = peek(f,1)) != ')'; ++S(p->link) ) {
+	if ( c == EOF )
 	    return 0;
-	SUFFIX(p->link, ptr, size);
-    }
-    else {
-	while (1) {
-	    if ( (c = peek(f,1)) == EOF )
-		return 0;
-	    else if ( strchr(stopper, c) )
-		break;
-	    else if ( (c == '\\') && strchr(stopper, peek(f,2)) )
-		pull(f);
-	    EXPAND(p->link) = pull(f);
-	}
-	___mkd_tidy(&p->link);
-    }
-    return 1;
-}
-
-
-/* extract a =HHHxWWW size from the input stream
- */
-static int
-linkysize(MMIOT *f, int image, Footnote *ref)
-{
-    int height=0, width=0;
-    int c;
-
-    if ( !image )
-	return 1;
-	
-    if ( (c = eatspace(f)) != '=' ) 
-	return (c != EOF);
-    pull(f);	/* eat '=' */
-
-    for ( c = pull(f); isdigit(c); c = pull(f))
-	width = (width * 10) + (c - '0');
-
-    if ( c == 'x' ) {
-	for ( c = pull(f); isdigit(c); c = pull(f))
-	    height = (height*10) + (c - '0');
-
-	if ( c != EOF ) {
-	    if ( !isspace(c) ) shift(f, -1);
-	    ref->height = height;
-	    ref->width  = width;
-	    return 1;
-	}
-    }
-    return 0;
-}
-
-
-/* extract a )-terminated title from the input stream.
- */
-static int
-linkytitle(MMIOT *f, Footnote *ref)
-{
-    int countq=0, qc, c;
-    char *title, *lastqc = 0;
-
-    if ( (qc = eatspace(f)) == '"' || qc == '\'' ) {
-	pull(f);
-	title = cursor(f);
-	while ( (c = peek(f,1)) != EOF ) {
-	    if ( (c == ')') && countq ) {
-		S(ref->title) = (lastqc - title);
-		T(ref->title) = title;
-		return 1;
-	    }
-	    else if ( c == qc ) {
-		lastqc = cursor(f);
-		countq++;
-	    }
+	else if ( (c == '"' || c == '\'') && linkytitle(f, c, p) )
+	    break;
+	else if ( image && (c == '=') && linkysize(f, p) )
+	    break;
+	else if ( (c == '\\') && ispunct(peek(f,2)) ) {
+	    ++S(p->link);
 	    pull(f);
 	}
-	return 0;
+	pull(f);
     }
+    if ( peek(f, 1) == ')' )
+	pull(f);
+	
+    ___mkd_tidy(&p->link);
+    
+    if ( mayneedtotrim && (T(p->link)[S(p->link)-1] == '>') )
+	--S(p->link);
+    
     return 1;
 }
+
 
 
 /* prefixes for <automatic links>
@@ -585,16 +602,19 @@ linkyformat(MMIOT *f, Cstring text, int image, Footnote *ref)
 
     if ( image )
 	tag = &imaget;
-    else if ( (f->flags & NO_PSEUDO_PROTO) || (tag = pseudo(ref->link)) == 0 ) {
+    else if ( tag = pseudo(ref->link) ) {
+	if ( f->flags & (NO_PSEUDO_PROTO|SAFELINK) )
+	    return 0;
+    }
+    else if ( (f->flags & SAFELINK) && T(ref->link)
+				    && (T(ref->link)[0] != '/')
+				    && !isautoprefix(T(ref->link)) )
 	/* if SAFELINK, only accept links that are local or
 	 * a well-known protocol
 	 */
-	if ( (f->flags & SAFELINK) && T(ref->link)
-				   && (T(ref->link)[0] != '/')
-				   && !isautoprefix(T(ref->link)) )
 	    return 0;
+    else
 	tag = &linkt;
-    }
 
     if ( f->flags & tag->flags )
 	return 0;
@@ -604,8 +624,8 @@ linkyformat(MMIOT *f, Cstring text, int image, Footnote *ref)
 	
 	if ( tag->kind & IS_URL ) {
 	    if ( f->base && T(ref->link) && (T(ref->link)[tag->szpat] == '/') )
-		puturl(f->base, strlen(f->base), f);
-	    puturl(T(ref->link) + tag->szpat, S(ref->link) - tag->szpat, f);
+		puturl(f->base, strlen(f->base), f, 0);
+	    puturl(T(ref->link) + tag->szpat, S(ref->link) - tag->szpat, f, 0);
 	}
 	else
 	    ___mkd_reparse(T(ref->link) + tag->szpat, S(ref->link) - tag->szpat, INSIDE_TAG, f);
@@ -656,13 +676,8 @@ linkylinky(int image, MMIOT *f)
 
 	switch ( pull(f) ) {
 	case '(':  /* embedded link */
-	    if ( linkyurl(f, image, &key) && linkysize(f, image, &key)
-						&& linkytitle(f, &key) ) {
-		if ( peek(f, 1) == ')' ) {
-		    pull(f);
-		    status = linkyformat(f, name, image, &key);
-		}
-	    }
+	    if ( linkyurl(f, image, &key) )
+		status = linkyformat(f, name, image, &key);
 	    break;
 	
 	case '[':/* footnote link */
@@ -746,64 +761,63 @@ forbidden_tag(MMIOT *f)
 }
 
 
-
-/* a < may be just a regular character, the start of an embedded html
- * tag, or the start of an <automatic link>.    If it's an automatic
- * link, we also need to know if it's an email address because if it
- * is we need to mangle it in our futile attempt to cut down on the
- * spaminess of the rendered page.
+/* Check a string to see if it looks like a mail address
+ * "looks like a mail address" means alphanumeric + some
+ * specials, then a `@`, then alphanumeric + some specials,
+ * but with a `.`
  */
 static int
-maybe_tag_or_link(MMIOT *f, int close)
+maybe_address(char *p, int size)
 {
-    char *text;
-    int c, size;
-    int maybetag = (close != EOF);
-    int maybeaddress=0;
-    int mailto;
-    int consume;
+    int ok = 0;
+    
+    for ( ;size && (isalnum(*p) || strchr("._-+*", *p)); ++p, --size)
+	;
 
-    if ( f->flags & INSIDE_TAG )
-	return 0;
-
-    for ( size=0; ((c = peek(f,size+1)) != close) && !isspace(c); size++ ) {
-	if ( ! (c == '/' || isalnum(c) || c == '~') )
-	    maybetag=0;
-	if ( c == '@' )
-	    maybeaddress=1;
-	else if ( c == EOF )
-	    return 0;
-    }
-
-    if ( size == 0 )
+    if ( ! (size && *p == '@') )
 	return 0;
     
-    if ( maybetag  || (size >= 3 && strncmp(cursor(f), "!--", 3) == 0) ) {
-	Qstring(forbidden_tag(f) ? "&lt;" : "<", f);
-	while ( ((c = peek(f, 1)) != EOF) && (c != '>') )
-	    cputc(pull(f), f);
-	return 1;
-    }
-    if ( close == '>' && isspace(c) )
-	return 0;
+    --size, ++p;
 
+    if ( size && *p == '.' ) return 0;
+    
+    for ( ;size && (isalnum(*p) || strchr("._-+", *p)); ++p, --size )
+	if ( *p == '.' && size > 1 ) ok = 1;
+
+    return size ? 0 : ok;
+}
+
+
+/* The size-length token at cursor(f) is either a mailto:, an
+ * implicit mailto:, one of the approved url protocols, or just
+ * plain old text.   If it's a mailto: or an approved protocol,
+ * linkify it, otherwise say "no"
+ */
+static int
+process_possible_link(MMIOT *f, int size)
+{
+    int address= 0;
+    int mailto = 0;
+    char *text = cursor(f);
+    
     if ( f->flags & DENY_A ) return 0;
 
-    consume = ( close != EOF ) ? (size+1) : (size);
+    if ( (size > 7) && strncasecmp(text, "mailto:", 7) == 0 ) {
+	/* if it says it's a mailto, it's a mailto -- who am
+	 * I to second-guess the user?
+	 */
+	address = 1;
+	mailto = 7; 	/* 7 is the length of "mailto:"; we need this */
+    }
+    else 
+	address = maybe_address(text, size);
 
-    text = cursor(f);
-    shift(f, consume);
-
-    if ( maybeaddress ) {
+    if ( address ) { 
 	Qstring("<a href=\"", f);
-	if ( (size > 7) && strncasecmp(text, "mailto:", 7) == 0 )
-	    mailto = 7;
-	else {
-	    mailto = 0;
+	if ( !mailto ) {
 	    /* supply a mailto: protocol if one wasn't attached */
 	    mangle("mailto:", 7, f);
 	}
-
 	mangle(text, size, f);
 	Qstring("\">", f);
 	mangle(text+mailto, size-mailto, f);
@@ -812,16 +826,88 @@ maybe_tag_or_link(MMIOT *f, int close)
     }
     else if ( isautoprefix(text) ) {
 	Qstring("<a href=\"", f);
-	puturl(text,size,f);
+	puturl(text,size,f, 0);
 	Qstring("\">", f);
-	puturl(text,size,f);
+	puturl(text,size,f, 1);
 	Qstring("</a>", f);
 	return 1;
     }
-
-    shift(f, -consume);
     return 0;
-} /* maybe_tag_or_link */
+} /* process_possible_link */
+
+
+/* a < may be just a regular character, the start of an embedded html
+ * tag, or the start of an <automatic link>.    If it's an automatic
+ * link, we also need to know if it's an email address because if it
+ * is we need to mangle it in our futile attempt to cut down on the
+ * spaminess of the rendered page.
+ */
+static int
+maybe_tag_or_link(MMIOT *f)
+{
+    int c, size;
+    int maybetag = 1;
+
+    if ( f->flags & INSIDE_TAG )
+	return 0;
+
+    for ( size=0; (c = peek(f, size+1)) != '>'; size++) {
+	if ( c == EOF )
+	    return 0;
+	else if ( c == '\\' ) {
+	    maybetag=0;
+	    if ( peek(f, size+2) != EOF )
+		size++;
+	}
+	else if ( isspace(c) )
+	    break;
+	else if ( ! (c == '/' || isalnum(c) ) )
+	    maybetag=0;
+    }
+
+    if ( size ) {
+	if ( maybetag || (size >= 3 && strncmp(cursor(f), "!--", 3) == 0) ) {
+	    Qstring(forbidden_tag(f) ? "&lt;" : "<", f);
+	    while ( ((c = peek(f, 1)) != EOF) && (c != '>') )
+		cputc(pull(f), f);
+	    return 1;
+	}
+	else if ( !isspace(c) && process_possible_link(f, size) ) {
+	    shift(f, size+1);
+	    return 1;
+	}
+    }
+    
+    return 0;
+}
+
+
+/* autolinking means that all inline html is <a href'ified>.   A
+ * autolink url is alphanumerics, slashes, periods, underscores,
+ * the at sign, colon, and the % character.
+ */
+static int
+maybe_autolink(MMIOT *f)
+{
+    register int c;
+    int size;
+
+    /* greedily scan forward for the end of a legitimate link.
+     */
+    for ( size=0; (c=peek(f, size+1)) != EOF; size++ )
+	if ( c == '\\' ) {
+	     if ( peek(f, size+2) != EOF )
+		++size;
+	}
+	else if ( isspace(c) || strchr("'\"()[]{}<>`", c) )
+	    break;
+
+    if ( (size > 1) && process_possible_link(f, size) ) {
+	shift(f, size);
+	return 1;
+    }
+    return 0;
+}
 
 
 /* smartyquote code that's common for single and double quotes
@@ -907,7 +993,7 @@ smartypants(int c, int *flags, MMIOT *f)
 {
     int i;
 
-    if ( f->flags & DENY_SMARTY )
+    if ( f->flags & (DENY_SMARTY|INSIDE_TAG) )
 	return 0;
 
     for ( i=0; i < NRSMART; i++)
@@ -963,7 +1049,7 @@ text(MMIOT *f)
 
     while (1) {
         if ( (f->flags & AUTOLINK) && isalpha(peek(f,1)) )
-	    maybe_tag_or_link(f, EOF);
+	    maybe_autolink(f);
 
         c = pull(f);
 
@@ -1021,15 +1107,24 @@ text(MMIOT *f)
 	case '_':
 #if RELAXED_EMPHASIS
 	/* Underscores don't count if they're in the middle of a word */
-		    if ( (!(f->flags & STRICT))
-			     && ((isthisspace(f,-1) && isthisspace(f,1))
-			      || (isthisalnum(f,-1) && isthisalnum(f,1))) ){
+		    if ( !(f->flags & STRICT) && isthisalnum(f,-1)
+					      && isthisalnum(f,1) ) {
+			Qchar(c, f);
+			break;
+		    }
+#endif
+	case '*':
+#if RELAXED_EMPHASIS
+	/* Underscores & stars don't count if they're out in the middle
+	 * of whitespace */
+		    if ( !(f->flags & STRICT) && isthisspace(f,-1)
+					      && isthisspace(f,1) ) {
 			Qchar(c, f);
 			break;
 		    }
 		    /* else fall into the regular old emphasis case */
 #endif
-	case '*':   if ( tag_text(f) )
+		    if ( tag_text(f) )
 			Qchar(c, f);
 		    else {
 			for (rep = 1; peek(f,1) == c; pull(f) )
@@ -1072,7 +1167,7 @@ text(MMIOT *f)
 		    }
 		    break;
 
-	case '<':   if ( !maybe_tag_or_link(f, '>') )
+	case '<':   if ( !maybe_tag_or_link(f) )
 			Qstring("&lt;", f);
 		    break;
 
