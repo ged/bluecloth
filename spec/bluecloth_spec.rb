@@ -35,6 +35,13 @@ describe BlueCloth do
 	include BlueCloth::TestConstants,
 		BlueCloth::Matchers
 
+	it "defines the top-level Markdown constant" do
+		Object.const_defined?('Markdown').should be_true()
+		# :FIXME: This is probably a fragile test, as anything else that defines it before
+		# the BlueCloth tests run could lead to a false failure. I at least know that it'll
+		# work in my environment, and I'm not sure how else to test it.
+		::Markdown.should be_equal( ::BlueCloth )
+	end
 
 	it "knows what version of Discount was used to build it" do
 		BlueCloth.discount_version.should =~ /^\d+\.\d+\.\d+.*RELAXED/

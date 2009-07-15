@@ -116,14 +116,14 @@ describe BlueCloth, "bugfixes" do
 	end
 
 
-	#
-	it "doesn't hang when presented with a series of hyphens" do
+	it "doesn't hang when presented with a series of hyphens (rails-security DoS/#57)" do
 		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		END_MARKDOWN
-		<hr />
+		This line of markdown below will hang you if you're running BlueCloth 1.x.
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   
 		
+		END_MARKDOWN
+		<p>This line of markdown below will hang you if you're running BlueCloth 1.x.</p>
+
 		<hr />
 		END_HTML
 	end

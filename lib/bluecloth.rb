@@ -154,3 +154,8 @@ class BlueCloth
 end # class BlueCloth
 
 require 'bluecloth_ext'
+
+# Set the top-level 'Markdown' constant if it isn't already set
+::Markdown = ::BlueCloth unless defined?( ::Markdown )
+
+

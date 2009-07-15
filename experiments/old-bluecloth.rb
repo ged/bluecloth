@@ -848,7 +848,7 @@ class OldBlueCloth < String
 
 		# Scan the whole string
 		until @scanner.eos?
-		
+
 			if @scanner.scan( /\[/ )
 				link = ''; linkid = ''
 				depth = 1
