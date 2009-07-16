@@ -18,7 +18,7 @@ project_summary: BlueCloth is a Ruby implementation of Markdown
 project_name: BlueCloth
 version_file: bluecloth.rb
 additional_pkgfiles: 
-- COPYRIGHT.discount
+- LICENSE.discount
 - spec/data/**/*.{txt,text,html}
 - ext/VERSION
 dev_dependencies: {}

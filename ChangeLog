@@ -1,3 +1,51 @@
+-- Thu, 16 Jul 2009 00:18:30 -0000 by deveiant (r132) -----
+   Changed: lib/bluecloth.rb
+
+   Bumping version to 2.0.5.
+
+
+-- Wed, 15 Jul 2009 23:52:42 -0000 by deveiant (r129) -----
+   Changed: Rakefile
+            experiments/old-bluecloth.rb
+            spec/bluecloth_spec.rb
+            lib/bluecloth.rb
+            spec/bugfix_spec.rb
+
+    * Updated the build system
+    * Made the example in the hyphen-slowdown bug more like the original report.
+    * Set the top-level 'Markdown' constant as an alias for BlueCloth if it's not 
+    already set by something else.
+
+
+-- Mon, 06 Jul 2009 23:57:48 -0000 by deveiant (r126) -----
+   Changed: spec/bugfix_spec.rb
+
+   Adding a spec to test out the DoS reported by Ben Sandofsky (refs #57).
+
+
+-- Tue, 30 Jun 2009 01:33:36 -0000 by deveiant (r124) -----
+   Changed: ext/markdown.c
+            ext/VERSION
+            ext/markdown.h
+            ext/generate.c
+
+    * Updated with Discount 1.4.4.
+
+
+-- Mon, 15 Jun 2009 13:15:54 -0000 by deveiant (r123) -----
+   Added:   spec/discount_spec.rb (new)
+   Changed: ext/cstring.h
+            ext/bluecloth.c
+            ext/markdown.c
+            spec/bluecloth/links_spec.rb
+            spec/lib/matchers.rb
+            ext/resource.c (and 10 other/s)
+
+    * Updated to Discount 1.4.2.
+    * Added some more tests for various Discount extensions.
+    * Added support for the MKD_AUTOLINK and MKD_SAFELINK.
+
+
 -- Tue, 26 May 2009 05:08:15 -0000 by deveiant (r121) -----
    Added:   ext/Csio.c (new)
             ext/xmlpage.c (new)

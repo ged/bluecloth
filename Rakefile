@@ -83,7 +83,7 @@ RAKE_TASKLIBS = Rake::FileList.new( "#{RAKE_TASKDIR}/*.rb" )
 LOCAL_RAKEFILE = BASEDIR + 'Rakefile.local'
 
 EXTRA_PKGFILES = Rake::FileList.new
-EXTRA_PKGFILES.include "#{BASEDIR}/COPYRIGHT.discount"
+EXTRA_PKGFILES.include "#{BASEDIR}/LICENSE.discount"
 EXTRA_PKGFILES.include "#{BASEDIR}/spec/data/**/*.{txt,text,html}"
 EXTRA_PKGFILES.include "#{BASEDIR}/ext/VERSION"
 EXTRA_PKGFILES.exclude( /\.svn/ )
