@@ -14,6 +14,10 @@
 #	define INITRNG(x) (void)1
 #endif
 
+#ifndef HAVE_BZERO
+#	define bzero(s, n) (memset((void *)s, 0, (size_t)n))
+#endif
+
 #ifdef HAVE_STRCASECMP
 #elif  HAVE_STRICMP
 #	define strcasecmp stricmp
