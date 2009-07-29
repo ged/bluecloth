@@ -1,0 +1,4 @@
+\.o$
+\.bundle$
+\.log$
+ext/Makefile$

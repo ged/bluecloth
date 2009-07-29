@@ -9,7 +9,6 @@ project_description: |-
   write using an easy-to-read, easy-to-write plain text format, then convert it to
   structurally valid XHTML (or HTML).
 rubyforge_group: deveiate
-author_name: Michael Granger
 project_pubhost: deveiate
 project_homepage: http://deveiate.org/projects/BlueCloth/
 project_dependencies: {}
@@ -23,5 +22,6 @@ additional_pkgfiles:
 - ext/VERSION
 dev_dependencies: {}
 
-author_email: ged@FaerieMUD.org
+authors: 
+  Michael Granger: ged@FaerieMUD.org
 post_install_message: ""

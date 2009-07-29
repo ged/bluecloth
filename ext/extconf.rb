@@ -32,7 +32,7 @@ have_func( "srand" ) || have_func( "srandom" )
 have_func( "random" ) || have_func( "rand" )
 
 # bzero() isn't ANSI C, so use memset() if it isn't defined
-have_func( "bzero" )
+have_func( "bzero", %w[string.h strings.h] )
 
 unless have_func( "strcasecmp" ) || have_func( "stricmp" )
 	fail( "This extension requires either strcasecmp() or stricmp()" )

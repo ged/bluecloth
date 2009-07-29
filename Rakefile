@@ -23,7 +23,6 @@ BEGIN {
 
 require 'rbconfig'
 require 'rake'
-require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rake/packagetask'
 require 'rake/clean'
@@ -39,6 +38,8 @@ EXTDIR        = BASEDIR + 'ext'
 DOCSDIR       = BASEDIR + 'docs'
 PKGDIR        = BASEDIR + 'pkg'
 DATADIR       = BASEDIR + 'data'
+
+MANUALDIR     = DOCSDIR + 'manual'
 
 PROJECT_NAME  = 'BlueCloth'
 PKG_NAME      = PROJECT_NAME.downcase
@@ -60,25 +61,33 @@ end
 PKG_FILE_NAME = "#{PKG_NAME.downcase}-#{PKG_VERSION}"
 GEM_FILE_NAME = "#{PKG_FILE_NAME}.gem"
 
+# Universal VCS constants
+DEFAULT_EDITOR  = 'vi'
+COMMIT_MSG_FILE = 'commit-msg.txt'
+FILE_INDENT     = " " * 12
+LOG_INDENT      = " " * 3
+
 EXTCONF       = EXTDIR + 'extconf.rb'
 
 ARTIFACTS_DIR = Pathname.new( CC_BUILD_ARTIFACTS )
 
 TEXT_FILES    = Rake::FileList.new( %w[Rakefile ChangeLog README LICENSE] )
-BIN_FILES     = Rake::FileList.new( "#{BINDIR}/*" ).exclude( /\.svn/ )
-LIB_FILES     = Rake::FileList.new( "#{LIBDIR}/**/*.rb" ).exclude( /\.svn/ )
-EXT_FILES     = Rake::FileList.new( "#{EXTDIR}/**/*.{c,h,rb}" ).exclude( /\.svn/ )
-DATA_FILES    = Rake::FileList.new( "#{DATADIR}/**/*" ).exclude( /\.svn/ )
+BIN_FILES     = Rake::FileList.new( "#{BINDIR}/*" )
+LIB_FILES     = Rake::FileList.new( "#{LIBDIR}/**/*.rb" )
+EXT_FILES     = Rake::FileList.new( "#{EXTDIR}/**/*.{c,h,rb}" )
+DATA_FILES    = Rake::FileList.new( "#{DATADIR}/**/*" )
 
 SPECDIR       = BASEDIR + 'spec'
 SPECLIBDIR    = SPECDIR + 'lib'
 SPEC_FILES    = Rake::FileList.new( "#{SPECDIR}/**/*_spec.rb", "#{SPECLIBDIR}/**/*.rb" )
 
 TESTDIR       = BASEDIR + 'tests'
-TEST_FILES    = Rake::FileList.new( "#{TESTDIR}/**/*.tests.rb" ).exclude( /\.svn/ )
+TEST_FILES    = Rake::FileList.new( "#{TESTDIR}/**/*.tests.rb" )
 
 RAKE_TASKDIR  = BASEDIR + 'rake'
 RAKE_TASKLIBS = Rake::FileList.new( "#{RAKE_TASKDIR}/*.rb" )
+PKG_TASKLIBS  = Rake::FileList.new( "#{RAKE_TASKDIR}/{191_compat,helpers,packaging,rdoc,testing}.rb" )
+PKG_TASKLIBS.include( "#{RAKE_TASKDIR}/manual.rb" ) if MANUALDIR.exist?
 
 LOCAL_RAKEFILE = BASEDIR + 'Rakefile.local'
 
@@ -86,7 +95,6 @@ EXTRA_PKGFILES = Rake::FileList.new
 EXTRA_PKGFILES.include "#{BASEDIR}/LICENSE.discount"
 EXTRA_PKGFILES.include "#{BASEDIR}/spec/data/**/*.{txt,text,html}"
 EXTRA_PKGFILES.include "#{BASEDIR}/ext/VERSION"
-EXTRA_PKGFILES.exclude( /\.svn/ )
 
 RELEASE_FILES = TEXT_FILES + 
 	SPEC_FILES + 
@@ -111,23 +119,16 @@ RCOV_OPTS = [
   ]
 
 
-# Subversion constants -- directory names for releases and tags
-SVN_TRUNK_DIR    = 'trunk'
-SVN_RELEASES_DIR = 'releases'
-SVN_BRANCHES_DIR = 'branches'
-SVN_TAGS_DIR     = 'tags'
-
-SVN_DOTDIR       = BASEDIR + '.svn'
-SVN_ENTRIES      = SVN_DOTDIR + 'entries'
-
-
 ### Load some task libraries that need to be loaded early
 require RAKE_TASKDIR + 'helpers.rb'
-require RAKE_TASKDIR + 'svn.rb'
-require RAKE_TASKDIR + 'verifytask.rb'
 
 # Define some constants that depend on the 'svn' tasklib
-PKG_BUILD = get_svn_rev( BASEDIR ) || 0
+if hg = which( 'hg' )
+	id = IO.read('|-') or exec hg, 'id', '-q'
+	PKG_BUILD = id.chomp
+else
+	PKG_BUILD = 0
+end
 SNAPSHOT_PKG_NAME = "#{PKG_FILE_NAME}.#{PKG_BUILD}"
 SNAPSHOT_GEM_NAME = "#{SNAPSHOT_PKG_NAME}.gem"
 
@@ -139,7 +140,7 @@ RDOC_OPTIONS = [
 	'-i', '.',
 	'-m', 'README',
 	'-t', PKG_NAME,
-	'-W', 'http://deveiate.org/projects/BlueCloth/browser/trunk/'
+	'-W', 'http://deveiate.org/projects/BlueCloth/browser/'
   ]
 
 # Release constants
@@ -196,7 +197,7 @@ GEMSPEC   = Gem::Specification.new do |gem|
   	  ].join( "\n" )
 
 	gem.authors           = "Michael Granger"
-	gem.email             = "ged@FaerieMUD.org"
+	gem.email             = ["ged@FaerieMUD.org"]
 	gem.homepage          = 'http://deveiate.org/projects/BlueCloth/'
 	gem.rubyforge_project = RUBYFORGE_PROJECT
 
@@ -214,12 +215,12 @@ GEMSPEC   = Gem::Specification.new do |gem|
 
 	gem.files             = RELEASE_FILES
 	gem.test_files        = SPEC_FILES
-		
+
 	DEPENDENCIES.each do |name, version|
 		version = '>= 0' if version.length.zero?
 		gem.add_runtime_dependency( name, version )
 	end
-	
+
 	# Developmental dependencies don't work as of RubyGems 1.2.0
 	unless Gem::Version.new( Gem::RubyGemsVersion ) <= Gem::Version.new( "1.2.0" )
 		DEVELOPMENT_DEPENDENCIES.each do |name, version|
@@ -227,14 +228,11 @@ GEMSPEC   = Gem::Specification.new do |gem|
 			gem.add_development_dependency( name, version )
 		end
 	end
-	
+
 	REQUIREMENTS.each do |name, version|
 		gem.requirements << [ name, version ].compact.join(' ')
 	end
 end
-
-# Manual-generation config
-MANUALDIR = DOCSDIR + 'manual'
 
 $trace = Rake.application.options.trace ? true : false
 $dryrun = Rake.application.options.dryrun ? true : false
@@ -242,7 +240,7 @@ $dryrun = Rake.application.options.dryrun ? true : false
 
 # Load any remaining task libraries
 RAKE_TASKLIBS.each do |tasklib|
-	next if tasklib.to_s =~ %r{/(helpers|svn|verifytask)\.rb$}
+	next if tasklib.to_s =~ %r{/helpers\.rb$}
 	begin
 		trace "  loading tasklib %s" % [ tasklib ]
 		require tasklib
@@ -276,14 +274,11 @@ task :local
 CLEAN.include 'coverage'
 CLOBBER.include 'artifacts', 'coverage.info', PKGDIR
 
-# Target to hinge on ChangeLog updates
-file SVN_ENTRIES
-
 ### Task: changelog
-file 'ChangeLog' => SVN_ENTRIES.to_s do |task|
+file 'ChangeLog' do |task|
 	log "Updating #{task.name}"
 
-	changelog = make_svn_changelog()
+	changelog = make_changelog()
 	File.open( task.name, 'w' ) do |fh|
 		fh.print( changelog )
 	end
@@ -296,13 +291,13 @@ task :cruise => [:clean, 'spec:quiet', :package] do |task|
 	raise "Artifacts dir not set." if ARTIFACTS_DIR.to_s.empty?
 	artifact_dir = ARTIFACTS_DIR.cleanpath + (CC_BUILD_LABEL || Time.now.strftime('%Y%m%d-%T'))
 	artifact_dir.mkpath
-	
+
 	coverage = BASEDIR + 'coverage'
 	if coverage.exist? && coverage.directory?
 		$stderr.puts "Copying coverage stats..."
 		FileUtils.cp_r( 'coverage', artifact_dir )
 	end
-	
+
 	$stderr.puts "Copying packages..."
 	FileUtils.cp_r( FileList['pkg/*'].to_a, artifact_dir )
 end
@@ -311,7 +306,7 @@ end
 desc "Update the build system to the latest version"
 task :update_build do
 	log "Updating the build system"
-	sh 'svn', 'up', RAKE_TASKDIR
+	run 'hg', '-R', RAKE_TASKDIR, 'pull', '-u'
 	log "Updating the Rakefile"
 	sh 'rake', '-f', RAKE_TASKDIR + 'Metarakefile'
 end
