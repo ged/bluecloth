@@ -60,10 +60,10 @@ You can also install as a site library via the Rakefile:
 
 == Source 
 
-You can check out the current development source with Subversion from
+You can check out the current development source with Mercurial from
 the following URL:
 
-  svn://deveiate.org/BlueCloth/trunk
+  http://repo.deveiate.org/BlueCloth
 
 You can report bugs, suggest improvements, or check on development
 activity at the project page:
