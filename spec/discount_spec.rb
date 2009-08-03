@@ -60,6 +60,58 @@ describe BlueCloth, "implementation of Discount-specific features" do
 		end
 
 	end
+
+
+	describe "Markdown-Extra tables" do
+
+		it "renders the example from orc's blog" do
+			the_indented_markdown( <<-"END_MARKDOWN", :strict => false ).should be_transformed_into(<<-"END_HTML").without_indentation
+			 a   |    b
+			-----|-----
+			hello|sailor
+			END_MARKDOWN
+			<table>
+			<thead>
+			<tr>
+			<th> a   </th>
+			<th>    b</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+			<td>hello</td>
+			<td>sailor</td>
+			</tr>
+			</tbody>
+			</table>
+			END_HTML
+		end
+
+		it "renders simple markdown-extra tables" do
+			the_indented_markdown( <<-"END_MARKDOWN", :strict => false ).should be_transformed_into(<<-"END_HTML").without_indentation
+			First Header  | Second Header
+			------------- | -------------
+			Content Cell  | Content Cell
+			END_MARKDOWN
+			<table>
+			<thead>
+			<tr>
+			<th>First Header  </th>
+			<th> Second Header</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+			<td>Content Cell  </td>
+			<td> Content Cell</td>
+			</tr>
+			</tbody>
+			</table>
+			END_HTML
+
+		end
+
+	end
 end
 
 

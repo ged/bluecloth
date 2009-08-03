@@ -259,6 +259,25 @@ comment(Paragraph *p)
 }
 
 
+istable(Line *t)
+{
+    char *p;
+    Line *dashes = t->next;
+    
+    if ( !dashes )
+	return 0;
+	
+    if ( !memchr(T(t->text), '|', S(t->text)) )
+	return 0;
+
+    for ( p = T(dashes->text)+S(dashes->text)-1; p >= T(dashes->text); --p)
+	if ( ! ((*p == '|') || (*p == ':') || (*p == '-') || isspace(*p)) )
+	    return 0;
+
+    return 1;
+}
+
+
 /* footnotes look like ^<whitespace>{0,3}[stuff]: <content>$
  */
 static int
@@ -628,6 +647,22 @@ quoteblock(Paragraph *p)
 }
 
 
+static Line *
+tableblock(Paragraph *p)
+{
+    Line *t, *q;
+    int bars;
+
+    for ( t = p->text; t && (q = t->next); t = t->next ) {
+	if ( !memchr(T(q->text), '|', S(q->text)) ) {
+	    t->next = 0;
+	    return q;
+	}
+    }
+    return 0;
+}
+
+
 static Paragraph *Pp(ParagraphRoot *, Line *, int);
 static Paragraph *compile(Line *, int, MMIOT *);
 
@@ -659,7 +694,7 @@ listitem(Paragraph *p, int indent)
 	 * need any indentation
 	 */
 	if ( q != t->next ) {
-	    if (q->dle < 4) {
+	    if (q->dle < indent) {
 		q = t->next;
 		t->next = 0;
 		return q;
@@ -684,9 +719,10 @@ listblock(Paragraph *top, int trim, MMIOT *f)
 {
     ParagraphRoot d = { 0, 0 };
     Paragraph *p;
-    Line *q = top->text, *text;
-    Line *label;
-    int para = 0;
+    Line *q = top->text, *text, *label;
+    int isdl = (top->typ == DL),
+	para = 0,
+	ltype;
 
     while (( text = q )) {
 	if ( top->typ == DL ) {
@@ -710,7 +746,8 @@ listblock(Paragraph *top, int trim, MMIOT *f)
 
 	if ( para && (top->typ != DL) && p->down ) p->down->align = PARA;
 
-	if ( !(q = skipempty(text)) || (islist(q, &trim) == 0) )
+	if ( !(q = skipempty(text)) || ((ltype = islist(q, &trim)) == 0)
+				    || (isdl != (ltype == DL)) )
 	    break;
 
 	if ( para = (q != text) ) {
@@ -853,6 +890,7 @@ compile(Line *ptr, int toplevel, MMIOT *f)
     struct kw *tag;
     Line *r;
     int para = toplevel;
+    int blocks = 0;
     int hdr_type, list_type, indent;
 
     ptr = consume(ptr, &para);
@@ -901,6 +939,10 @@ compile(Line *ptr, int toplevel, MMIOT *f)
 	    ptr = consume(addfootnote(ptr, f), &para);
 	    continue;
 	}
+	else if ( istable(ptr) && !(f->flags & STRICT) ) {
+	    p = Pp(&d, ptr, TABLE);
+	    ptr = tableblock(p);
+	}
 	else {
 	    p = Pp(&d, ptr, MARKUP);
 	    ptr = textblock(p, toplevel);
@@ -909,7 +951,8 @@ compile(Line *ptr, int toplevel, MMIOT *f)
 	if ( (para||toplevel) && !p->align )
 	    p->align = PARA;
 
-	para = toplevel;
+	blocks++;
+	para = toplevel || (blocks > 1);
 	ptr = consume(ptr, &para);
 
 	if ( para && !p->align )

@@ -5,3 +5,4 @@ ext/Makefile$
 pkg/
 ext/.*\.so$
 docs/api
+^discount-\d+.*

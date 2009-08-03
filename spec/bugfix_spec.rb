@@ -120,11 +120,29 @@ describe BlueCloth, "bugfixes" do
 		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
 		This line of markdown below will hang you if you're running BlueCloth 1.x.
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   
-		
+
 		END_MARKDOWN
 		<p>This line of markdown below will hang you if you're running BlueCloth 1.x.</p>
 
 		<hr />
+		END_HTML
+	end
+
+	it "recognizes closing block tags even when they're not on their own line" do
+		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
+		Para 1
+
+		<div><pre>HTML block
+		</pre></div>
+
+		Para 2 [Link](#anchor)
+		END_MARKDOWN
+		<p>Para 1</p>
+
+		<div><pre>HTML block
+		</pre></div>
+
+		<p>Para 2 <a href=\"#anchor\">Link</a></p>
 		END_HTML
 	end
 
