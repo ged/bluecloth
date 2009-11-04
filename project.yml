@@ -1,4 +1,6 @@
 --- 
+excluded_pkgfiles: []
+
 rubyforge_project: bluecloth
 project_requirements: {}
 
