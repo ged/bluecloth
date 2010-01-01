@@ -6,3 +6,4 @@ pkg/
 ext/.*\.so$
 docs/api
 ^discount-\d+.*
+^tmp/

@@ -201,6 +201,9 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 			opthash = text;
 			text = rb_str_new( "", 0 );
 		}
+		else {
+			text = rb_obj_as_string( text );
+		}
 
 		/* Merge the options hash with the defaults and turn it into a flags int */
 		if ( NIL_P(opthash) ) opthash = rb_hash_new();

@@ -60,6 +60,20 @@ describe BlueCloth do
 	end
 
 
+	it "handles non-string content safely" do
+		BlueCloth.new( nil ).text.should == ''
+	end
+
+
+	it "inherits the taintedness of its input" do
+		str = "a string"
+		BlueCloth.new( str ).should_not be_tainted()
+
+		str.taint
+		BlueCloth.new( str ).should be_tainted()
+	end
+
+
 	it "allows output to be rendered several times" do
 		bc = BlueCloth.new( "Some text" )
 		bc.to_html.should == bc.to_html

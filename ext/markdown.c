@@ -32,11 +32,11 @@ static struct kw blocktags[] = { KW("!--"), KW("STYLE"), KW("SCRIPT"),
 				 KW("ADDRESS"), KW("BDO"), KW("BLOCKQUOTE"),
 				 KW("CENTER"), KW("DFN"), KW("DIV"), KW("H1"),
 				 KW("H2"), KW("H3"), KW("H4"), KW("H5"),
-				 KW("H6"), KW("IFRAME"), KW("LISTING"), KW("NOBR"),
+				 KW("H6"), KW("LISTING"), KW("NOBR"),
 				 KW("UL"), KW("P"), KW("OL"), KW("DL"),
 				 KW("PLAINTEXT"), KW("PRE"), KW("TABLE"),
 				 KW("WBR"), KW("XMP"), SC("HR"), SC("BR"),
-				 KW("MAP") };
+				 KW("IFRAME"), KW("MAP") };
 #define SZTAGS	(sizeof blocktags / sizeof blocktags[0])
 #define MAXTAG	11 /* sizeof "BLOCKQUOTE" */
 
@@ -230,6 +230,8 @@ htmlblock(Paragraph *p, struct kw *tag)
 			    /* consume trailing gunk in close tag */
 			    c = flogetc(&f);
 			}
+			if ( !f.t )
+			    return 0;
 			ret = f.t->next;
 			f.t->next = 0;
 			return ret;
@@ -259,22 +261,34 @@ comment(Paragraph *p)
 }
 
 
+/* tables look like
+ *   header|header{|header}
+ *   ------|------{|......}
+ *   {body lines}
+ */
+static int
 istable(Line *t)
 {
     char *p;
     Line *dashes = t->next;
+    int contains = 0;	/* found character bits; 0x01 is |, 0x02 is - */
     
-    if ( !dashes )
-	return 0;
-	
-    if ( !memchr(T(t->text), '|', S(t->text)) )
+    /* two lines, first must contain | */
+    if ( !(dashes && memchr(T(t->text), '|', S(t->text))) )
 	return 0;
 
+    /* second line must contain - or | and nothing
+     * else except for whitespace or :
+     */
     for ( p = T(dashes->text)+S(dashes->text)-1; p >= T(dashes->text); --p)
-	if ( ! ((*p == '|') || (*p == ':') || (*p == '-') || isspace(*p)) )
+	if ( *p == '|' )
+	    contains |= 0x01;
+	else if ( *p == '-' )
+	    contains |= 0x02;
+	else if ( ! ((*p == ':') || isspace(*p)) )
 	    return 0;
 
-    return 1;
+    return (contains & 0x03);
 }
 
 
@@ -573,17 +587,17 @@ szmarkerclass(char *p)
  * marker %[kind:]name%
  */
 static int
-isdivmarker(Line *p)
+isdivmarker(Line *p, int start)
 {
 #if DIV_QUOTE
     char *s = T(p->text);
     int len = S(p->text);
     int i;
 
-    if ( !(len && s[0] == '%' && s[len-1] == '%') ) return 0;
+    if ( !(len && s[start] == '%' && s[len-1] == '%') ) return 0;
 
-    i = szmarkerclass(s+1);
-    --len;
+    i = szmarkerclass(s+start+1)+start;
+    len -= start+1;
 
     while ( ++i < len )
 	if ( !isalnum(s[i]) )
@@ -620,13 +634,15 @@ quoteblock(Paragraph *p)
 	    t->dle = mkd_firstnonblank(t);
 	}
 
-	if ( !(q = skipempty(t->next)) || ((q != t->next) && !isquote(q)) ) {
+	q = skipempty(t->next);
+
+	if ( (q == 0) || ((q != t->next) && (!isquote(q) || isdivmarker(q,1))) ) {
 	    ___mkd_freeLineRange(t, q);
 	    t = q;
 	    break;
 	}
     }
-    if ( isdivmarker(p->text) ) {
+    if ( isdivmarker(p->text,0) ) {
 	char *prefix = "class";
 	int i;
 	
@@ -647,11 +663,14 @@ quoteblock(Paragraph *p)
 }
 
 
+/*
+ * A table block starts with a table header (see istable()), and continues
+ * until EOF or a line that /doesn't/ contain a |.
+ */
 static Line *
 tableblock(Paragraph *p)
 {
     Line *t, *q;
-    int bars;
 
     for ( t = p->text; t && (q = t->next); t = t->next ) {
 	if ( !memchr(T(q->text), '|', S(q->text)) ) {
@@ -878,6 +897,64 @@ consume(Line *ptr, int *eaten)
 
 
 /*
+ * top-level compilation; break the document into
+ * style, html, and source blocks with footnote links
+ * weeded out.
+ */
+static Paragraph *
+compile_document(Line *ptr, MMIOT *f)
+{
+    ParagraphRoot d = { 0, 0 };
+    ANCHOR(Line) source = { 0, 0 };
+    Paragraph *p = 0;
+    struct kw *tag;
+    int eaten;
+
+    while ( ptr ) {
+	if ( !(f->flags & DENY_HTML) && (tag = isopentag(ptr)) ) {
+	    /* If we encounter a html/style block, compile and save all
+	     * of the cached source BEFORE processing the html/style.
+	     */
+	    if ( T(source) ) {
+		E(source)->next = 0;
+		p = Pp(&d, 0, SOURCE);
+		p->down = compile(T(source), 1, f);
+		T(source) = E(source) = 0;
+	    }
+	    p = Pp(&d, ptr, strcmp(tag->id, "STYLE") == 0 ? STYLE : HTML);
+	    if ( strcmp(tag->id, "!--") == 0 )
+		ptr = comment(p);
+	    else
+		ptr = htmlblock(p, tag);
+	}
+	else if ( isfootnote(ptr) ) {
+	    /* footnotes, like cats, sleep anywhere; pull them
+	     * out of the input stream and file them away for
+	     * later processing
+	     */
+	    ptr = consume(addfootnote(ptr, f), &eaten);
+	}
+	else {
+	    /* source; cache it up to wait for eof or the
+	     * next html/style block
+	     */
+	    ATTACH(source,ptr);
+	    ptr = ptr->next;
+	}
+    }
+    if ( T(source) ) {
+	/* if there's any cached source at EOF, compile
+	 * it now.
+	 */
+	E(source)->next = 0;
+	p = Pp(&d, 0, SOURCE);
+	p->down = compile(T(source), 1, f);
+    }
+    return T(d);
+}
+
+
+/*
  * break a collection of markdown input into
  * blocks of lists, code, html, and text to
  * be marked up.
@@ -887,7 +964,6 @@ compile(Line *ptr, int toplevel, MMIOT *f)
 {
     ParagraphRoot d = { 0, 0 };
     Paragraph *p = 0;
-    struct kw *tag;
     Line *r;
     int para = toplevel;
     int blocks = 0;
@@ -896,14 +972,7 @@ compile(Line *ptr, int toplevel, MMIOT *f)
     ptr = consume(ptr, &para);
 
     while ( ptr ) {
-	if ( toplevel && !(f->flags & DENY_HTML) && (tag = isopentag(ptr)) ) {
-	    p = Pp(&d, ptr, strcmp(tag->id, "STYLE") == 0 ? STYLE : HTML);
-	    if ( strcmp(tag->id, "!--") == 0 )
-		ptr = comment(p);
-	    else
-		ptr = htmlblock(p, tag);
-	}
-	else if ( iscode(ptr) ) {
+	if ( iscode(ptr) ) {
 	    p = Pp(&d, ptr, CODE);
 	    
 	    if ( f->flags & MKD_1_COMPAT) {
@@ -935,11 +1004,7 @@ compile(Line *ptr, int toplevel, MMIOT *f)
 	    p = Pp(&d, ptr, HDR);
 	    ptr = headerblock(p, hdr_type);
 	}
-	else if ( toplevel && (isfootnote(ptr)) ) {
-	    ptr = consume(addfootnote(ptr, f), &para);
-	    continue;
-	}
-	else if ( istable(ptr) && !(f->flags & STRICT) ) {
+	else if ( istable(ptr) && !(f->flags & (STRICT|NOTABLES)) ) {
 	    p = Pp(&d, ptr, TABLE);
 	    ptr = tableblock(p);
 	}
@@ -1003,7 +1068,7 @@ mkd_compile(Document *doc, int flags)
 
     initialize();
 
-    doc->code = compile(T(doc->content), 1, doc->ctx);
+    doc->code = compile_document(T(doc->content), doc->ctx);
     qsort(T(*doc->ctx->footnotes), S(*doc->ctx->footnotes),
 		        sizeof T(*doc->ctx->footnotes)[0],
 			           (stfu)__mkd_footsort);

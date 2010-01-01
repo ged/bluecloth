@@ -1,5 +1,7 @@
 #!rake
 
+require 'rake/extensiontask'
+
 # C extension constants
 EXT_MAKEFILE       = EXTDIR + 'Makefile'
 EXT_SOURCES        = FileList[ EXTDIR + '*.c' ]
@@ -14,50 +16,23 @@ DOCFILES << 'LICENSE.discount'
 #####################################################################
 
 # Make both the default task and the spec task depend on building the extension
-task :local => :build
-task :spec => :build
+task :local => :compile
+task :spec => :compile
 namespace :spec do
-	task :doc   => [ :build ]
-	task :quiet => [ :build ]
-	task :html  => [ :build ]
-	task :text  => [ :build ]
+	task :doc   => [ :compile ]
+	task :quiet => [ :compile ]
+	task :html  => [ :compile ]
+	task :text  => [ :compile ]
 end
 
-desc "Make the Makefile for the C extension"
-file EXT_MAKEFILE.to_s => EXT_SOURCES do
-	log "Configuring BlueCloth C extension"
-	in_subdirectory( EXTDIR ) do
-		ruby 'extconf.rb'
-	end
+
+Rake::ExtensionTask.new do |ext|
+	ext.name = 'bluecloth_ext'
+	ext.gem_spec = GEMSPEC
+	ext.ext_dir = 'ext'
+	ext.lib_dir = 'lib'
+	ext.source_pattern = "*.{c,h}"
+	# ext.cross_compile = true
+	# ext.cross_platform = 'i386-mswin32'
 end
-CLOBBER.include( EXTDIR + 'mkmf.log', EXTDIR + 'conftest.dSYM', EXT_SO )
-
-desc "Build the C extension"
-task :build => EXT_SO
-file EXT_SO => [ EXT_MAKEFILE.to_s, *EXT_SOURCES ] do
-	in_subdirectory( EXTDIR ) do
-		sh 'make'
-	end
-end
-
-desc "Rebuild the C extension"
-task :rebuild => [ :clobber, :build ]
-
-
-task :clean do
-	if EXT_MAKEFILE.exist?
-		in_subdirectory( EXTDIR ) do
-			sh 'make clean'
-		end
-	end
-end	
-
-task :clobber do
-	if EXT_MAKEFILE.exist?
-		in_subdirectory( EXTDIR ) do
-			sh 'make distclean'
-		end
-	end
-end	
-CLOBBER.include( EXT_MAKEFILE )
 

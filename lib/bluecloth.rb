@@ -29,13 +29,7 @@
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.5'
-
-	# SVN Revision
-	SVNREV = %q$Rev$
-
-	# SVN Id tag
-	SVNID = %q$Id$
+	VERSION = '2.0.6'
 
 	# The defaults for all supported options.
 	DEFAULT_OPTIONS = {

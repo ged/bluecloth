@@ -632,9 +632,9 @@ linkyformat(MMIOT *f, Cstring text, int image, Footnote *ref)
 	
 	Qstring(tag->link_sfx, f);
 
-	if ( tag->WxH && ref->height && ref->width ) {
-	    Qprintf(f," height=\"%d\"", ref->height);
-	    Qprintf(f, " width=\"%d\"", ref->width);
+	if ( tag->WxH) {
+	    if ( ref->height) Qprintf(f," height=\"%d\"", ref->height);
+	    if ( ref->width) Qprintf(f, " width=\"%d\"", ref->width);
 	}
 
 	if ( S(ref->title) ) {
@@ -661,44 +661,46 @@ static int
 linkylinky(int image, MMIOT *f)
 {
     int start = mmiottell(f);
-    int implicit_mark;
     Cstring name;
     Footnote key, *ref;
 		
     int status = 0;
 
     CREATE(name);
-    bzero(&key, sizeof key);
+    memset(&key, 0, sizeof key);
 
     if ( linkylabel(f, &name) ) {
-	implicit_mark = mmiottell(f);
-	eatspace(f);
-
-	switch ( pull(f) ) {
-	case '(':  /* embedded link */
+	if ( peek(f,1) == '(' ) {
+	    pull(f);
 	    if ( linkyurl(f, image, &key) )
 		status = linkyformat(f, name, image, &key);
-	    break;
+	}
+	else {
+	    int goodlink, implicit_mark = mmiottell(f);
 	
-	case '[':/* footnote link */
-	default: /* (undocumented) implicit link */
-	    if ( peek(f, 0) != '[' ) {
+	    if ( eatspace(f) == '[' ) {
+		pull(f);	/* consume leading '[' */
+		goodlink = linkylabel(f, &key.tag);
+	    }
+	    else {
+		/* new markdown implicit name syntax doesn't
+		 * require a second []
+		 */
 		mmiotseek(f, implicit_mark);
-		if ( f->flags & MKD_1_COMPAT )
-		    break;
+		goodlink = !(f->flags & MKD_1_COMPAT);
 	    }
-	    else if ( !linkylabel(f, &key.tag) )
-		break;
 	    
-	    if ( !S(key.tag) ) {
-		DELETE(key.tag);
-		T(key.tag) = T(name);
-		S(key.tag) = S(name);
-	    }
+	    if ( goodlink ) {
+		if ( !S(key.tag) ) {
+		    DELETE(key.tag);
+		    T(key.tag) = T(name);
+		    S(key.tag) = S(name);
+		}
 
-	    if ( ref = bsearch(&key, T(*f->footnotes), S(*f->footnotes),
-				      sizeof key, (stfu)__mkd_footsort) )
-		status = linkyformat(f, name, image, ref);
+		if ( ref = bsearch(&key, T(*f->footnotes), S(*f->footnotes),
+					  sizeof key, (stfu)__mkd_footsort) )
+		    status = linkyformat(f, name, image, ref);
+	    }
 	}
     }
 
@@ -867,9 +869,19 @@ maybe_tag_or_link(MMIOT *f)
 
     if ( size ) {
 	if ( maybetag || (size >= 3 && strncmp(cursor(f), "!--", 3) == 0) ) {
+
+	    /* It is not a html tag unless we find the closing '>' in
+	     * the same block.
+	     */
+	    while ( (c = peek(f, size+1)) != '>' )
+		if ( c == EOF )
+		    return 0;
+		else
+		    size++;
+	    
 	    Qstring(forbidden_tag(f) ? "&lt;" : "<", f);
 	    while ( ((c = peek(f, 1)) != EOF) && (c != '>') )
-		cputc(pull(f), f);
+		Qchar(pull(f), f);
 	    return 1;
 	}
 	else if ( !isspace(c) && process_possible_link(f, size) ) {
@@ -1276,9 +1288,7 @@ printheader(Paragraph *pp, MMIOT *f)
 }
 
 
-#define CENTER 1
-#define LEFT 2
-#define RIGHT 3
+enum e_alignments { a_NONE, a_CENTER, a_LEFT, a_RIGHT };
 
 static char* alignments[] = { "", " align=\"center\"", " align=\"left\"",
 				  " align=\"right\"" };
@@ -1303,7 +1313,7 @@ splat(Line *p, char *block, Istring align, int force, MMIOT *f)
 
 	Qprintf(f, "<%s%s>",
 		   block,
-		   alignments[ (colno < S(align)) ? T(align)[colno]:0 ]);
+		   alignments[ (colno < S(align)) ? T(align)[colno] : a_NONE ]);
 	___mkd_reparse(T(p->text)+first, idx-first, 0, f);
 	Qprintf(f, "</%s>\n", block);
 	idx++;
@@ -1329,7 +1339,7 @@ printtable(Paragraph *pp, MMIOT *f)
     int hcols;
     char *p;
 
-    if ( !(pp->text && pp->text->next && pp->text->next->next) )
+    if ( !(pp->text && pp->text->next) )
 	return 0;
 
     hdr = pp->text;
@@ -1351,8 +1361,8 @@ printtable(Paragraph *pp, MMIOT *f)
 		last = p[end];
 	    }
 	}
-	EXPAND(align) = ( first == ':' ) ? (( last == ':') ? CENTER : LEFT)
-					 : (( last == ':') ? RIGHT : 0 );
+	EXPAND(align) = ( first == ':' ) ? (( last == ':') ? a_CENTER : a_LEFT)
+					 : (( last == ':') ? a_RIGHT : a_NONE );
 	start = 1+end;
     }
 
@@ -1361,11 +1371,11 @@ printtable(Paragraph *pp, MMIOT *f)
     hcols = splat(hdr, "th", align, 0, f);
     Qstring("</thead>\n", f);
 
-    if ( hcols > S(align) )
+    if ( hcols < S(align) )
 	S(align) = hcols;
     else
 	while ( hcols > S(align) )
-	    EXPAND(align) = 0;
+	    EXPAND(align) = a_NONE;
 
     Qstring("<tbody>\n", f);
     for ( ; body; body = body->next)
@@ -1374,6 +1384,7 @@ printtable(Paragraph *pp, MMIOT *f)
     Qstring("</table>\n", f);
 
     DELETE(align);
+    return 1;
 }
 
 
@@ -1559,6 +1570,10 @@ display(Paragraph *p, MMIOT *f)
 	printtable(p, f);
 	break;
 
+    case SOURCE:
+	htmlify(p->down, 0, 0, f);
+	break;
+	
     default:
 	printblock(p, f);
 	break;
