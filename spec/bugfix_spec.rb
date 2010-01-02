@@ -146,6 +146,24 @@ describe BlueCloth, "bugfixes" do
 		END_HTML
 	end
 
+	it "correctly wraps lines after a code block in a list item" do
+		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
+		* testing
+
+		        pre
+
+		    more li
+		END_MARKDOWN
+		<ul>
+		<li><p>testing</p>
+
+		<pre><code>pre
+		</code></pre>
+
+		<p>more li</p></li>
+		</ul>
+		END_HTML
+	end
 
 end
 
