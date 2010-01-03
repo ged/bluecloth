@@ -11,12 +11,14 @@ EXPERIMENTS = Pathname.new( __FILE__ ).dirname
 require EXPERIMENTS + 'old-bluecloth.rb' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
 
 require 'rubygems'
+
 require 'bluecloth'
 require 'rdiscount'
 require 'maruku'
 require 'peg_markdown'
 require 'bluefeather'
 require 'tartan/markdown'
+require 'kramdown'
 
 ITERATIONS = 100
 TEST_FILE = EXPERIMENTS + 'benchmark.txt'
@@ -47,6 +49,9 @@ class Tartan::Markdown::Parser
 	VERSION = Gem.loaded_specs['tartan'].version.to_s
 end
 
+class Kramdown::Document
+	VERSION = Kramdown::VERSION
+end
 
 IMPLEMENTATIONS = [
 	OldBlueCloth,
@@ -56,6 +61,7 @@ IMPLEMENTATIONS = [
 	PEGMarkdown,
 	BlueFeatherWrapper,
 	Tartan::Markdown::Parser,
+	Kramdown::Document,
 ]
 
 $stderr.puts "Markdown -> HTML, %d iterations (%s, %d bytes)" % [ ITERATIONS, TEST_FILE, TEST_DATA.length ]
