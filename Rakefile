@@ -302,7 +302,7 @@ task :local
 
 ### Task: clean
 CLEAN.include 'coverage', '**/*.orig', '**/*.rej'
-CLOBBER.include 'artifacts', 'coverage.info', PKGDIR
+CLOBBER.include 'artifacts', 'coverage.info', 'ChangeLog', PKGDIR
 
 ### Task: changelog
 file 'ChangeLog' do |task|
