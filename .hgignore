@@ -7,3 +7,5 @@ ext/.*\.so$
 docs/api
 ^discount-\d+.*
 ^tmp/
+^ChangeLog$
+^lib/bluecloth_ext\.so$

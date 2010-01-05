@@ -111,7 +111,72 @@ describe BlueCloth, "implementation of Discount-specific features" do
 
 		end
 
+  		it "renders tables with leading and trailing pipes" do
+ 			pending "Discount doesn't support this kind (yet?)" do
+ 				the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
+ 				| First Header  | Second Header |
+ 				| ------------- | ------------- |
+ 				| Content Cell  | Content Cell  |
+ 				| Content Cell  | Content Cell  |
+ 				END_MARKDOWN
+ 				<table>
+ 				<thead>
+ 				<tr>
+ 				<th>First Header  </th>
+ 				<th> Second Header</th>
+ 				</tr>
+ 				</thead>
+ 				<tbody>
+ 				<tr>
+ 				<td>Content Cell  </td>
+ 				<td> Content Cell</td>
+ 				</tr>
+ 				<tr>
+ 				<td>Content Cell  </td>
+ 				<td> Content Cell</td>
+ 				</tr>
+ 				</tbody>
+ 				</table>
+ 				END_HTML
+ 			end
+  		end
+
+  		it "renders tables with aligned columns" do
+ 			pending "Discount doesn't support this kind (yet?)" do
+ 				the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
+ 				| Item      | Value |
+ 				| --------- | -----:|
+ 				| Computer  | $1600 |
+ 				| Phone     |   $12 |
+ 				| Pipe      |    $1 |
+ 				END_MARKDOWN
+ 				<table>
+ 				<thead>
+ 				<tr>
+ 				<th>Item      </th>
+ 				<th align="right"> Value</th>
+ 				</tr>
+ 				</thead>
+ 				<tbody>
+ 				<tr>
+ 				<td>Computer </td>
+ 				<td align="right"> $1600</td>
+ 				</tr>
+ 				<tr>
+ 				<td>Phone    </td>
+ 				<td align="right">   $12</td>
+ 				</tr>
+ 				<tr>
+ 				<td>Pipe     </td>
+ 				<td align="right">    $1</td>
+ 				</tr>
+ 				</tbody>
+ 				</table>
+ 				END_HTML
+ 			end
+		end
 	end
+
 end
 
 
