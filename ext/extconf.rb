@@ -19,7 +19,7 @@ $CPPFLAGS << %Q{ -DVERSION=\\"#{version}\\"}
 
 # Add my own debugging hooks if building for me
 if ENV['DEBUGGING_BUILD']
-	$CFLAGS << ' -ggdb' << ' -DDEBUG' 
+	$CFLAGS << ' -ggdb' << ' -DDEBUG'
 end
 
 def fail( *messages )
@@ -43,6 +43,10 @@ end
 
 have_header( 'mkdio.h' ) or fail( "missing mkdio.h" )
 
+# Check for 1.9.xish encoding header
+have_header( 'ruby/encoding.h' )
+
+create_header()
 create_makefile( 'bluecloth_ext' )
 
 FileUtils.rm_rf( 'conftest.dSYM' ) # MacOS X cleanup

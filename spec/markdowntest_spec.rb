@@ -3,10 +3,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
@@ -33,7 +33,7 @@ describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 	before( :all ) do
 		soext = Config::CONFIG['LIBRUBY_ALIASES'].sub( /.*\./, '' )
 		@dlname = "libtidy.#{soext}"
-	
+
 		begin
 			DL.dlopen( @dlname )
 		rescue RuntimeError => err
@@ -46,7 +46,7 @@ describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 			@have_libtidy = true
 			@tidy_error = nil
 		end
-		
+
 		begin
 			require 'tidy'
 		rescue LoadError, NameError => err
@@ -55,12 +55,12 @@ describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 		end
 
 	end
-	
+
 	before( :each ) do
 		pending( "These tests require the tidy library: #@tidy_error" ) unless @have_libtidy
 	end
-	
-	
+
+
 	markdowntest_dir = Pathname.new( __FILE__ ).dirname + 'data/markdowntest'
 	pattern = markdowntest_dir + '*.text'
 	Pathname.glob( pattern.to_s ).each do |textfile|
@@ -70,7 +70,7 @@ describe BlueCloth, "-- MarkdownTest 1.0.3: " do
 			markdown = textfile.read
 			expected = resultfile.read
 			options = { :smartypants => false }
-		
+
 			the_markdown( markdown, options ).should be_transformed_into_normalized_html( expected )
 		end
 	end

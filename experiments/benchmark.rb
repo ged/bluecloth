@@ -17,7 +17,6 @@ require 'rdiscount'
 require 'maruku'
 require 'peg_markdown'
 require 'bluefeather'
-require 'tartan/markdown'
 require 'kramdown'
 
 ITERATIONS = 100
@@ -31,7 +30,7 @@ class BlueFeatherWrapper
 	def initialize( text )
 		@text = text
 	end
-	
+
 	def to_html
 		return BlueFeather.parse( @text )
 	end
@@ -42,12 +41,9 @@ class BlueFeatherWrapper
 end
 
 class PEGMarkdown
-	VERSION = Gem.loaded_specs['rpeg-markdown'].version.to_s
+	VERSION = '1.4.4'
 end
 
-class Tartan::Markdown::Parser
-	VERSION = Gem.loaded_specs['tartan'].version.to_s
-end
 
 class Kramdown::Document
 	VERSION = Kramdown::VERSION
@@ -60,9 +56,19 @@ IMPLEMENTATIONS = [
 	Maruku,
 	PEGMarkdown,
 	BlueFeatherWrapper,
-	Tartan::Markdown::Parser,
 	Kramdown::Document,
 ]
+
+begin
+	require 'tartan/markdown'
+	class Tartan::Markdown::Parser
+		VERSION = Gem.loaded_specs['tartan'].version.to_s
+	end
+	IMPLEMENTATIONS << Tartan::Markdown::Parser
+rescue LoadError, ScriptError => err
+	$stderr.puts "%s while loading the 'tartan' markdown gem: %s" % [ err.class.name, err.message ]
+end
+
 
 $stderr.puts "Markdown -> HTML, %d iterations (%s, %d bytes)" % [ ITERATIONS, TEST_FILE, TEST_DATA.length ]
 Benchmark.bmbm do |bench|

@@ -9,3 +9,4 @@ docs/api
 ^tmp/
 ^ChangeLog$
 ^lib/bluecloth_ext\.so$
+\.orig$

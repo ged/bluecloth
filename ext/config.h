@@ -6,6 +6,10 @@
 #ifndef CONFIG_H_RZLE3ADO
 #define CONFIG_H_RZLE3ADO
 
+#ifdef RUBY_EXTCONF_H
+#	include RUBY_EXTCONF_H
+#endif
+
 #ifdef HAVE_SRANDOM
 #	define INITRNG(x) srandom((unsigned int)x)
 #elif  HAVE_SRAND

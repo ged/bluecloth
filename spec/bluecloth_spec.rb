@@ -259,6 +259,23 @@ describe BlueCloth do
 		end
 	end
 
+
+	describe "encoding under Ruby 1.9.x" do
+
+		before( :each ) do
+			pending "only valid under a version of Ruby that has the Encoding class" unless
+				Object.const_defined?( :Encoding )
+		end
+
+
+		it "outputs HTML in the same encoding as the source string" do
+			utf8 = "a string".encode( "UTF-8" )
+			out  = BlueCloth.new( utf8 ).to_html
+
+			out.encoding.name.should == 'UTF-8'
+		end
+	end
+
 end
 
 # vim: set nosta noet ts=4 sw=4:
