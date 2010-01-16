@@ -10,3 +10,4 @@ docs/api
 ^ChangeLog$
 ^lib/bluecloth_ext\.so$
 \.orig$
+^lib/1\.8/bluecloth_ext\.so$

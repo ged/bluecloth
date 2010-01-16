@@ -36,3 +36,6 @@ Rake::ExtensionTask.new do |ext|
 	ext.cross_platform = %w[i386-mswin32 i386-mingw32]
 end
 
+WINFAT_DIRS = Rake::FileList[ LIBDIR + '{1.8,1.9}' ]
+
+CLEAN.include( WINFAT_DIRS )
