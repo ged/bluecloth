@@ -151,7 +151,7 @@ end # class BlueCloth
 if RUBY_PLATFORM =~/(mswin|mingw)/i
 	major_minor = RUBY_VERSION[ /^(\d+\.\d+)/ ] or
 		raise "Oops, can't extract the major/minor version from #{RUBY_VERSION.dump}"
-	require "#{major_minor}/nokogiri"
+	require "#{major_minor}/bluecloth_ext"
 else
 	require 'bluecloth_ext'
 end
