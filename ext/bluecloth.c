@@ -145,12 +145,7 @@ bluecloth_s_allocate( VALUE klass ) {
  */
 static VALUE
 bluecloth_s_discount_version( VALUE klass ) {
-#ifdef HAVE_RUBY_ENCODING_H
-	return rb_external_str_new_with_enc( markdown_version, strlen(markdown_version),
-		rb_default_external_encoding() );
-#else
 	return rb_str_new2( markdown_version );
-#endif
 }
 
 /* --------------------------------------------------------------
@@ -224,9 +219,6 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 		rb_iv_set( self, "@text", textcopy );
 		OBJ_FREEZE( fullhash );
 		rb_iv_set( self, "@options", fullhash );
-#ifdef HAVE_RUBY_ENCODING_H
-		rb_enc_copy( self, text );
-#endif
 
 		OBJ_INFECT( self, text );
 	}
@@ -255,9 +247,6 @@ bluecloth_to_html( VALUE self ) {
 		bluecloth_debug( "Pointer to results: %p, length = %d", output, length );
 		result = rb_str_new( output, length );
 
-#ifdef HAVE_RUBY_ENCODING_H
-		rb_enc_copy( result, self );
-#endif
 		OBJ_INFECT( result, self );
 		return result;
 	} else {
