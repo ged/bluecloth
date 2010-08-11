@@ -32,11 +32,11 @@ VALUE bluecloth_default_opthash;
 static MMIOT *
 bluecloth_alloc( VALUE text, int flags ) {
 	MMIOT *document;
-	
+
 	document = mkd_string( RSTRING_PTR(text), RSTRING_LEN(text), flags );
 	if ( !document )
 		rb_raise( rb_eRuntimeError, "Failed to create a BlueCloth object for: %s", RSTRING_PTR(text) );
-	
+
 	return document;
 }
 
@@ -100,7 +100,7 @@ bluecloth_check_ptr( VALUE self ) {
 		rb_raise( rb_eTypeError, "wrong argument type %s (expected BlueCloth object)",
 				  rb_class2name(CLASS_OF( self )) );
     }
-	
+
 	return DATA_PTR( self );
 }
 
@@ -242,7 +242,7 @@ bluecloth_to_html( VALUE self ) {
 	VALUE result = Qnil;
 
 	bluecloth_debug( "Compiling document %p", document );
-	
+
 	if ( (length = mkd_document( document, &output )) != EOF ) {
 		bluecloth_debug( "Pointer to results: %p, length = %d", output, length );
 		result = rb_str_new( output, length );
@@ -283,7 +283,7 @@ bluecloth_header( VALUE self ) {
 	VALUE fieldstring, headers = rb_hash_new();
 
 	bluecloth_debug( "Fetching pandoc headers for document %p", document );
-	
+
 	if ( (field = mkd_doc_title(document)) ) {
 		fieldstring = rb_str_new2( field );
 		OBJ_INFECT( fieldstring, self );
@@ -312,6 +312,9 @@ bluecloth_header( VALUE self ) {
 void Init_bluecloth_ext( void ) {
 	bluecloth_cBlueCloth = rb_define_class( "BlueCloth", rb_cObject );
 
+	mkd_with_html5_tags();
+	mkd_initialize();
+
 	rb_define_alloc_func( bluecloth_cBlueCloth, bluecloth_s_allocate );
 	rb_define_singleton_method( bluecloth_cBlueCloth, "discount_version", 
 		bluecloth_s_discount_version, 0 );
@@ -321,10 +324,10 @@ void Init_bluecloth_ext( void ) {
 	rb_define_method( bluecloth_cBlueCloth, "to_html", bluecloth_to_html, 0 );
 	rb_define_method( bluecloth_cBlueCloth, "header", bluecloth_header, 0 );
 	rb_define_alias( bluecloth_cBlueCloth, "pandoc_header", "header" );
-	
+
 	/* The original Markdown text the object was constructed with */
 	rb_define_attr( bluecloth_cBlueCloth, "text", 1, 0 );
-	
+
 	/* The options hash that describes the options in effect when the object was created */
 	rb_define_attr( bluecloth_cBlueCloth, "options", 1, 0 );
 
@@ -339,22 +342,22 @@ void Init_bluecloth_ext( void ) {
 
 	/* Do not do Smartypants-style mangling of quotes, dashes, or ellipses. */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOPANTS",  INT2FIX(MKD_NOPANTS) );
-	
+
 	/* Escape all opening angle brackets in the input text instead of allowing block-level HTML */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHTML",   INT2FIX(MKD_NOHTML) );
 
 	/* disable SUPERSCRIPT, RELAXED_EMPHASIS */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_STRICT",   INT2FIX(MKD_STRICT) );
-	
+
 	/* process text inside an html tag; no <em>, no <bold>, no html or [] expansion */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TAGTEXT",  INT2FIX(MKD_TAGTEXT) );
-	
+
 	/* don't allow pseudo-protocols */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",   INT2FIX(MKD_NO_EXT) );
-	
+
 	/* do table-of-contents processing */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TOC",      INT2FIX(MKD_TOC) );
-	
+
 	/* MarkdownTest 1.0 Compatibility Mode */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_1_COMPAT", INT2FIX(MKD_1_COMPAT) );
 

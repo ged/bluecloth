@@ -123,67 +123,6 @@ describe BlueCloth, "document with inline HTML" do
 	end
 
 
-	it "preserves MathML block" do
-		pending "discount doesn't support this, it explicitly matches block-level HTML elements only"
-		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
-		Examples
-		--------
-		
-		Now that we have met some of the key players, it is time to see what we can
-		do. Here are some examples and comments which illustrate the use of the basic
-		layout and token elements. Consider the expression x2 + 4x + 4 = 0. A basic
-		MathML presentation encoding for this would be:
-		
-		<math>
-		  <mrow>
-			<msup>
-			  <mi>x</mi>
-			  <mn>2</mn>
-			</msup>
-			<mo>+</mo>
-			<mn>4</mn>
-			<mi>x</mi>
-			<mo>+</mo>
-			<mn>4</mn>
-			<mo>=</mo>
-			<mn>0</mn>
-		  </mrow>
-		</math>
-		
-		This encoding will display as you would expect. However, if we were interested
-		in reusing this expression in unknown situations, we would likely want to spend
-		a little more effort analyzing and encoding the logical expression structure.
-		---
-		<h2>Examples</h2>
-		
-		<p>Now that we have met some of the key players, it is time to see what we can
-		do. Here are some examples and comments which illustrate the use of the basic
-		layout and token elements. Consider the expression x2 + 4x + 4 = 0. A basic
-		MathML presentation encoding for this would be:</p>
-		
-		<math>
-		  <mrow>
-		    <msup>
-		      <mi>x</mi>
-		      <mn>2</mn>
-		    </msup>
-		    <mo>+</mo>
-		    <mn>4</mn>
-		    <mi>x</mi>
-		    <mo>+</mo>
-		    <mn>4</mn>
-		    <mo>=</mo>
-		    <mn>0</mn>
-		  </mrow>
-		</math>
-		
-		<p>This encoding will display as you would expect. However, if we were interested
-		in reusing this expression in unknown situations, we would likely want to spend
-		a little more effort analyzing and encoding the logical expression structure.</p>
-		---
-	end
-
-
 	it "preserves span-level HTML" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 		This is some stuff with a <span class="foo">spanned bit of text</span> in
@@ -229,6 +168,30 @@ describe BlueCloth, "document with inline HTML" do
 		<p>This is some stuff with a <SPAN CLASS="foo">spanned bit of text</SPAN> in
 		it. And <DEL>this <em>should</em> be a bit of deleted text</DEL> which should be
 		preserved, and part of it emphasized.</p>
+		---
+	end
+
+	it "preserves HTML5 tags" do
+		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
+		<aside>
+			<p>This is a sidebar that explains some stuff.</p>
+		</aside>
+
+		The main content.
+
+		<footer>
+			<p>Copyright &copy; 2010 by J. Random Hacker.</p>
+		</footer>
+		---
+		<aside>
+		    <p>This is a sidebar that explains some stuff.</p>
+		</aside>
+
+		<p>The main content.</p>
+
+		<footer>
+		    <p>Copyright &copy; 2010 by J. Random Hacker.</p>
+		</footer>
 		---
 	end
 
