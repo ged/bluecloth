@@ -157,10 +157,10 @@ describe BlueCloth, "bugfixes" do
 		<ul>
 		<li><p>testing</p>
 
-		<pre><code>pre
+		<pre><code>  pre
 		</code></pre>
 
-		<p>more li</p></li>
+		<p>  more li</p></li>
 		</ul>
 		END_HTML
 	end

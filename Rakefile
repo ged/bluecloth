@@ -11,11 +11,12 @@
 #
 
 BEGIN {
+	require 'rbconfig'
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname
 
 	libdir = basedir + "lib"
-	extdir = basedir + "ext"
+	extdir = libdir + Config::CONFIG['sitearch']
 
 	$LOAD_PATH.unshift( libdir.to_s ) unless $LOAD_PATH.include?( libdir.to_s )
 	$LOAD_PATH.unshift( extdir.to_s ) unless $LOAD_PATH.include?( extdir.to_s )
@@ -73,9 +74,9 @@ if VERSION_FILE.exist? && buildrev = ENV['CC_BUILD_LABEL']
 	PKG_VERSION = VERSION_FILE.read[ /VERSION\s*=\s*['"](\d+\.\d+\.\d+)['"]/, 1 ] + '.' + buildrev
 elsif VERSION_FILE.exist?
 	PKG_VERSION = VERSION_FILE.read[ /VERSION\s*=\s*['"](\d+\.\d+\.\d+)['"]/, 1 ]
-else
-	PKG_VERSION = '0.0.0'
 end
+
+PKG_VERSION = '0.0.0' unless defined?( PKG_VERSION ) && !PKG_VERSION.nil?
 
 PKG_FILE_NAME = "#{PKG_NAME.downcase}-#{PKG_VERSION}"
 GEM_FILE_NAME = "#{PKG_FILE_NAME}.gem"
@@ -90,7 +91,7 @@ EXTCONF       = EXTDIR + 'extconf.rb'
 
 ARTIFACTS_DIR = Pathname.new( CC_BUILD_ARTIFACTS )
 
-TEXT_FILES    = Rake::FileList.new( %w[Rakefile ChangeLog README LICENSE] )
+TEXT_FILES    = Rake::FileList.new( %w[Rakefile ChangeLog README* LICENSE] )
 BIN_FILES     = Rake::FileList.new( "#{BINDIR}/*" )
 LIB_FILES     = Rake::FileList.new( "#{LIBDIR}/**/*.rb" )
 EXT_FILES     = Rake::FileList.new( "#{EXTDIR}/**/*.{c,h,rb}" )
@@ -166,26 +167,37 @@ if !RAKE_TASKDIR.exist?
 end
 
 require RAKE_TASKDIR + 'helpers.rb'
+include RakefileHelpers
 
 # Set the build ID if the mercurial executable is available
 if hg = which( 'hg' )
-	id = IO.read('|-') or exec hg.to_s, 'id', '-n'
-	PKG_BUILD = 'pre' + (id.chomp[ /^[[:xdigit:]]+/ ] || '1')
+	id = `#{hg} id -n`.chomp
+	PKG_BUILD = "pre%03d" % [(id.chomp[ /^[[:xdigit:]]+/ ] || '1')]
 else
-	PKG_BUILD = 'pre0'
+	PKG_BUILD = 'pre000'
 end
 SNAPSHOT_PKG_NAME = "#{PKG_FILE_NAME}.#{PKG_BUILD}"
 SNAPSHOT_GEM_NAME = "#{SNAPSHOT_PKG_NAME}.gem"
 
 # Documentation constants
-RDOCDIR = DOCSDIR + 'api'
+API_DOCSDIR = DOCSDIR + 'api'
+README_FILE = TEXT_FILES.find {|path| path =~ /^README/ } || 'README'
 RDOC_OPTIONS = [
-	'-w', '4',
-	'-HN',
-	'-i', '.',
-	'-m', 'README',
-	'-t', PKG_NAME,
-	'-W', 'http://deveiate.org/projects/BlueCloth/browser/'
+	'--tab-width=4',
+	'--show-hash',
+	'--include', BASEDIR.to_s,
+	"--main=#{README_FILE}",
+	"--title=#{PKG_NAME}",
+  ]
+YARD_OPTIONS = [
+	'--use-cache',
+	'--no-private',
+	'--protected',
+	'-r', README_FILE,
+	'--exclude', 'extconf\\.rb',
+	'--files', 'ChangeLog,LICENSE',
+	'--output-dir', API_DOCSDIR.to_s,
+	'--title', "#{PKG_NAME} #{PKG_VERSION}",
   ]
 
 # Release constants
@@ -205,16 +217,16 @@ DEPENDENCIES = {
 
 # Developer Gem dependencies: gemname => version
 DEVELOPMENT_DEPENDENCIES = {
-	'rake'        => '>= 0.8.7',
-	'rcodetools'  => '>= 0.7.0.0',
-	'rcov'        => '>= 0.8.1.2.0',
-	'rdoc'        => '>= 2.4.3',
-	'RedCloth'    => '>= 4.0.3',
-	'rspec'       => '>= 1.2.6',
-	'termios'     => '>= 0',
-	'text-format' => '>= 1.0.0',
-	'tmail'       => '>= 1.2.3.1',
-	'diff-lcs'    => '>= 1.1.2',
+	'rake'         => '>= 0.8.7',
+	'rcodetools'   => '>= 0.7.0.0',
+	'rcov'         => '>= 0.8.1.2.0',
+	'rdoc'         => '>= 2.4.3',
+	'RedCloth'     => '>= 4.0.3',
+	'rspec'        => '>= 1.2.6',
+	'ruby-termios' => '>= 0.9.6',
+	'text-format'  => '>= 1.0.0',
+	'tmail'        => '>= 1.2.3.1',
+	'diff-lcs'     => '>= 1.1.2',
 	'rake-compiler' => '>= 0.7.0',
 }
 
@@ -241,7 +253,7 @@ GEMSPEC   = Gem::Specification.new do |gem|
 
 	gem.has_rdoc          = true
 	gem.rdoc_options      = RDOC_OPTIONS
-	gem.extra_rdoc_files  = %w[ChangeLog README LICENSE]
+	gem.extra_rdoc_files  = TEXT_FILES - [ 'Rakefile' ]
 
 	gem.bindir            = BINDIR.relative_path_from(BASEDIR).to_s
 	gem.executables       = BIN_FILES.select {|pn| File.executable?(pn) }.
@@ -295,7 +307,7 @@ import LOCAL_RAKEFILE if LOCAL_RAKEFILE.exist?
 #####################################################################
 
 ### Default task
-task :default  => [:clean, :local, :spec, :rdoc, :package]
+task :default  => [:clean, :local, :spec, :apidocs, :package]
 
 ### Task the local Rakefile can append to -- no-op by default
 task :local
