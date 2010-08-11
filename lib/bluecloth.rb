@@ -29,7 +29,7 @@
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.7'
+	VERSION = '2.0.8'
 
 	# The defaults for all supported options.
 	DEFAULT_OPTIONS = {
