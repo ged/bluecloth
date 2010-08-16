@@ -1,5 +1,8 @@
 #!/usr/bin/ruby
 
+require 'pathname'
+require 'rbconfig'
+
 # 
 # Bluecloth is a Ruby implementation of Markdown, a text-to-HTML conversion
 # tool.
@@ -153,7 +156,9 @@ if RUBY_PLATFORM =~/(mswin|mingw)/i
 		raise "Oops, can't extract the major/minor version from #{RUBY_VERSION.dump}"
 	require "#{major_minor}/bluecloth_ext"
 else
-	require 'bluecloth_ext'
+	archlib = Pathname( __FILE__ ).dirname + Config::CONFIG['arch']
+	requirepath = archlib + 'bluecloth_ext'
+	require( requirepath.to_s )
 end
 
 
