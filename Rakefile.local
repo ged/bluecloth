@@ -7,9 +7,9 @@ require 'rake/extensiontask'
 ARCH = Config::CONFIG['arch']
 ARCHLIBDIR = LIBDIR + ARCH
 
-EXT_MAKEFILE       = EXTDIR + 'Makefile'
-EXT_SOURCES        = FileList[ EXTDIR + '*.c' ]
-EXT_SO             = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
+EXT_MAKEFILE = EXTDIR + 'Makefile'
+EXT_SOURCES  = FileList[ EXTDIR + '*.c' ]
+EXT_SO       = EXTDIR + "bluecloth_ext.#{CONFIG['DLEXT']}"
 
 
 
@@ -37,8 +37,8 @@ ENV['RUBY_CC_VERSION'] = '1.8.6:1.9.1'
 Rake::ExtensionTask.new do |ext|
 	ext.name = 'bluecloth_ext'
 	ext.gem_spec = GEMSPEC
-	ext.ext_dir = 'ext'
-	ext.lib_dir = ARCHLIBDIR.to_s
+	ext.ext_dir = EXTDIR.to_s
+	ext.lib_dir = LIBDIR.to_s
 	ext.source_pattern = "*.{c,h}"
 	ext.cross_compile = true
 	ext.cross_platform = %w[i386-mswin32 i386-mingw32]

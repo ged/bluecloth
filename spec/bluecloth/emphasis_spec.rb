@@ -8,6 +8,7 @@ BEGIN {
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
 	
+	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }

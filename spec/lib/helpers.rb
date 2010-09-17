@@ -20,27 +20,27 @@ require 'spec/runner/formatter/html_formatter'
 class Spec::Runner::Formatter::HtmlFormatter
 	def example_failed( example, counter, failure )
 		failure_style = failure.pending_fixed? ? 'pending_fixed' : 'failed'
-		
+
 		unless @header_red
 			@output.puts "    <script type=\"text/javascript\">makeRed('rspec-header');</script>"
 			@header_red = true
 		end
-		
+
 		unless @example_group_red
 			css_class = 'example_group_%d' % [current_example_group_number||0]
 			@output.puts "    <script type=\"text/javascript\">makeRed('#{css_class}');</script>"
 			@example_group_red = true
 		end
-		
+
 		move_progress()
-		
+
 		@output.puts "    <dd class=\"spec #{failure_style}\">",
 		             "      <span class=\"failed_spec_name\">#{h(example.description)}</span>",
 		             "      <div class=\"failure\" id=\"failure_#{counter}\">"
 		if failure.exception
 			backtrace = format_backtrace( failure.exception.backtrace )
 			message = failure.exception.message
-			
+
 			@output.puts "        <div class=\"message\"><code>#{h message}</code></div>",
 			             "        <div class=\"backtrace\"><pre>#{backtrace}</pre></div>"
 		end
@@ -48,7 +48,7 @@ class Spec::Runner::Formatter::HtmlFormatter
 		if extra = extra_failure_content( failure )
 			@output.puts( extra )
 		end
-		
+
 		@output.puts "      </div>",
 		             "    </dd>"
 		@output.flush
@@ -56,7 +56,7 @@ class Spec::Runner::Formatter::HtmlFormatter
 
 
 	alias_method :default_global_styles, :global_styles
-	
+
 	def global_styles
 		css = default_global_styles()
 		css << %Q{
@@ -129,7 +129,7 @@ class Spec::Runner::Formatter::HtmlFormatter
 				color:  white;
 			}
 		}
-		
+
 		return css
 	end
 end

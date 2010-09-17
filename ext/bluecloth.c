@@ -44,7 +44,7 @@ bluecloth_alloc( VALUE text, int flags ) {
 /*
  * GC Free function
  */
-static void 
+static void
 bluecloth_gc_free( MMIOT *document ) {
 	if ( document ) {
 		mkd_cleanup( document );
@@ -181,11 +181,11 @@ bluecloth_s_discount_version( VALUE klass ) {
  *   superscript notation. Defaults to +true+.
  * 
  */
-static VALUE 
+static VALUE
 bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 	if ( !bluecloth_check_ptr(self) ) {
 		MMIOT *document;
-		VALUE text, textcopy, optflags, fullhash, opthash = Qnil;
+		VALUE text, utf8text, optflags, fullhash, opthash = Qnil;
 		int flags = 0;
 
 		rb_scan_args( argc, argv, "02", &text, &opthash );
@@ -201,7 +201,7 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 			text = rb_str_new( "", 0 );
 		}
 		else {
-			text = rb_obj_as_string( text );
+			text = rb_obj_dup( rb_obj_as_string(text) );
 		}
 
 		/* Merge the options hash with the defaults and turn it into a flags int */
@@ -210,13 +210,21 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 		fullhash = rb_funcall( bluecloth_cBlueCloth, rb_intern("opthash_from_flags"), 1, optflags );
 
 		flags = NUM2INT( optflags );
+
+#ifdef M17N_SUPPORTED
+		bluecloth_debug( "Bytes before utf8ification: %s",
+			RSTRING_PTR(rb_funcall(text, rb_intern("dump"), 0, Qnil)) );
+		utf8text = rb_str_export_to_enc( rb_str_dup(text), rb_utf8_encoding() );
+		DATA_PTR( self ) = document = bluecloth_alloc( utf8text, flags );
+#else
 		DATA_PTR( self ) = document = bluecloth_alloc( text, flags );
+#endif /* M17N_SUPPORTED */
+
 		if ( !mkd_compile(document, flags) )
 			rb_raise( rb_eRuntimeError, "Failed to compile markdown" );
 
-		textcopy = rb_str_dup( text );
-		OBJ_FREEZE( textcopy );
-		rb_iv_set( self, "@text", textcopy );
+		OBJ_FREEZE( text );
+		rb_iv_set( self, "@text", text );
 		OBJ_FREEZE( fullhash );
 		rb_iv_set( self, "@options", fullhash );
 
@@ -244,10 +252,18 @@ bluecloth_to_html( VALUE self ) {
 	bluecloth_debug( "Compiling document %p", document );
 
 	if ( (length = mkd_document( document, &output )) != EOF ) {
-		bluecloth_debug( "Pointer to results: %p, length = %d", output, length );
+#ifdef M17N_SUPPORTED
+		VALUE orig_encoding = rb_obj_encoding( rb_iv_get(self, "@text") );
+		VALUE utf8_result = rb_enc_str_new( output, length, rb_utf8_encoding() );
+		result = rb_str_encode( utf8_result, orig_encoding, 0, Qnil );
+		bluecloth_debug( "Bytes after un-utf8ification (if necessary): %s",
+			RSTRING_PTR(rb_funcall(result, rb_intern("dump"), 0, Qnil)) );
+#else
 		result = rb_str_new( output, length );
+#endif /* M17N_SUPPORTED */
 
 		OBJ_INFECT( result, self );
+
 		return result;
 	} else {
 		return Qnil;

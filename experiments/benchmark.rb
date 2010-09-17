@@ -3,10 +3,17 @@
 # Based on Ryan Tomayako's benchmark script from:
 #   http://tomayko.com/writings/ruby-markdown-libraries-real-cheap-for-you-two-for-price-of-one
 
+# Install dependencies like so:
+#   sudo gem install rdiscount maruku rpeg-markdown bluefeather kramdown tartan --no-rdoc --no-ri
+
 require 'benchmark'
 require 'pathname'
 
+$VERBOSE = false
+
 EXPERIMENTS = Pathname.new( __FILE__ ).dirname
+BASEDIR = EXPERIMENTS.parent
+$LOAD_PATH.unshift( BASEDIR )
 
 require EXPERIMENTS + 'old-bluecloth.rb' # bluecloth.rb 1.0.0, renamed to old-bluecloth.rb/OldBlueCloth
 
@@ -78,21 +85,27 @@ Benchmark.bmbm do |bench|
 	end
 end
 
-# ruby 1.8.7 (2008-08-11 patchlevel 72) [i686-darwin9.6.0]
+# ruby 1.8.7 (2009-06-12 patchlevel 174) [universal-darwin10.0]
 # Markdown -> HTML, 100 iterations (experiments/benchmark.txt, 8064 bytes)
-# Rehearsal ------------------------------------------------
-# OldBlueCloth  17.750000   1.000000  18.750000 ( 18.789201)
-# BlueCloth      0.080000   0.010000   0.090000 (  0.088035)
-# RDiscount      0.110000   0.000000   0.110000 (  0.104491)
-# Maruku         9.100000   0.070000   9.170000 (  9.192100)
-# PEGMarkdown    0.500000   0.010000   0.510000 (  0.501156)
-# -------------------------------------- total: 28.630000sec
 # 
-#                    user     system      total        real
-# OldBlueCloth  17.760000   0.980000  18.740000 ( 18.772004)
-# BlueCloth      0.080000   0.000000   0.080000 (  0.082273)
-# RDiscount      0.080000   0.000000   0.080000 (  0.085950)
-# Maruku         8.910000   0.050000   8.960000 (  8.982518)
-# PEGMarkdown    0.500000   0.010000   0.510000 (  0.513450)
+#                                        user     system      total        real
+# OldBlueCloth (1.1.0)               8.560000   0.760000   9.320000 (  9.333176)
+# BlueCloth (2.0.8)                  0.050000   0.000000   0.050000 (  0.044746)
+# RDiscount (1.6.5)                  0.050000   0.000000   0.050000 (  0.043800)
+# Maruku (3.1.7.3)                   5.320000   0.120000   5.440000 (  5.439757)
+# PEGMarkdown (1.4.4)                0.340000   0.000000   0.340000 (  0.337712)
+# BlueFeather (0.33)                10.660000   0.630000  11.290000 ( 11.305359)
+# Kramdown::Document (0.10.0)        1.480000   0.020000   1.500000 (  1.502757)
+# Tartan::Markdown::Parser (0.2.1)  13.110000   0.360000  13.470000 ( 13.495817)
 # 
+# ruby 1.9.2p0 (2010-08-18 revision 29036) [x86_64-darwin10.4.0]
+# 
+#                                   user     system      total        real
+# OldBlueCloth (1.1.0)          6.020000   0.050000   6.070000 (  6.078804)
+# BlueCloth (2.0.8)             0.090000   0.000000   0.090000 (  0.086979)
+# RDiscount (1.6.5)             0.040000   0.000000   0.040000 (  0.042072)
+# Maruku (3.1.7.3)              5.020000   0.070000   5.090000 (  5.088757)
+# PEGMarkdown (1.4.4)           0.350000   0.000000   0.350000 (  0.354823)
+# BlueFeather (0.33)            7.370000   0.060000   7.430000 (  7.424055)
+# Kramdown::Document (0.10.0)   1.140000   0.000000   1.140000 (  1.138709)
 

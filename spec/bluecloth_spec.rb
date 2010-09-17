@@ -8,6 +8,7 @@ BEGIN {
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
 
+	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
@@ -268,14 +269,29 @@ describe BlueCloth do
 		end
 
 
-		it "outputs HTML in the same encoding as the source string" do
-			pending "until I can figure out what the right way to do m17n in the C API is" do
-				utf8 = "a string".encode( "UTF-8" )
-				out  = BlueCloth.new( utf8 ).to_html
+		it "outputs HTML in UTF8 if given a UTF8 string" do
+			input = "a ∫‡®îñg".encode( Encoding::UTF_8 )
+			output = BlueCloth.new( input ).to_html
 
-				out.encoding.name.should == 'UTF-8'
-			end
+			output.encoding.should == Encoding::UTF_8
 		end
+
+		it "outputs HTML in KOI8-U if given a KOI8-U string" do
+			input = "Почему Молчишь".encode( Encoding::KOI8_U )
+			output = BlueCloth.new( input ).to_html
+
+			output.should == "<p>\xF0\xCF\xDE\xC5\xCD\xD5 \xED\xCF\xCC\xDE\xC9\xDB\xD8</p>".
+				force_encoding( Encoding::KOI8_U )
+		end
+
+		it "outputs HTML in Shift-JIS if given a Shift-JIS string" do
+			input = "日本語".encode( Encoding::SHIFT_JIS )
+			output = BlueCloth.new( input ).to_html
+
+			output.should == "<p>\x93\xFA\x96{\x8C\xEA</p>".
+				force_encoding( Encoding::SHIFT_JIS )
+		end
+
 	end
 
 end
