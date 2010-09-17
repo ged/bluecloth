@@ -371,6 +371,12 @@ void Init_bluecloth_ext( void ) {
 	/* don't allow pseudo-protocols */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",   INT2FIX(MKD_NO_EXT) );
 
+	/* disallow tables */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOTABLES", INT2FIX(MKD_NOTABLES) );
+
+	/* forbid ~~strikethrough~~ */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOSTRIKETHROUGH", INT2FIX(MKD_NOSTRIKETHROUGH) );
+
 	/* do table-of-contents processing */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_TOC",      INT2FIX(MKD_TOC) );
 

@@ -74,18 +74,20 @@ class BlueCloth
 
 		flags = 0
 
-        if   opthash[:remove_links]    then flags |= MKD_NOLINKS;  end
-        if   opthash[:remove_images]   then flags |= MKD_NOIMAGE;  end
-        if ! opthash[:smartypants]     then flags |= MKD_NOPANTS;  end
-        if ! opthash[:pseudoprotocols] then flags |= MKD_NO_EXT;   end
-        if ! opthash[:pandoc_headers]  then flags |= MKD_NOHEADER; end
-        if   opthash[:header_labels]   then flags |= MKD_TOC;      end
-        if   opthash[:mdtest_1_compat] then flags |= MKD_1_COMPAT; end
-        if   opthash[:escape_html]     then flags |= MKD_NOHTML;   end
-        if   opthash[:strict_mode]     then flags |= MKD_STRICT;   end
-        if   opthash[:tagtext_mode]    then flags |= MKD_TAGTEXT;  end
-        if   opthash[:auto_links]      then flags |= MKD_AUTOLINK; end
-        if   opthash[:safe_links]      then flags |= MKD_SAFELINK; end
+        if   opthash[:remove_links]    then flags |= MKD_NOLINKS;         end
+        if   opthash[:remove_images]   then flags |= MKD_NOIMAGE;         end
+        if ! opthash[:smartypants]     then flags |= MKD_NOPANTS;         end
+        if ! opthash[:pseudoprotocols] then flags |= MKD_NO_EXT;          end
+        if ! opthash[:pandoc_headers]  then flags |= MKD_NOHEADER;        end
+        if   opthash[:header_labels]   then flags |= MKD_TOC;             end
+        if   opthash[:mdtest_1_compat] then flags |= MKD_1_COMPAT;        end
+        if   opthash[:escape_html]     then flags |= MKD_NOHTML;          end
+        if   opthash[:strict_mode]     then flags |= MKD_STRICT;          end
+        if   opthash[:tagtext_mode]    then flags |= MKD_TAGTEXT;         end
+        if   opthash[:auto_links]      then flags |= MKD_AUTOLINK;        end
+        if   opthash[:safe_links]      then flags |= MKD_SAFELINK;        end
+        if ! opthash[:tables]          then flags |= MKD_NOTABLES;        end
+        if ! opthash[:strikethrough]   then flags |= MKD_NOSTRIKETHROUGH; end
 
 		return flags
 	end
@@ -96,18 +98,20 @@ class BlueCloth
 		flags = flags.to_i
 
 		opthash = {}
-        if  ( flags & MKD_NOLINKS  ).nonzero? then opthash[:remove_links]    = true; end
-        if  ( flags & MKD_NOIMAGE  ).nonzero? then opthash[:remove_images]   = true; end
-        if !( flags & MKD_NOPANTS  ).nonzero? then opthash[:smartypants]     = true; end
-        if !( flags & MKD_NO_EXT   ).nonzero? then opthash[:pseudoprotocols] = true; end
-        if !( flags & MKD_NOHEADER ).nonzero? then opthash[:pandoc_headers]  = true; end
-        if  ( flags & MKD_TOC      ).nonzero? then opthash[:header_labels]   = true; end
-        if  ( flags & MKD_1_COMPAT ).nonzero? then opthash[:mdtest_1_compat] = true; end
-        if  ( flags & MKD_NOHTML   ).nonzero? then opthash[:escape_html]     = true; end
-        if  ( flags & MKD_STRICT   ).nonzero? then opthash[:strict_mode]     = true; end
-        if  ( flags & MKD_TAGTEXT  ).nonzero? then opthash[:tagtext_mode]    = true; end
-        if  ( flags & MKD_AUTOLINK ).nonzero? then opthash[:auto_links]      = true; end
-        if  ( flags & MKD_SAFELINK ).nonzero? then opthash[:safe_links]      = true; end
+        if  ( flags & MKD_NOLINKS         ).nonzero? then opthash[:remove_links]    = true; end
+        if  ( flags & MKD_NOIMAGE         ).nonzero? then opthash[:remove_images]   = true; end
+        if !( flags & MKD_NOPANTS         ).nonzero? then opthash[:smartypants]     = true; end
+        if !( flags & MKD_NO_EXT          ).nonzero? then opthash[:pseudoprotocols] = true; end
+        if !( flags & MKD_NOHEADER        ).nonzero? then opthash[:pandoc_headers]  = true; end
+        if  ( flags & MKD_TOC             ).nonzero? then opthash[:header_labels]   = true; end
+        if  ( flags & MKD_1_COMPAT        ).nonzero? then opthash[:mdtest_1_compat] = true; end
+        if  ( flags & MKD_NOHTML          ).nonzero? then opthash[:escape_html]     = true; end
+        if  ( flags & MKD_STRICT          ).nonzero? then opthash[:strict_mode]     = true; end
+        if  ( flags & MKD_TAGTEXT         ).nonzero? then opthash[:tagtext_mode]    = true; end
+        if  ( flags & MKD_AUTOLINK        ).nonzero? then opthash[:auto_links]      = true; end
+        if  ( flags & MKD_SAFELINK        ).nonzero? then opthash[:safe_links]      = true; end
+        if !( flags & MKD_NOTABLES        ).nonzero? then opthash[:tables]          = true; end
+        if !( flags & MKD_NOSTRIKETHROUGH ).nonzero? then opthash[:strikethrough]   = true; end
 
 		return opthash
 	end

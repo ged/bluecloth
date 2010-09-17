@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#coding: utf-8
 
 BEGIN {
 	require 'pathname'
@@ -60,13 +61,30 @@ describe BlueCloth, "implementation of Discount-specific features" do
 				should be_transformed_into( '<p>bar</p>' )
 		end
 
+		it "renders lang: links as language-specified blocks" do
+			the_markdown( "[gift](lang:de)", :pseudoprotocols => true ).
+				should be_transformed_into( '<p><span lang="de">gift</span></p>' )
+		end
+
 	end
 
 
 	describe "Markdown-Extra tables" do
 
+		it "doesn't try to render tables if :tables isn't set" do
+			the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
+			 a   |    b
+			-----|-----
+			hello|sailor
+			END_MARKDOWN
+			<p> a   |    b
+			-----|-----
+			hello|sailor</p>
+			END_HTML
+		end
+
 		it "renders the example from orc's blog" do
-			the_indented_markdown( <<-"END_MARKDOWN", :strict => false ).should be_transformed_into(<<-"END_HTML").without_indentation
+			the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
 			 a   |    b
 			-----|-----
 			hello|sailor
@@ -89,7 +107,7 @@ describe BlueCloth, "implementation of Discount-specific features" do
 		end
 
 		it "renders simple markdown-extra tables" do
-			the_indented_markdown( <<-"END_MARKDOWN", :strict => false ).should be_transformed_into(<<-"END_HTML").without_indentation
+			the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
 			First Header  | Second Header
 			------------- | -------------
 			Content Cell  | Content Cell
@@ -176,6 +194,31 @@ describe BlueCloth, "implementation of Discount-specific features" do
  				END_HTML
  			end
 		end
+	end
+
+
+	describe "tilde strike-through" do
+
+		it "doesn't render tilde-bracketed test when :strikethrough isn't set" do
+			the_markdown( "~~cancelled~~" ).
+				should be_transformed_into( '<p>~~cancelled~~</p>' )
+		end
+
+		it "renders double tilde-bracketed text as strikethrough" do
+			the_markdown( "~~cancelled~~", :strikethrough => true ).
+				should be_transformed_into( '<p><del>cancelled</del></p>' )
+		end
+
+		it "renders tilde-bracketed text for tilde-brackets of more than two tildes" do
+			the_markdown( "~~~~cancelled~~~~", :strikethrough => true ).
+				should be_transformed_into( '<p><del>cancelled</del></p>' )
+		end
+
+		it "includes extra tildes in tilde-bracketed text" do
+			the_markdown( "~~~cancelled~~", :strikethrough => true ).
+				should be_transformed_into( '<p><del>~cancelled</del></p>' )
+		end
+
 	end
 
 end
