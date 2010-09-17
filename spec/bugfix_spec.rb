@@ -166,6 +166,27 @@ describe BlueCloth, "bugfixes" do
 		END_HTML
 	end
 
+	it "renders heading with trailing spaces correctly (#67)" do
+		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
+		The Ant-Sugar Tales 
+		=================== 
+
+		By Candice Yellowflower
+
+		Use of Metaphor 
+		--------------- 
+
+		The author's splendid...
+		END_MARKDOWN
+		<h1>The Ant-Sugar Tales </h1>
+
+		<p>By Candice Yellowflower</p>
+
+		<h2>Use of Metaphor </h2>
+
+		<p>The author's splendid...</p>
+		END_HTML
+	end
 end
 
 
