@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'bluecloth'
+
+require 'tidy'
 require 'diff/lcs'
 require 'diff/lcs/callbacks'
 require 'spec/lib/constants'
-require 'rbconfig'
 
 
 ### Fixturing functions
@@ -134,24 +135,11 @@ module BlueCloth::Matchers
 	class TidyTransformMatcher < TransformMatcher
 
 		TIDY_OPTIONS = {}
-		@tidy = nil
-
-		### Fetch the class-global Tidy object, creating it if necessary
-		def self::tidy_object
-			unless @tidy
-				require 'tidy'
-				soext = Config::CONFIG['LIBRUBY_ALIASES'].sub( /.*\./, '' )
-				Tidy.path = "libtidy.#{soext}"
-				@tidy = Tidy.new( TIDY_OPTIONS )
-			end
-
-			return @tidy
-		end
-
 
 		### Set the matcher's expected output to a tidied version of the input +html+.
 		def initialize( html )
-			@html = self.class.tidy_object.clean( html )
+			@tidy = Tidy.open( TIDY_OPTIONS )
+			@html = @tidy.clean( html )
 		end
 
 
@@ -159,7 +147,7 @@ module BlueCloth::Matchers
 		### expected HTML after normalizing them both with 'tidy'.
 		def matches?( bluecloth )
 			@bluecloth = bluecloth
-			@output_html = self.class.tidy_object.clean( bluecloth.to_html )
+			@output_html = @tidy.clean( bluecloth.to_html )
 			return @output_html == @html
 		end
 

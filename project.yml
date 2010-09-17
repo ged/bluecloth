@@ -23,6 +23,7 @@ additional_pkgfiles:
 - ext/VERSION
 dev_dependencies: 
   rake-compiler: ">= 0.7.0"
+  tidy-ext: ">= 0.1.10"
 authors: 
   Michael Granger: ged@FaerieMUD.org
 post_install_message: ""

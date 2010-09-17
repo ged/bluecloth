@@ -18,6 +18,7 @@ BEGIN {
 	libdir = basedir + "lib"
 	extdir = libdir + Config::CONFIG['sitearch']
 
+	$LOAD_PATH.unshift( basedir.to_s ) unless $LOAD_PATH.include?( basedir.to_s )
 	$LOAD_PATH.unshift( libdir.to_s ) unless $LOAD_PATH.include?( libdir.to_s )
 	$LOAD_PATH.unshift( extdir.to_s ) unless $LOAD_PATH.include?( extdir.to_s )
 }
@@ -227,6 +228,7 @@ DEVELOPMENT_DEPENDENCIES = {
 	'text-format'  => '>= 1.0.0',
 	'tmail'        => '>= 1.2.3.1',
 	'diff-lcs'     => '>= 1.1.2',
+	'tidy-ext' => '>= 0.1.10',
 	'rake-compiler' => '>= 0.7.0',
 }
 
@@ -266,6 +268,10 @@ GEMSPEC   = Gem::Specification.new do |gem|
 
 	gem.files             = RELEASE_FILES
 	gem.test_files        = SPEC_FILES
+
+	# signing key and certificate chain
+	gem.signing_key       = '/Volumes/Keys/ged-private_gem_key.pem'
+	gem.cert_chain        = [File.expand_path('~/.gem/ged-public_gem_cert.pem')]
 
 	DEPENDENCIES.each do |name, version|
 		version = '>= 0' if version.length.zero?
