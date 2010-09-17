@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 
 BEGIN {
 	require 'pathname'
@@ -187,6 +188,60 @@ describe BlueCloth, "bugfixes" do
 		<p>The author's splendid...</p>
 		END_HTML
 	end
+
+	it "renders the example from #68 correctly" do
+		the_indented_markdown( <<-"END_MARKDOWN" ).should be_transformed_into(<<-"END_HTML").without_indentation
+		START example
+
+		1. ö
+		1. ü
+		1. ó
+		1. ő
+		1. ú
+		1. é
+		1. á
+		1. ű
+		1. í
+
+		- ö
+		- ü
+		- ó
+		- ő
+		- ú
+		- é
+		- á
+		- ű
+		- í
+
+		END example
+		END_MARKDOWN
+		<p>START example</p>
+
+		<ol>
+		<li>ö</li>
+		<li>ü</li>
+		<li>ó</li>
+		<li>ő</li>
+		<li>ú</li>
+		<li>é</li>
+		<li>á</li>
+		<li>ű</li>
+		<li><p>í</p></li>
+		<li><p>ö</p></li>
+		<li>ü</li>
+		<li>ó</li>
+		<li>ő</li>
+		<li>ú</li>
+		<li>é</li>
+		<li>á</li>
+		<li>ű</li>
+		<li>í</li>
+		</ol>
+
+		<p>END example</p>
+		END_HTML
+	end
+
 end
 
 
