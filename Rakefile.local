@@ -32,7 +32,7 @@ namespace :spec do
 end
 
 
-ENV['RUBY_CC_VERSION'] = '1.8.6:1.9.1'
+ENV['RUBY_CC_VERSION'] = '1.8.6:1.9.2'
 
 Rake::ExtensionTask.new do |ext|
 	ext.name = 'bluecloth_ext'
