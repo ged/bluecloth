@@ -242,6 +242,11 @@ describe BlueCloth, "bugfixes" do
 		END_HTML
 	end
 
+	it "renders alignments in code blocks without changing indentation (#71)" do
+		the_indented_markdown( "    Самообучение\n    Bugaga\n" ).
+			should be_transformed_into( "<pre><code>Самообучение\nBugaga\n</code></pre>" )
+	end
+
 end
 
 
