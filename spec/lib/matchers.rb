@@ -8,7 +8,7 @@ require 'diff/lcs/callbacks'
 require 'spec/lib/constants'
 
 
-### Fixturing functions
+### Expectation matcher classes/functions
 module BlueCloth::Matchers
 
 	### Matcher for comparing output of a BlueCloth-generated HTML fragment against a known-good

@@ -14,7 +14,7 @@ BEGIN {
 }
 
 require 'rubygems'
-require 'spec'
+require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'

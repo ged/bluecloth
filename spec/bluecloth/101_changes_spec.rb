@@ -4,16 +4,16 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-require 'spec'
+require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
@@ -36,16 +36,16 @@ describe BlueCloth, "1.0.1 changes" do
 		formatting syntax. For example, if you wanted to surround a word with
 		literal asterisks (instead of an HTML `<em>` tag), you can backslashes
 		before the asterisks, like this:
-		
+
 			\\*literal asterisks\\*
-		
+
 		---
 		<p>Markdown allows you to use backslash escapes to generate literal
 		characters which would otherwise have special meaning in Markdown's
 		formatting syntax. For example, if you wanted to surround a word with
 		literal asterisks (instead of an HTML <code>&lt;em&gt;</code> tag), you can backslashes
 		before the asterisks, like this:</p>
-		
+
 		<pre><code>\\*literal asterisks\\*
 		</code></pre>
 		---
@@ -63,11 +63,11 @@ describe BlueCloth, "1.0.1 changes" do
 	it "converts reference-style links at or deeper than tab width to code blocks" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 		An [example][ex] reference-style link.
-		
+
 			[ex]: http://www.bluefi.com/
 		---
 		<p>An [example][ex] reference-style link.</p>
-		
+
 		<pre><code>[ex]: http://www.bluefi.com/
 		</code></pre>
 		---
@@ -115,23 +115,23 @@ describe BlueCloth, "1.0.1 changes" do
 	it "correctly marks up header + list + code" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 		## This is a header.
-		
+
 		1.   This is the first list item.
 		2.   This is the second list item.
-		
+
 		Here's some example code:
-		
+
 			return shell_exec("echo $input | $markdown_script");
 		---
 		<h2>This is a header.</h2>
-		
+
 		<ol>
 		<li>This is the first list item.</li>
 		<li>This is the second list item.</li>
 		</ol>
-		
+
 		<p>Here's some example code:</p>
-		
+
 		<pre><code>return shell_exec("echo $input | $markdown_script");
 		</code></pre>
 		---

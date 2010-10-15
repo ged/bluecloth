@@ -4,6 +4,7 @@ excluded_pkgfiles: []
 project_pubdir: /usr/local/www/public/code
 project_pubhost: deveiate
 project_homepage: http://deveiate.org/projects/BlueCloth/
+gem_pubhost: rubygems.org
 project_requirements: {}
 
 release_smtphost: mail.faeriemud.org
@@ -22,8 +23,8 @@ additional_pkgfiles:
 - spec/data/**/*.{txt,text,html}
 - ext/VERSION
 dev_dependencies: 
-  rake-compiler: ">= 0.7.0"
   tidy-ext: ">= 0.1.10"
+  rake-compiler: ">= 0.7.0"
 authors: 
   Michael Granger: ged@FaerieMUD.org
 post_install_message: ""

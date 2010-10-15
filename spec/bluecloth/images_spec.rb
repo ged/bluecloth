@@ -13,7 +13,7 @@ BEGIN {
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-require 'spec'
+require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
