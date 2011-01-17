@@ -119,7 +119,7 @@ describe BlueCloth do
 		you might want to prevent.
 		---
 		<p>This is an example
-		[of something](javascript:do_something_bad())
+		[of something](javascript:do<em>something</em>bad())
 		you might want to prevent.</p>
 		---
 	end
@@ -153,7 +153,7 @@ describe BlueCloth do
 
 		it "correctly expands id: links when :pseudoprotocols are enabled" do
 			input = "It was [just as he said](id:foo) it would be."
-			expected = %{<p>It was <a id="foo">just as he said</a> it would be.</p>}
+			expected = %{<p>It was <span id="foo">just as he said</span> it would be.</p>}
 
 			the_markdown( input, :pseudoprotocols => true ).should be_transformed_into( expected )
 		end
@@ -174,30 +174,30 @@ describe BlueCloth do
 
 		it "correctly adds IDs to headers when :header_labels is enabled" do
 			input = %{# A header\n\nSome stuff\n\n## Another header\n\nMore stuff.\n\n}
-			expected = %{<h1 id=\"A+header\">A header</h1>\n\n<p>Some stuff</p>\n\n} +
-			           %{<h2 id=\"Another+header\">Another header</h2>\n\n<p>More stuff.</p>}
+			expected = %{<h1 id=\"A.header\">A header</h1>\n\n<p>Some stuff</p>\n\n} +
+			           %{<h2 id=\"Another.header\">Another header</h2>\n\n<p>More stuff.</p>}
 
 			the_markdown( input, :header_labels => true ).should be_transformed_into( expected )
 		end
 
-		it "expands superscripts when :strict_mode is disabled" do
+		it "expands superscripts only when :superscript is enabled" do
 			input = %{It used to be that E = mc^2 used to be the province of physicists.}
 			expected = %{<p>It used to be that E = mc<sup>2</sup> used to be the province} +
 			           %{ of physicists.</p>}
-			strict = %{<p>It used to be that E = mc^2 used to be the province} +
+			disabled = %{<p>It used to be that E = mc^2 used to be the province} +
 			         %{ of physicists.</p>}
 
-			the_markdown( input, :strict_mode => false ).should be_transformed_into( expected )
-			the_markdown( input, :strict_mode => true ).should be_transformed_into( strict )
+			the_markdown( input, :superscript => false ).should be_transformed_into( disabled )
+			the_markdown( input, :superscript => true ).should be_transformed_into( expected )
 		end
 
-		it "uses relaxed emphasis when :strict_mode is disabled" do
+		it "uses relaxed emphasis when :relaxed is enabled" do
 			input = %{If you use size_t instead, you _won't_ have to worry as much about portability.}
-			expected = %{<p>If you use size_t instead, you <em>won't</em> have to worry as much about portability.</p>}
+			relaxed = %{<p>If you use size_t instead, you <em>won't</em> have to worry as much about portability.</p>}
 			strict = %{<p>If you use size<em>t instead, you </em>won't_ have to worry as much about portability.</p>}
 
-			the_markdown( input, :strict_mode => false ).should be_transformed_into( expected )
-			the_markdown( input, :strict_mode => true ).should be_transformed_into( strict )
+			the_markdown( input, :relaxed => true ).should be_transformed_into( relaxed )
+			the_markdown( input, :relaxed => false ).should be_transformed_into( strict )
 		end
 
 	end

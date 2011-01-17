@@ -25,7 +25,7 @@ require 'spec/lib/matchers'
 ###	C O N T E X T S
 #####################################################################
 
-describe BlueCloth, "1.0.1 changes" do
+describe BlueCloth, "after the 1.0.1 changes" do
 	include BlueCloth::TestConstants,
 	        BlueCloth::Matchers
 
@@ -126,8 +126,8 @@ describe BlueCloth, "1.0.1 changes" do
 		<h2>This is a header.</h2>
 
 		<ol>
-		<li>This is the first list item.</li>
-		<li>This is the second list item.</li>
+		<li> This is the first list item.</li>
+		<li> This is the second list item.</li>
 		</ol>
 
 		<p>Here's some example code:</p>

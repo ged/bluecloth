@@ -48,7 +48,7 @@ describe BlueCloth, "implementation of Discount-specific features" do
 
 		it "renders id: links as anchors with an ID" do
 			the_markdown( "[foo](id:bar)", :pseudoprotocols => true ).
-				should be_transformed_into( '<p><a id="bar">foo</a></p>' )
+				should be_transformed_into( '<p><span id="bar">foo</span></p>' )
 		end
 
 		it "renders class: links as SPANs with a CLASS" do

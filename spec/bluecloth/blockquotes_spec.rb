@@ -4,10 +4,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
@@ -72,14 +72,14 @@ describe BlueCloth, "blockquotes" do
 		> This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
 		consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
 		Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
-		
+
 		> Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
 		id sem consectetuer libero luctus adipiscing.
 		---
 		<blockquote><p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,
 		consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
 		Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
-		
+
 		<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse
 		id sem consectetuer libero luctus adipiscing.</p></blockquote>
 		---
@@ -90,23 +90,23 @@ describe BlueCloth, "blockquotes" do
 	it "supports other Markdown elements in blockquote sections" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 		> ## This is a header.
-		> 
+		>
 		> 1.   This is the first list item.
 		> 2.   This is the second list item.
-		> 
+		>
 		> Here's some example code:
-		> 
+		>
 		>     return shell_exec("echo $input | $markdown_script");
 		---
 		<blockquote><h2>This is a header.</h2>
-		
+
 		<ol>
-		<li>This is the first list item.</li>
-		<li>This is the second list item.</li>
+		<li> This is the first list item.</li>
+		<li> This is the second list item.</li>
 		</ol>
-		
+
 		<p>Here's some example code:</p>
-		
+
 		<pre><code>return shell_exec("echo $input | $markdown_script");
 		</code></pre></blockquote>
 		---
@@ -121,19 +121,19 @@ describe BlueCloth, "blockquotes" do
 			> <pre>
 			> foo + bar; foo.factorize; foo.display
 			> </pre>
-			> 
+			>
 			> This should result in an error on any little-endian platform.
-			> 
+			>
 			> <div>- Garrick Mettronne</div>
 			---
 			<blockquote><p>The best approximation of the problem is the following code:</p>
-			
+
 			<pre>
 			foo + bar; foo.factorize; foo.display
 			</pre>
-			
+
 			<p>This should result in an error on any little-endian platform.</p>
-			
+
 			<div>- Garrick Mettronne</div>
 			</blockquote>
 			---

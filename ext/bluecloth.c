@@ -185,8 +185,9 @@ static VALUE
 bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 	if ( !bluecloth_check_ptr(self) ) {
 		MMIOT *document;
-		VALUE text, utf8text, optflags, fullhash, opthash = Qnil;
+		VALUE text, optflags, fullhash, opthash = Qnil;
 		int flags = 0;
+		VALUE utf8text = Qnil;
 
 		rb_scan_args( argc, argv, "02", &text, &opthash );
 
@@ -254,12 +255,12 @@ bluecloth_to_html( VALUE self ) {
 	if ( (length = mkd_document( document, &output )) != EOF ) {
 #ifdef M17N_SUPPORTED
 		VALUE orig_encoding = rb_obj_encoding( rb_iv_get(self, "@text") );
-		VALUE utf8_result = rb_enc_str_new( output, length, rb_utf8_encoding() );
+		VALUE utf8_result = rb_enc_str_new( output, strlen(output), rb_utf8_encoding() );
 		result = rb_str_encode( utf8_result, orig_encoding, 0, Qnil );
 		bluecloth_debug( "Bytes after un-utf8ification (if necessary): %s",
 			RSTRING_PTR(rb_funcall(result, rb_intern("dump"), 0, Qnil)) );
 #else
-		result = rb_str_new( output, length );
+		result = rb_str_new2( output );
 #endif /* M17N_SUPPORTED */
 
 		OBJ_INFECT( result, self );
@@ -371,6 +372,15 @@ void Init_bluecloth_ext( void ) {
 	/* don't allow pseudo-protocols */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NO_EXT",   INT2FIX(MKD_NO_EXT) );
 
+	/* Generate code for xml ![CDATA[...]] */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_CDATA", INT2FIX(MKD_CDATA) );
+
+	/* Don't use superscript extension */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOSUPERSCRIPT", INT2FIX(MKD_NOSUPERSCRIPT) );
+
+	/* Relaxed emphasis -- emphasis happens everywhere */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NORELAXED", INT2FIX(MKD_NORELAXED) );
+
 	/* disallow tables */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOTABLES", INT2FIX(MKD_NOTABLES) );
 
@@ -392,9 +402,20 @@ void Init_bluecloth_ext( void ) {
 	/* Be paranoid about link protocols */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_SAFELINK", INT2FIX(MKD_SAFELINK) );
 
-
 	/* don't process header blocks */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NOHEADER", INT2FIX(MKD_NOHEADER) );
+
+	/* Expand tabs to 4 spaces */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_TABSTOP", INT2FIX(MKD_TABSTOP) );
+
+	/* Forbid '>%class%' blocks */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NODIVQUOTE", INT2FIX(MKD_NODIVQUOTE) );
+
+	/* Forbid alphabetic lists */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NOALPHALIST", INT2FIX(MKD_NOALPHALIST) );
+
+	/* Forbid definition lists */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_NODLIST", INT2FIX(MKD_NODLIST) );
 
 
 	/* Make sure the Ruby side is loaded */
