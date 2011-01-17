@@ -4,7 +4,7 @@
 #
 # Based on various other Rakefiles, especially one by Ben Bleything
 #
-# Copyright (c) 2007-2010 The FaerieMUD Consortium
+# Copyright (c) 2007-2011 The FaerieMUD Consortium
 #
 # Authors:
 #  * Michael Granger <ged@FaerieMUD.org>
@@ -42,6 +42,7 @@ rescue LoadError
 	end
 end
 
+require 'pathname'
 require 'rbconfig'
 require 'rake'
 require 'rake/testtask'
@@ -173,9 +174,9 @@ include RakefileHelpers
 # Set the build ID if the mercurial executable is available
 if hg = which( 'hg' )
 	id = `#{hg} id -n`.chomp
-	PKG_BUILD = "pre%03d" % [(id.chomp[ /^[[:xdigit:]]+/ ] || '1')]
+	PKG_BUILD = (id.chomp[ /^[[:xdigit:]]+/ ] || '1')
 else
-	PKG_BUILD = 'pre000'
+	PKG_BUILD = '0'
 end
 SNAPSHOT_PKG_NAME = "#{PKG_FILE_NAME}.#{PKG_BUILD}"
 SNAPSHOT_GEM_NAME = "#{SNAPSHOT_PKG_NAME}.gem"
@@ -192,7 +193,6 @@ RDOC_OPTIONS = [
   ]
 YARD_OPTIONS = [
 	'--use-cache',
-	'--no-private',
 	'--protected',
 	'-r', README_FILE,
 	'--exclude', 'extconf\\.rb',
@@ -220,16 +220,15 @@ DEPENDENCIES = {
 
 # Developer Gem dependencies: gemname => version
 DEVELOPMENT_DEPENDENCIES = {
-	'rake'         => '>= 0.8.7',
-	'rcodetools'   => '>= 0.7.0.0',
-	'rcov'         => '>= 0.8.1.2.0',
-	'rdoc'         => '>= 2.4.3',
-	'RedCloth'     => '>= 4.0.3',
-	'rspec'        => '>= 1.2.6',
-	'ruby-termios' => '>= 0.9.6',
-	'text-format'  => '>= 1.0.0',
-	'tmail'        => '>= 1.2.3.1',
-	'diff-lcs'     => '>= 1.1.2',
+	'rake'          => '~> 0.8.7',
+	'rcodetools'    => '~> 0.7.0.0',
+	'rcov'          => '~> 0.8.1.2.0',
+	'yard'          => '~> 0.6.1',
+	'RedCloth'      => '~> 4.2.3',
+	'rspec'         => '~> 2.0.1',
+	'ruby-termios'  => '~> 0.9.6',
+	'text-format'   => '~> 1.0.0',
+	'tmail'         => '~> 1.2.3.1',
 	'tidy-ext' => '>= 0.1.10',
 	'rake-compiler' => '>= 0.7.0',
 }
@@ -251,9 +250,10 @@ GEMSPEC   = Gem::Specification.new do |gem|
 		"structurally valid XHTML (or HTML).",
   	  ].join( "\n" )
 
-	gem.authors           = "Michael Granger"
+	gem.authors           = ["Michael Granger"]
 	gem.email             = ["ged@FaerieMUD.org"]
 	gem.homepage          = 'http://deveiate.org/projects/BlueCloth/'
+	gem.licenses          = ["BSD"]
 
 	gem.has_rdoc          = true
 	gem.rdoc_options      = RDOC_OPTIONS
@@ -274,6 +274,9 @@ GEMSPEC   = Gem::Specification.new do |gem|
 	# signing key and certificate chain
 	gem.signing_key       = '/Volumes/Keys/ged-private_gem_key.pem'
 	gem.cert_chain        = [File.expand_path('~/.gem/ged-public_gem_cert.pem')]
+
+
+	gem.required_ruby_version = '>= 1.8.7'
 
 	DEPENDENCIES.each do |name, version|
 		version = '>= 0' if version.length.zero?

@@ -1,31 +1,34 @@
 --- 
-excluded_pkgfiles: []
-
-project_pubdir: /usr/local/www/public/code
-project_pubhost: deveiate
+project_name: BlueCloth
 project_homepage: http://deveiate.org/projects/BlueCloth/
-gem_pubhost: rubygems.org
-project_requirements: {}
-
-release_smtphost: mail.faeriemud.org
+project_summary: BlueCloth is a Ruby implementation of Markdown
 project_description: |-
   BlueCloth is a Ruby implementation of [Markdown][1], a text-to-HTML conversion
   tool for web writers. To quote from the project page: Markdown allows you to
   write using an easy-to-read, easy-to-write plain text format, then convert it to
   structurally valid XHTML (or HTML).
+project_pubhost: deveiate
+project_pubdir: /usr/local/www/public/code
+project_licenses: 
+- BSD
+gem_pubhost: rubygems.org
 release_mailto: Ruby-Talk List <ruby-talk@ruby-lang.org>
+release_smtphost: mail.faeriemud.org
+post_install_message: ""
+authors: 
+  Michael Granger: ged@FaerieMUD.org
 project_dependencies: {}
 
-project_summary: BlueCloth is a Ruby implementation of Markdown
-version_file: bluecloth.rb
+dev_dependencies: 
+  tidy-ext: ">= 0.1.10"
+  rake-compiler: ">= 0.7.0"
+project_requirements: {}
+
 additional_pkgfiles: 
 - LICENSE.discount
 - spec/data/**/*.{txt,text,html}
 - ext/VERSION
-dev_dependencies: 
-  tidy-ext: ">= 0.1.10"
-  rake-compiler: ">= 0.7.0"
-authors: 
-  Michael Granger: ged@FaerieMUD.org
-post_install_message: ""
-project_name: BlueCloth
+excluded_pkgfiles: []
+
+required_ruby_version: ">= 1.8.7"
+version_file: bluecloth.rb
