@@ -16,8 +16,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -25,8 +23,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "links" do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	it "supports inline links" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation

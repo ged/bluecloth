@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################

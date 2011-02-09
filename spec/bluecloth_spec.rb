@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 ### Output some debugging if $DEBUG is true
@@ -174,8 +172,8 @@ describe BlueCloth do
 
 		it "correctly adds IDs to headers when :header_labels is enabled" do
 			input = %{# A header\n\nSome stuff\n\n## Another header\n\nMore stuff.\n\n}
-			expected = %{<h1 id=\"A.header\">A header</h1>\n\n<p>Some stuff</p>\n\n} +
-			           %{<h2 id=\"Another.header\">Another header</h2>\n\n<p>More stuff.</p>}
+			expected = %{<a name=\"A.header\"></a>\n<h1>A header</h1>\n\n<p>Some stuff</p>\n\n} +
+			           %{<a name=\"Another.header\"></a>\n<h2>Another header</h2>\n\n<p>More stuff.</p>}
 
 			the_markdown( input, :header_labels => true ).should be_transformed_into( expected )
 		end

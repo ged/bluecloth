@@ -13,13 +13,11 @@ BEGIN {
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
-require 'rubygems'
-require 'rspec'
-require 'bluecloth'
+require 'timeout'
 
+require 'rspec'
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
+require 'bluecloth'
 
 
 #####################################################################
@@ -44,9 +42,9 @@ describe BlueCloth, "bugfixes" do
 
 		bcobj = BlueCloth::new( contents )
 
-		lambda do
+		expect {
 			timeout( 2 ) { bcobj.to_html }
-		end.should_not raise_error()
+		}.to_not raise_error()
 	end
 
 

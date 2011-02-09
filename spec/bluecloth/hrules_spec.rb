@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -26,8 +24,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "horizontal rules" do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	# Hrule -- three asterisks
 	it "produces a horizontal rule tag from three asterisks on a line by themselves" do

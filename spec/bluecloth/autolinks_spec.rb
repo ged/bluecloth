@@ -4,10 +4,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -26,8 +24,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "auto-links" do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	it "supports HTTP auto-links" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation

@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -26,8 +24,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "titles" do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	# setext-style h1 -- three characters
 	it "transforms Setext-style level-one headers (three equals) into an H1" do

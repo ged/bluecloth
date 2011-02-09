@@ -17,8 +17,6 @@ require 'bluecloth'
 require 'tidy'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -26,8 +24,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "-- MarkdownTest 1.0.3: " do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	markdowntest_dir = Pathname.new( __FILE__ ).dirname + 'data/markdowntest'
 	pattern = markdowntest_dir + '*.text'

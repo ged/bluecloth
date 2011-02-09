@@ -17,8 +17,6 @@ require 'rspec'
 require 'bluecloth'
 
 require 'spec/lib/helpers'
-require 'spec/lib/constants'
-require 'spec/lib/matchers'
 
 
 #####################################################################
@@ -26,8 +24,6 @@ require 'spec/lib/matchers'
 #####################################################################
 
 describe BlueCloth, "that contains code blocks or spans" do
-	include BlueCloth::TestConstants,
-	        BlueCloth::Matchers
 
 	it "wraps CODE tags around backticked spans" do
 		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
