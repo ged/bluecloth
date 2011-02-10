@@ -58,10 +58,15 @@ task 'hg:precheckin' => :spec
 # Ensure the extension is compiled before testing
 task :spec => :compile
 
+# gem-testers support
+task :test => :spec
+
 desc "Turn on warnings and debugging in the build."
 task :maint do
 	ENV['MAINTAINER_MODE'] = 'yes'
 end
+
+ENV['RUBY_CC_VERSION'] = '1.8.6' # ':1.9.2' <- doesn't work
 
 # Rake-compiler task
 Rake::ExtensionTask.new do |ext|
