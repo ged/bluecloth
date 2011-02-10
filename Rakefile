@@ -16,8 +16,9 @@ rescue LoadError
 end
 
 # Build constants
-BASEDIR = Pathname( __FILE__ ).dirname
+BASEDIR = Pathname( __FILE__ ).dirname.relative_path_from( Pathname.pwd )
 SPECDIR = BASEDIR + 'spec'
+LIBDIR  = BASEDIR + 'lib'
 EXTDIR  = BASEDIR + 'ext'
 
 # Load Hoe plugins
@@ -26,6 +27,7 @@ Hoe.plugin :yard
 Hoe.plugin :signing
 
 Hoe.plugins.delete :rubyforge
+Hoe.plugins.delete :compiler
 
 # Configure Hoe
 hoespec = Hoe.spec 'bluecloth' do
@@ -41,6 +43,7 @@ hoespec = Hoe.spec 'bluecloth' do
 
 	self.spec_extras[:licenses] = ["BSD"]
 	self.spec_extras[:signing_key] = '/Volumes/Keys/ged-private_gem_key.pem'
+	self.spec_extras[:extensions] = [ "ext/extconf.rb" ]
 
 	self.require_ruby_version( '>=1.8.7' )
 
