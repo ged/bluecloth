@@ -32,7 +32,7 @@ require 'rbconfig'
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.10'
+	VERSION = '2.0.11'
 
 	# The defaults for all supported options.
 	DEFAULT_OPTIONS = {
