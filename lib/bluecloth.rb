@@ -1,8 +1,5 @@
 #!/usr/bin/ruby
 
-require 'pathname'
-require 'rbconfig'
-
 # 
 # Bluecloth is a Ruby implementation of Markdown, a text-to-HTML conversion
 # tool.
