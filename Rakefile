@@ -21,6 +21,9 @@ SPECDIR = BASEDIR + 'spec'
 LIBDIR  = BASEDIR + 'lib'
 EXTDIR  = BASEDIR + 'ext'
 
+DLEXT   = Config::CONFIG['DLEXT']
+EXT     = LIBDIR + "bluecloth_ext.#{DLEXT}"
+
 # Load Hoe plugins
 Hoe.plugin :mercurial
 Hoe.plugin :yard
@@ -63,14 +66,23 @@ task 'hg:precheckin' => :spec
 task :spec => :compile
 
 # gem-testers support
-task :test => :spec
+task :test do
+	# rake-compiler always wants to copy the compiled extension into lib/, but
+	# we don't want testers to have to re-compile, especially since that
+	# often fails because they can't (and shouldn't have to) write to tmp/ in
+	# the installed gem dir. So we clear the task rake-compiler set up
+	# to break the dependency between :spec and :compile when running under
+	# rubygems-test, and then run :spec.
+	Rake::Task[ EXT.to_s ].clear
+	Rake::Task[ :spec ].execute
+end
 
 desc "Turn on warnings and debugging in the build."
 task :maint do
 	ENV['MAINTAINER_MODE'] = 'yes'
 end
 
-ENV['RUBY_CC_VERSION'] = '1.8.6' # ':1.9.2' <- doesn't work
+ENV['RUBY_CC_VERSION'] = '1.8.7:1.9.2'
 
 # Rake-compiler task
 Rake::ExtensionTask.new do |ext|
