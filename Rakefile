@@ -37,6 +37,7 @@ hoespec = Hoe.spec 'bluecloth' do
 	self.developer 'Michael Granger', 'ged@FaerieMUD.org'
 
 	self.extra_dev_deps.push *{
+		'tidy-ext'      => '~> 0.1',
 		'rake-compiler' => '~> 0.7',
 		'rspec'         => '~> 2.4',
 	}
