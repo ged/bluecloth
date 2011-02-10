@@ -37,7 +37,7 @@ describe BlueCloth, "bugfixes" do
 
 	### Test to be sure the README file can be transformed.
 	it "can transform the included README file" do
-		readme = @basedir + 'README'
+		readme = @basedir + 'README.md'
 		contents = readme.read
 
 		bcobj = BlueCloth::new( contents )

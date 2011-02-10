@@ -13,19 +13,17 @@ version = versionfile.read.chomp
 if CONFIG['host_os'].match( 'mswin' )
 	$CFLAGS << ' -I.' << ' -W3' << ' -Zi'
 else
-	$CFLAGS << ' -I.' << ' -Wall'
+	$CFLAGS << ' -I.'
 end
 $CPPFLAGS << %Q{ -DVERSION=\\"#{version}\\"}
 
 # Add my own debugging hooks if building for me
-if ENV['DEBUGGING_BUILD']
+if ENV['MAINTAINER_MODE']
+	$stderr.puts "Maintainer mode enabled."
+	$CFLAGS << ' -Wall'
 	$CFLAGS << ' -ggdb' << ' -DDEBUG'
 end
 
-def fail( *messages )
-	$stderr.puts( *messages )
-	exit( 1 )
-end
 
 # Stuff from configure.sh
 have_func( "srand" ) || have_func( "srandom" )
@@ -35,13 +33,13 @@ have_func( "random" ) || have_func( "rand" )
 have_func( "bzero", %w[string.h strings.h] )
 
 unless have_func( "strcasecmp" ) || have_func( "stricmp" )
-	fail( "This extension requires either strcasecmp() or stricmp()" )
+	abort "This extension requires either strcasecmp() or stricmp()"
 end
 unless have_func( "strncasecmp" ) || have_func( "strnicmp" )
-	fail( "This extensions requires either strncasecmp() or strnicmp()" )
+	abort "This extensions requires either strncasecmp() or strnicmp()"
 end
 
-have_header( 'mkdio.h' ) or fail( "missing mkdio.h" )
+have_header( 'mkdio.h' ) or abort "missing mkdio.h"
 
 # Check for 1.9.xish encoding header
 have_header( 'ruby/encoding.h' )

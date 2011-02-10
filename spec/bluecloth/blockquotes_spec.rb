@@ -109,7 +109,7 @@ describe BlueCloth, "blockquotes" do
 	end
 
 	# Blockquotes with a <pre> section
-	it "supports block-level HTML inside of blockquotes" do
+	it "supports block-level HTML inside of blockquotes", :pedantic => true do
 		pending "a fix in Discount" do
 			the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
 			> The best approximation of the problem is the following code:

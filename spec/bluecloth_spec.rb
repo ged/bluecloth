@@ -259,7 +259,7 @@ describe BlueCloth do
 	end
 
 
-	describe "encoding under Ruby 1.9.x" do
+	describe "encoding under Ruby 1.9.x", :ruby_19_only => true do
 
 		before( :each ) do
 			pending "only valid under a version of Ruby that has the Encoding class" unless

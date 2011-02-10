@@ -126,7 +126,7 @@ describe BlueCloth, "implementation of Discount-specific features" do
 
 		end
 
-  		it "renders tables with leading and trailing pipes" do
+  		it "renders tables with leading and trailing pipes", :pedantic => true do
  			pending "Discount doesn't support this kind (yet?)" do
  				the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
  				| First Header  | Second Header |
@@ -156,7 +156,7 @@ describe BlueCloth, "implementation of Discount-specific features" do
  			end
   		end
 
-  		it "renders tables with aligned columns" do
+  		it "renders tables with aligned columns", :pedantic => true do
  			pending "Discount doesn't support this kind (yet?)" do
  				the_indented_markdown( <<-"END_MARKDOWN", :tables => true ).should be_transformed_into(<<-"END_HTML").without_indentation
  				| Item      | Value |
