@@ -52,8 +52,6 @@ hoespec = Hoe.spec 'bluecloth' do
 	self.require_ruby_version( '>=1.8.7' )
 
 	self.hg_sign_tags = true if self.respond_to?( :hg_sign_tags= )
-	self.yard_opts = [ '--protected', '--verbose' ] if self.respond_to?( :yard_opts= )
-
 	self.rdoc_locations << "deveiate:/usr/local/www/public/code/#{remote_rdoc_dir}"
 end
 
