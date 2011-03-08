@@ -4,10 +4,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
@@ -54,6 +54,24 @@ describe BlueCloth, "document with entities" do
 		The left shift operator, which is written as &#x3c;&#x3c;, is often used &#x26; greatly admired.
 		---
 		<p>The left shift operator, which is written as &#x3c;&#x3c;, is often used &#x26; greatly admired.</p>
+		---
+	end
+
+	it "handles a mix of entities in code spans and not in code spans (issue #73)" do
+		the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
+		# HTML Text is Unicode #
+
+		* You can either use character entities or character codes for foreign language characters and symbols:
+		* ``&eacute;`` or ``&#233;`` is e-acute (&eacute;)
+		* ``&copy;`` or ``&#169;`` is the copyright symbol &copy;
+		---
+		<h1>HTML Text is Unicode</h1>
+
+		<ul>
+		<li>You can either use character entities or character codes for foreign language characters and symbols:</li>
+		<li><code>&amp;eacute;</code> or <code>&amp;#233;</code> is e-acute (&eacute;)</li>
+		<li><code>&amp;copy;</code> or <code>&amp;#169;</code> is the copyright symbol &copy;</li>
+		</ul>
 		---
 	end
 
