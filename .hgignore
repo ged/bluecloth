@@ -13,3 +13,4 @@ docs/api
 ^lib/1\.8/bluecloth_ext\.so$
 .*\.so$
 ^\.yardoc/
+^doc/
