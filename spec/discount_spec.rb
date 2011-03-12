@@ -217,6 +217,111 @@ describe BlueCloth, "implementation of Discount-specific features" do
 
 	end
 
+
+	describe "definition lists" do
+
+		describe "(discount style)" do
+			it "aren't rendered by default" do
+				the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
+				=hey!=
+				    This is a definition list
+				---
+				<p>=hey!=</p>
+
+				<pre><code>This is a definition list
+				</code></pre>
+				---
+			end
+
+			it "are rendered if the :definition_lists option is true" do
+				the_indented_markdown( <<-"---", :definition_lists => true ).should be_transformed_into(<<-"---").without_indentation
+				=hey!=
+				    This is a definition list
+				---
+				<dl>
+				<dt>hey!</dt>
+				<dd>This is a definition list</dd>
+				</dl>
+				---
+			end
+
+			it "supports multiple-term list items" do
+				the_indented_markdown( <<-"---", :definition_lists => true ).should be_transformed_into(<<-"---").without_indentation
+				=tag1=
+				=tag2=
+				    data.
+				---
+				<dl>
+				<dt>tag1</dt>
+				<dt>tag2</dt>
+				<dd>data.</dd>
+				</dl>
+				---
+			end
+		end
+
+		describe "(markdown-extra style)" do
+			it "aren't rendered by default" do
+				the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
+				Apple
+				:   Pomaceous fruit of plants of the genus Malus in 
+				    the family Rosaceae.
+
+				Orange
+				:   The fruit of an evergreen tree of the genus Citrus.
+				---
+				<p>Apple
+				:   Pomaceous fruit of plants of the genus Malus in</p>
+
+				<pre><code>the family Rosaceae.
+				</code></pre>
+
+				<p>Orange
+				:   The fruit of an evergreen tree of the genus Citrus.</p>
+				---
+			end
+
+			it "are rendered if the :definition_lists option is true" do
+				the_indented_markdown( <<-"---", :definition_lists => true ).should be_transformed_into(<<-"---").without_indentation
+				Apple
+				:   Pomaceous fruit of plants of the genus Malus in 
+				    the family Rosaceae.
+
+				Orange
+				:   The fruit of an evergreen tree of the genus Citrus.
+				---
+				<dl>
+				<dt>Apple</dt>
+				<dd>  Pomaceous fruit of plants of the genus Malus in
+				  the family Rosaceae.</dd>
+				<dt>Orange</dt>
+				<dd>  The fruit of an evergreen tree of the genus Citrus.</dd>
+				</dl>
+				---
+			end
+
+			it "are rendered if the :definition_lists option is true" do
+				the_indented_markdown( <<-"---", :definition_lists => true ).should be_transformed_into(<<-"---").without_indentation
+				Apple
+				:   Pomaceous fruit of plants of the genus Malus in 
+				the family Rosaceae.
+
+				Orange
+				:   The fruit of an evergreen tree of the genus Citrus.
+				---
+				<dl>
+				<dt>Apple</dt>
+				<dd>  Pomaceous fruit of plants of the genus Malus in
+				the family Rosaceae.</dd>
+				<dt>Orange</dt>
+				<dd>  The fruit of an evergreen tree of the genus Citrus.</dd>
+				</dl>
+				---
+			end
+		end
+
+	end
+
 end
 
 

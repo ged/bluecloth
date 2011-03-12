@@ -417,6 +417,9 @@ void Init_bluecloth_ext( void ) {
 	/* Forbid definition lists */
 	rb_define_const( bluecloth_cBlueCloth, "MKD_NODLIST", INT2FIX(MKD_NODLIST) );
 
+	/* Markdown-extra Footnotes */
+	rb_define_const( bluecloth_cBlueCloth, "MKD_EXTRA_FOOTNOTE", INT2FIX(MKD_EXTRA_FOOTNOTE) );
+
 
 	/* Make sure the Ruby side is loaded */
 	rb_require( "bluecloth" );

@@ -61,6 +61,8 @@
 #define DL_TAG_EXTENSION 1
 #define PANDOC_HEADER 1
 #define ALPHA_LIST 1
+#define USE_DISCOUNT_DL 1
+#define USE_EXTRA_DL 1
 
 #endif /* end of include guard: CONFIG_H_RZLE3ADO */
 

@@ -1,28 +1,27 @@
 #include "config.h"
 
 char markdown_version[] = VERSION
-#if DL_TAG_EXTENSION
-		" DL_TAG"
-#endif
-#if PANDOC_HEADER
-		" HEADER"
-#endif
 #if 4 != 4
 		" TAB=4"
 #endif
 #if USE_AMALLOC
 		" DEBUG"
 #endif
-#if SUPERSCRIPT
-		" SUPERSCRIPT"
+#if USE_DISCOUNT_DL
+# if USE_EXTRA_DL
+		" DL=BOTH"
+# else
+		" DL=DISCOUNT"
+# endif
+#elif USE_EXTRA_DL
+		" DL=EXTRA"
+#else
+		" DL=NONE"
 #endif
-#if RELAXED_EMPHASIS
-		" RELAXED"
+#if WITH_ID_ANCHOR
+		" ID-ANCHOR"
 #endif
-#if DIV_QUOTE
-		" DIV"
-#endif
-#if ALPHA_LIST
-		" AL"
+#if WITH_GITHUB_TAGS
+		" GITHUB-TAGS"
 #endif
 		;

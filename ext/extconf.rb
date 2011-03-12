@@ -24,7 +24,6 @@ if ENV['MAINTAINER_MODE']
 	$CFLAGS << ' -ggdb' << ' -DDEBUG'
 end
 
-
 # Stuff from configure.sh
 have_func( "srand" ) || have_func( "srandom" )
 have_func( "random" ) || have_func( "rand" )
