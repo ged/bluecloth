@@ -322,6 +322,103 @@ describe BlueCloth, "implementation of Discount-specific features" do
 
 	end
 
+
+	describe "footnotes" do
+
+		it "aren't rendered by default" do
+			the_indented_markdown( <<-"---" ).should be_transformed_into(<<-"---").without_indentation
+			That's some text with a footnote.[^1]
+
+			[^1]: And that's the footnote.
+			---
+			<p>That's some text with a footnote.<a href=\"And\">^1</a></p>
+			---
+		end
+
+		it "are rendered if the :footnotes option is true" do
+			the_indented_markdown( <<-"---", :footnotes => true ).should be_transformed_into(<<-"---").without_indentation
+			That's some text with a footnote.[^1]
+
+			[^1]: And that's the footnote.
+			---
+			<p>That's some text with a footnote.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+			<div class="footnotes">
+			<hr/>
+			<ol>
+			<li id="fn:1">
+			<p>And that&rsquo;s the footnote.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+			</ol>
+			</div>
+			---
+		end
+
+		it "renders a second link to the same footnote as plain text" do
+			the_indented_markdown( <<-"---", :footnotes => true ).should be_transformed_into(<<-"---").without_indentation
+			That's some text with a footnote.[^afootnote]
+			And here's another.[^afootnote]
+
+			[^afootnote]: And that's the footnote.
+			---
+			<p>That's some text with a footnote.<sup id=\"fnref:1\"><a href=\"#fn:1\" rel=\"footnote\">1</a></sup>
+			And here's another.[^afootnote]</p>
+			<div class=\"footnotes\">
+			<hr/>
+			<ol>
+			<li id=\"fn:1\">
+			<p>And that&rsquo;s the footnote.<a href=\"#fnref:1\" rev=\"footnote\">&#8617;</a></p></li>
+			</ol>
+			</div>
+			---
+		end
+
+		it "support multiple block-level elements via indentation", :pedantic => true do
+			pending "not yet implemented by Discount" do
+				the_indented_markdown( <<-"---", :footnotes => true ).should be_transformed_into(<<-"---").without_indentation
+				That's some text with a footnote.[^1]
+
+				[^1]: And that's the footnote.
+
+				    That's the second paragraph.
+				---
+				<p>That's some text with a footnote.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+				<div class="footnotes">
+				<hr/>
+				<ol>
+				<li id="fn:1">
+				<p>And that&rsquo;s the footnote.</p>
+				<p>That&rsquo;s the second paragraph.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+				</ol>
+				</div>
+				---
+			end
+		end
+
+		it "support multiple block-level elements with an empty first line", :pedantic => true do
+			pending "not yet implemented by Discount" do
+				the_indented_markdown( <<-"---", :footnotes => true ).should be_transformed_into(<<-"---").without_indentation
+				That's some text with a footnote.[^cows]
+
+				[^cows]:
+				    And that's the footnote.
+
+				    That's the second paragraph.
+				---
+				<p>That's some text with a footnote.<sup id="fnref:cows"><a href="#fn:cows" rel="footnote">1</a></sup></p>
+				<div class="footnotes">
+				<hr />
+				<ol>
+				<li id="fn:cows">
+				<p>And that's the footnote.</p>
+				<p>That's the second paragraph.&#160;<a href="#fnref:cows" rev="footnote">&#8617;</a></p>
+				</li>
+				</ol>
+				</div>
+				---
+			end
+		end
+
+	end
+
 end
 
 

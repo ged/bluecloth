@@ -104,7 +104,7 @@ class BlueCloth
 		if ! opthash[:divquotes]        then flags |= MKD_NODIVQUOTE;      end
 		if ! opthash[:alphalists]       then flags |= MKD_NOALPHALIST;     end
 		if ! opthash[:definition_lists] then flags |= MKD_NODLIST;         end
-		if ! opthash[:footnotes]        then flags |= MKD_EXTRA_FOOTNOTE;  end
+		if   opthash[:footnotes]        then flags |= MKD_EXTRA_FOOTNOTE;  end
 
 		return flags
 	end
@@ -136,7 +136,7 @@ class BlueCloth
 		if !( flags & MKD_NODIVQUOTE      ).nonzero? then opthash[:divquotes]        = true; end
 		if !( flags & MKD_NOALPHALIST     ).nonzero? then opthash[:alphalists]       = true; end
 		if !( flags & MKD_NODLIST         ).nonzero? then opthash[:definition_lists] = true; end
-		if !( flags & MKD_EXTRA_FOOTNOTE  ).nonzero? then opthash[:footnotes]        = true; end
+		if  ( flags & MKD_EXTRA_FOOTNOTE  ).nonzero? then opthash[:footnotes]        = true; end
 
 		return opthash
 	end
