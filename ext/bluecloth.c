@@ -333,7 +333,7 @@ void Init_bluecloth_ext( void ) {
 	mkd_initialize();
 
 	rb_define_alloc_func( bluecloth_cBlueCloth, bluecloth_s_allocate );
-	rb_define_singleton_method( bluecloth_cBlueCloth, "discount_version", 
+	rb_define_singleton_method( bluecloth_cBlueCloth, "discount_version",
 		bluecloth_s_discount_version, 0 );
 
 	rb_define_method( bluecloth_cBlueCloth, "initialize", bluecloth_initialize, -1 );

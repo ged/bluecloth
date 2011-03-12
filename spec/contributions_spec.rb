@@ -3,10 +3,10 @@
 BEGIN {
 	require 'pathname'
 	basedir = Pathname.new( __FILE__ ).dirname.parent
-	
+
 	libdir = basedir + 'lib'
 	extdir = basedir + 'ext'
-	
+
 	$LOAD_PATH.unshift( basedir ) unless $LOAD_PATH.include?( basedir )
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
 	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
@@ -44,23 +44,16 @@ describe BlueCloth, "contributed features: " do
 		### Test the :filter_html restriction
 		it "can be configured with html filtering when created" do
 			bc = BlueCloth.new( 'foo', :filter_html )
-			bc.filter_html.should be_true()
+			bc.options.should include( :escape_html )
 		end
-	
-	
+
+
 		it "can be configured with html filtering (via an Array of options) when created" do
 			bc = BlueCloth.new( 'foo', [:filter_html] )
-			bc.filter_html.should be_true()
+			bc.options.should include( :escape_html )
 		end
-	
-	
-		it "raises an appropriate error when #filter_html= is called" do
-			lambda {
-				BlueCloth.new( 'foo' ).filter_html = true
-			}.should raise_error( NotImplementedError, /sorry/i )
-		end
-	
-	
+
+
 		it "can escape any existing HTML in the input if configured to do so" do
 			the_markdown( DANGEROUS_HTML, :filter_html ).
 				should be_transformed_into( DANGEROUS_HTML_OUTPUT )

@@ -18,18 +18,49 @@
 # 
 # == Version
 #
-#  $Id$
+# 2.1.0
+#
+# == Revision
 # 
+# $Revision$
+#
 # == License
-# 
-# :include: LICENSE
-#--
-# Please see the LICENSE file included in the distribution for copyright and licensing details.
-# 
+#
+# Copyright (c) 2004-2011, Michael Granger
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# * Neither the name of the author/s, nor the names of the project's
+#   contributors may be used to endorse or promote products derived from this
+#   software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
 class BlueCloth
 
 	# Release Version
-	VERSION = '2.0.11'
+	VERSION = '2.1.0'
+
+	# Version control revision
+	REVISION = %q$Revision$
 
 	# The defaults for all supported options.
 	DEFAULT_OPTIONS = {
@@ -157,25 +188,6 @@ class BlueCloth
 			self.options,
 		]
 	end
-
-
-	### Backward-compatible method: return +true+ if the object's :escape_html option was
-	### set.
-	def filter_html
-		return self.options[:escape_html]
-	end
-
-
-	### Backward-compatible method: raises an appropriate error notifying the user that
-	### BlueCloth2 doesn't support this option.
-	def filter_html=( arg )
-		raise NotImplementedError,
-			"Sorry, this version of BlueCloth no longer supports toggling of HTML filtering" +
-			"via #filter_html=. You now must create the BlueCloth object with the :escape_html" +
-			"option set to true instead."
-	end
-
-
 
 end # class BlueCloth
 
