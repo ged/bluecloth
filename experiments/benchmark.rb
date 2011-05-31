@@ -25,6 +25,7 @@ require 'maruku'
 require 'peg_markdown'
 require 'bluefeather'
 require 'kramdown'
+require 'redcarpet'
 
 ITERATIONS = 100
 TEST_FILE = EXPERIMENTS + 'benchmark.txt'
@@ -64,6 +65,7 @@ IMPLEMENTATIONS = [
 	PEGMarkdown,
 	BlueFeatherWrapper,
 	Kramdown::Document,
+	Redcarpet,
 ]
 
 begin

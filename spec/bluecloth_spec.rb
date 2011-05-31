@@ -43,7 +43,7 @@ describe BlueCloth do
 	end
 
 	it "knows what version of Discount was used to build it" do
-		BlueCloth.discount_version.should =~ /^\d+\.\d+\.\d+.*DL=BOTH/
+		BlueCloth.discount_version.should =~ /^\d+\.\d+\.\d+.*GITHUB-TAGS/
 	end
 
 	it "can build a flags bitmask out of an options hash" do
