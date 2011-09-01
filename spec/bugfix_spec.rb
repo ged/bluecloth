@@ -35,19 +35,6 @@ describe BlueCloth, "bugfixes" do
 
 
 
-	### Test to be sure the README file can be transformed.
-	it "can transform the included README file" do
-		readme = @basedir + 'README.md'
-		contents = readme.read
-
-		bcobj = BlueCloth::new( contents )
-
-		expect {
-			timeout( 2 ) { bcobj.to_html }
-		}.to_not raise_error()
-	end
-
-
 	it "provides a workaround for the regexp-engine overflow bug" do
 		datafile = @datadir + 're-overflow.txt'
 		markdown = datafile.read

@@ -1,9 +1,9 @@
 .gemtest
-History.md
+History.rdoc
 Manifest.txt
 LICENSE
 LICENSE.discount
-README.md
+README.rdoc
 Rakefile
 bin/bluecloth
 ext/Csio.c

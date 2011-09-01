@@ -22,8 +22,10 @@ module BlueCloth::SpecHelpers
 end # module BlueCloth::SpecHelpers
 
 
+abort "You need a version of RSpec >= 2.6.0" unless defined?( RSpec )
+
 ### Mock with Rspec
-Rspec.configure do |c|
+RSpec.configure do |c|
 	c.mock_with :rspec
 
 	c.include( BlueCloth::SpecHelpers )
