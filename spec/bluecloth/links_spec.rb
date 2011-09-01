@@ -6,10 +6,8 @@ BEGIN {
 	basedir = Pathname.new( __FILE__ ).dirname.parent.parent
 
 	libdir = basedir + 'lib'
-	extdir = basedir + 'ext'
 
 	$LOAD_PATH.unshift( libdir ) unless $LOAD_PATH.include?( libdir )
-	$LOAD_PATH.unshift( extdir ) unless $LOAD_PATH.include?( extdir )
 }
 
 require 'rspec'
