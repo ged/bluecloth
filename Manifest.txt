@@ -31,6 +31,7 @@ ext/version.c
 ext/xml.c
 ext/xmlpage.c
 lib/bluecloth.rb
+man/man1/bluecloth.1
 spec/bluecloth/101_changes_spec.rb
 spec/bluecloth/TEMPLATE
 spec/bluecloth/autolinks_spec.rb

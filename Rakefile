@@ -24,6 +24,13 @@ EXTDIR  = BASEDIR + 'ext'
 DLEXT   = Config::CONFIG['DLEXT']
 EXT     = LIBDIR + "bluecloth_ext.#{DLEXT}"
 
+MANDIR  = BASEDIR + 'man'
+MAN1DIR = MANDIR + 'man1'
+MANPAGE = MAN1DIR + 'bluecloth.1'
+
+MANPAGE_POD = BASEDIR + 'bluecloth.1.pod'
+
+
 # Load Hoe plugins
 Hoe.plugin :mercurial
 Hoe.plugin :signing
@@ -88,4 +95,16 @@ Rake::ExtensionTask.new do |ext|
 	ext.cross_compile  = true
 	ext.cross_platform = %w[i386-mswin32 i386-mingw32]
 end
+
+# Generate a manpage for bin/bluecloth for packagers
+directory MAN1DIR.to_s
+file MANPAGE_POD
+
+file MANPAGE => [ MANPAGE_POD, MAN1DIR ] do |task|
+	sh 'pod2man', '--center', '',
+		'--release', '',
+		'--name', 'bluecloth',
+		'--utf8', task.prerequisites.first, task.name
+end
+
 
