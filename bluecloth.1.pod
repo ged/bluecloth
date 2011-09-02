@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-bluecloth - convert Markdown input to HTLM
+bluecloth - convert Markdown input to HTML
 
 =head1 SYNOPSIS
 
@@ -10,10 +10,10 @@ B<bluecloth> [I<OPTIONS>] I<FILES>
 
 =head1 DESCRIPTION
 
-B<bluecloth> converts input files, supposed to be written in the Markdown
-markup language. If no file is given, then it will read from the standard
-input. B<bluecloth> then writes to the standard output a HTML file by
-converting Mardown syntax using bluecloth ruby library.
+B<bluecloth> converts input files written in Markdown to HTML
+and outputs them to standard output.
+
+If no input file is given, it will read from the standard input.
 
 
 =head1 OPTIONS
@@ -22,17 +22,21 @@ converting Mardown syntax using bluecloth ruby library.
 
 =item   B<-d>, B<--debug>
 
-Turn debugging output on
+Turn debugging output on.
 
 =item B<-f>, B<--fragment>
 
-Output HTML fragments instead of whole documents
+Output HTML fragments instead of whole documents.
+
+=item B<-h>, B<--help>
+
+Output a help message and exit.
 
 =back
 
 =head1 AUTHORS
 
-B<bluecloth> has been developed by Michael Granger. 
+B<bluecloth> was written by Michael Granger.
 
 This manual page has been written for the Debian Project by Cédric Boutillier (but
 may used by others). 
