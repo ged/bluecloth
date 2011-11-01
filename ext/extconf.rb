@@ -4,7 +4,7 @@ require 'mkmf'
 require 'fileutils'
 require 'pathname'
 require 'rbconfig'
-include Config
+include RbConfig
 
 versionfile = Pathname.new( __FILE__ ).dirname + 'VERSION'
 version = versionfile.read.chomp
