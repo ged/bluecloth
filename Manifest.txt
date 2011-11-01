@@ -1,11 +1,13 @@
 .gemtest
+.rspec
 History.rdoc
-Manifest.txt
 LICENSE
 LICENSE.discount
+Manifest.txt
 README.rdoc
 Rakefile
 bin/bluecloth
+bluecloth.1.pod
 ext/Csio.c
 ext/VERSION
 ext/amalloc.h

@@ -62,7 +62,7 @@ end
 ENV['VERSION'] ||= hoespec.spec.version.to_s
 
 # Ensure the specs pass before checking in
-task 'hg:precheckin' => :spec
+task 'hg:precheckin' => [ :check_manifest, :check_history, :spec ]
 
 # Ensure the extension is compiled before testing
 task :spec => :compile
