@@ -214,7 +214,7 @@ bluecloth_initialize( int argc, VALUE *argv, VALUE self ) {
 
 #ifdef M17N_SUPPORTED
 		bluecloth_debug( "Bytes before utf8ification: %s",
-			RSTRING_PTR(rb_funcall(text, rb_intern("dump"), 0, Qnil)) );
+			RSTRING_PTR(rb_funcall(text, rb_intern("dump"), 0)) );
 		utf8text = rb_str_export_to_enc( rb_str_dup(text), rb_utf8_encoding() );
 		DATA_PTR( self ) = document = bluecloth_alloc( utf8text, flags );
 #else
@@ -258,7 +258,7 @@ bluecloth_to_html( VALUE self ) {
 		VALUE utf8_result = rb_enc_str_new( output, strlen(output), rb_utf8_encoding() );
 		result = rb_str_encode( utf8_result, orig_encoding, 0, Qnil );
 		bluecloth_debug( "Bytes after un-utf8ification (if necessary): %s",
-			RSTRING_PTR(rb_funcall(result, rb_intern("dump"), 0, Qnil)) );
+			RSTRING_PTR(rb_funcall(result, rb_intern("dump"), 0)) );
 #else
 		result = rb_str_new2( output );
 #endif /* M17N_SUPPORTED */
